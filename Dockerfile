@@ -50,13 +50,13 @@ COPY --from=mainDeps /app/projects/$name/node_modules ./projects/$name/node_modu
 RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 RUN apk add --no-cache libc6-compat && npm install -g pnpm@8.6.0
-ARG name
 RUN pnpm --filter=$name build
 
 # --------- runner -----------
 FROM node:18.17-alpine AS runner
 WORKDIR /app
 
+ARG name
 ARG proxy
 
 # create user and use it
