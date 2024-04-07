@@ -25,6 +25,7 @@ export interface AppSchema {
   permission: `${PermissionTypeEnum}`;
   inited?: boolean;
   teamTags: string[];
+  isShow: string;
 }
 
 export type AppListItemType = {

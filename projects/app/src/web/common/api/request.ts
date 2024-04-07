@@ -9,6 +9,9 @@ import { TOKEN_ERROR_CODE } from '@fastgpt/global/common/error/errorCode';
 import { TeamErrEnum } from '@fastgpt/global/common/error/code/team';
 import { useSystemStore } from '../system/useSystemStore';
 
+const ONEAPI_SERVER_URL = process.env.NEXT_PUBLIC_ONEAPI_SERVER_URL || '';
+const ONEAPI_SERVER_TOKEN = process.env.NEXT_PUBLIC_ONEAPI_SERVER_TOKEN || '';
+
 interface ConfigType {
   headers?: { [key: string]: string };
   timeout?: number;
@@ -63,7 +66,6 @@ function startInterceptors(config: InternalAxiosRequestConfig): InternalAxiosReq
   if (config.headers) {
     config.headers.token = getToken();
   }
-
   return config;
 }
 
@@ -187,3 +189,5 @@ export function PUT<T = undefined>(url: string, data = {}, config: ConfigType = 
 export function DELETE<T = undefined>(url: string, data = {}, config: ConfigType = {}): Promise<T> {
   return request(url, data, config, 'DELETE');
 }
+
+export default instance;

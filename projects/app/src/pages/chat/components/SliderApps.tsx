@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex, Box, IconButton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import Avatar from '@/components/Avatar';
 import { AppListItemType } from '@fastgpt/global/core/app/type';
+import { ModelType } from '@fastgpt/global/support/permission/constant';
 
 const SliderApps = ({
   showExist = true,
@@ -17,6 +18,18 @@ const SliderApps = ({
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const [currentType, setCurrentType] = useState('');
+
+  const filterMyApps = () => {
+    apps.map((item) => {
+      if (item._id === activeAppId) {
+        setCurrentType(item.isShow);
+      }
+    });
+  };
+  useEffect(() => {
+    filterMyApps();
+  }, [activeAppId]);
 
   return (
     <Flex flexDirection={'column'} h={'100%'}>
@@ -29,7 +42,9 @@ const SliderApps = ({
             px={3}
             borderRadius={'md'}
             _hover={{ bg: 'myGray.200' }}
-            onClick={() => router.push('/app/list')}
+            onClick={() =>
+              ModelType.EXPLORE === currentType ? router.push('/explore') : router.push('/app/list')
+            }
           >
             <IconButton
               mr={3}
@@ -46,21 +61,22 @@ const SliderApps = ({
       </Box>
 
       <Box flex={'1 0 0'} h={0} px={5} overflow={'overlay'}>
-        {apps.map((item) => (
-          <Flex
-            key={item._id}
-            py={2}
-            px={3}
-            mb={3}
-            cursor={'pointer'}
-            borderRadius={'md'}
-            alignItems={'center'}
-            {...(item._id === activeAppId
-              ? {
+        {apps.filter((item) => item.isShow === currentType)
+          .map((item) => (
+            <Flex
+              key={item._id}
+              py={2}
+              px={3}
+              mb={3}
+              cursor={'pointer'}
+              borderRadius={'md'}
+              alignItems={'center'}
+              {...(item._id === activeAppId
+                ? {
                   bg: 'white',
                   boxShadow: 'md'
                 }
-              : {
+                : {
                   _hover: {
                     bg: 'myGray.200'
                   },
@@ -74,13 +90,13 @@ const SliderApps = ({
                     });
                   }
                 })}
-          >
-            <Avatar src={item.avatar} w={'24px'} />
-            <Box ml={2} className={'textEllipsis'}>
-              {item.name}
-            </Box>
-          </Flex>
-        ))}
+            >
+              <Avatar src={item.avatar} w={'24px'} />
+              <Box ml={2} className={'textEllipsis'}>
+                {item.name}
+              </Box>
+            </Flex>
+          ))}
       </Box>
     </Flex>
   );

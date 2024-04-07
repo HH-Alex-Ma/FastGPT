@@ -254,8 +254,8 @@ const TokenList = () => {
                     {expired_time === -1
                       ? '永不过期'
                       : dayjs(expired_time * 1000)
-                          .format('YYYY-MM-DD HH:mm:ss')
-                          .toString()}
+                        .format('YYYY-MM-DD HH:mm:ss')
+                        .toString()}
                   </Td>
                   <Td>
                     <Menu autoSelect={false} isLazy>

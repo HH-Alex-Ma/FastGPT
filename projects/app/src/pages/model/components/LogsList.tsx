@@ -22,7 +22,7 @@ import MyIcon from '@fastgpt/web/components/common/Icon';
 import { useTranslation } from 'next-i18next';
 import dayjs from 'dayjs';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
-import { useLoading } from '@/web/common/hooks/useLoading';
+import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { RepeatIcon, SearchIcon, ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { useMutation } from '@tanstack/react-query';
 
@@ -56,7 +56,7 @@ const LogsList = () => {
   const [searchBar, setSearchBar] = useState(originalKeyword);
   const { mutate: initLogs, isLoading: isGetting } = useMutation({
     mutationFn: async () => {
-      const result:any = await getLogsList(
+      const result: any = await getLogsList(
         `?p=${pageNum}&type=${searchBar.type}&username=${searchBar.username}&token_name=${searchBar.token_name}&model_name=${searchBar.model_name}&start_timestamp=${searchBar.start_timestamp}&end_timestamp=${searchBar.end_timestamp}&channel=${searchBar.channel}`
       );
       setLogs(result);

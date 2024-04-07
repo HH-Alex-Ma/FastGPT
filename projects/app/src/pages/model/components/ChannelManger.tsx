@@ -45,7 +45,7 @@ import {
   createOrUpdateChannel
 } from '@/web/support/model/api';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useLoading } from '@/web/common/hooks/useLoading';
+import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import dayjs from 'dayjs';
 import { AddIcon, CheckIcon, RepeatIcon, ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'next-i18next';
@@ -53,7 +53,7 @@ import MyIcon from '@fastgpt/web/components/common/Icon';
 import { useRequest } from '@/web/common/hooks/useRequest';
 import MyTooltip from '@/components/MyTooltip';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
-import { useToast } from '@/web/common/hooks/useToast';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 import {
   renderBalance,
   renderType,
@@ -124,7 +124,7 @@ const ChannelManger = () => {
   });
   const { mutate: textResponseTime, isLoading: isTexting } = useMutation({
     mutationFn: async (data: any) => {
-      let result:any = await getTestChannel(data);
+      let result: any = await getTestChannel(data);
       // console.log(result)
       if (result.success === false && result.time == 0) {
         toast({
@@ -142,7 +142,7 @@ const ChannelManger = () => {
   });
   const { mutate: getRenderBalance } = useMutation({
     mutationFn: async (data: any) => {
-      let result:any = await getUpdateBalance(data);
+      let result: any = await getUpdateBalance(data);
       if (result.success === false) {
         toast({
           title: result.message,
@@ -293,10 +293,10 @@ const ChannelManger = () => {
                         status == 1
                           ? '已启用'
                           : status == 2
-                          ? '本渠道被手动禁用'
-                          : status == 3
-                          ? '本渠道被程序自动禁用'
-                          : '未知状态'
+                            ? '本渠道被手动禁用'
+                            : status == 3
+                              ? '本渠道被程序自动禁用'
+                              : '未知状态'
                       }
                       placement="top"
                     >

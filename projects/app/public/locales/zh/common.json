@@ -1,10 +1,13 @@
 {
   "App": "应用",
-  "Create New": "",
+  "Cancel": "取消",
+  "Confirm": "确认",
+  "Create New": "新建",
   "Export": "导出",
   "Folder": "文件夹",
   "Move": "移动",
   "Name": "名称",
+  "Refresh Clear": "刷新/清除",
   "Rename": "重命名",
   "Running": "运行中",
   "Select value is empty": "选择的内容为空",
@@ -1176,6 +1179,28 @@
     },
     "slogan": "让 AI 更懂你的知识"
   },
+  "model": {
+    "Model Library": "模型库"
+  },
+  "modelCenter": {
+    "channel": {
+      "channelInfo": "查看和管理所有模型的部署详情，包括性能指标和运行状态。",
+      "channelManager": "渠道管理",
+      "channelPlaceholder": "搜索渠道的 ID，名称和密钥 ..."
+    },
+    "log": {
+      "logInfo": "详细记录每次模型服务调用详情及消耗，便于追踪成本。",
+      "modelLogs": "模型日志"
+    },
+    "modelBase": "模型库",
+    "pagePre": "当前第",
+    "pageSuf": "页",
+    "token": {
+      "tokenInfo": "精确管理令牌，监控配额使用，确保服务持续运行。",
+      "tokenManager": "令牌管理",
+      "tokenPlaceholder": "搜索令牌的名称..."
+    }
+  },
   "module": {
     "Confirm Delete Module": "确认删除该自定义模块？",
     "Confirm Sync Plugin": "确认同步插件最新信息？插件的连线和输入的内容将会被清空，请确认！",
@@ -1195,6 +1220,7 @@
     "Apps Share": "应用分享",
     "Chat": "聊天",
     "Datasets": "知识中心",
+    "Model": "模型中心",
     "Module": "模块",
     "Plugin": "插件",
     "Store": "应用市场",

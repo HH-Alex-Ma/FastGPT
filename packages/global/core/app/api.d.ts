@@ -17,4 +17,6 @@ export interface AppUpdateParams {
   modules?: AppSchema['modules'];
   permission?: AppSchema['permission'];
   teamTags?: AppSchema['teamTags'];
+  permission?: AppSchema['permission'];
+  isShow?: AppSchema['isShow'];
 }
