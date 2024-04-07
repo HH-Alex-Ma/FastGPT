@@ -29,11 +29,18 @@ stages:
       vmImage: $(vmImageName)
     steps:
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: Build an image
       inputs:
         containerRegistry: '$(dockerRegistryServiceConnection)'
         repository: '$(imageRepository)'
-        command: 'buildAndPush'
+        command: 'build'
         Dockerfile: '**/Dockerfile'
         tags: '$(tag)'
         arguments: --build-arg name=app
+    - task: Docker@2
+      displayName: Push an image to container registry
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'push'
+        tags: '$(tag)'
