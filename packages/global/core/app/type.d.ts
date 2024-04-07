@@ -34,6 +34,7 @@ export type AppListItemType = {
   intro: string;
   isOwner: boolean;
   permission: `${PermissionTypeEnum}`;
+  isShow: string;
 };
 
 export type AppDetailType = AppSchema & {

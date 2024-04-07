@@ -50,7 +50,7 @@ const ChatTest = ({ appId }: { appId: string }) => {
           appName: `调试-${appDetail.name}`
         },
         onMessage: generatingMessage,
-        abortCtrl: controller
+        abortSignal: controller
       });
 
       return { responseText, responseData };
@@ -105,7 +105,7 @@ const ChatTest = ({ appId }: { appId: string }) => {
           userGuideModule={getGuideModule(modules)}
           showFileSelector={checkChatSupportSelectFileByModules(modules)}
           onStartChat={startChat}
-          onDelMessage={() => {}}
+          onDelMessage={() => { }}
         />
       </Box>
       {appDetail.type !== AppTypeEnum.simple && (

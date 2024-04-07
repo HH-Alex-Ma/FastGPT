@@ -67,7 +67,7 @@ const ChatTest = (
           appName: `调试-${app.name}`
         },
         onMessage: generatingMessage,
-        abortCtrl: controller
+        abortSignal: controller
       });
 
       return { responseText, responseData };
@@ -127,7 +127,7 @@ const ChatTest = (
             userGuideModule={getGuideModule(modules)}
             showFileSelector={checkChatSupportSelectFileByModules(modules)}
             onStartChat={startChat}
-            onDelMessage={() => {}}
+            onDelMessage={() => { }}
           />
         </Box>
       </Flex>

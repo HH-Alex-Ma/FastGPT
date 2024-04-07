@@ -92,7 +92,7 @@ const OutLink = () => {
           chatId: completionChatId
         },
         onMessage: generatingMessage,
-        abortCtrl: controller
+        abortSignal: controller
       });
 
       const newTitle = getChatTitleFromChatMessage(GPTMessages2Chats(prompts)[0]);
@@ -360,7 +360,7 @@ const OutLink = () => {
                 userGuideModule={chatData.app?.userGuideModule}
                 showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}
                 feedbackType={'user'}
-                onUpdateVariable={(e) => {}}
+                onUpdateVariable={(e) => { }}
                 onStartChat={startChat}
                 onDelMessage={(e) =>
                   delOneHistoryItem({ ...e, appId: chatData.appId, chatId, teamId, teamToken })
