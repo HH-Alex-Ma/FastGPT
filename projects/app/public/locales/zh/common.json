@@ -28,6 +28,7 @@
     "Connection type is different": "连接的类型不一致",
     "Copy Module Config": "复制配置",
     "Dataset Quote Template": "知识库问答模式",
+    "Explore": "探索",
     "Export Config Successful": "已复制配置，请注意检查是否有重要数据",
     "Export Configs": "导出配置",
     "Feedback Count": "用户反馈",
@@ -593,7 +594,8 @@
             "success": "开始同步"
           }
         },
-        "training": {}
+        "training": {
+        }
       },
       "data": {
         "Auxiliary Data": "辅助数据",
@@ -1219,6 +1221,7 @@
     "Apps Share": "应用分享",
     "Chat": "聊天",
     "Datasets": "知识中心",
+    "Explore": "探索",
     "Model": "模型中心",
     "Module": "模块",
     "Plugin": "插件",
@@ -1355,10 +1358,6 @@
       "auth": {
         "Sending Code": "正在发送"
       },
-      "status": {
-        "active": "激活",
-        "forbidden": "注销"
-      },
       "inform": {
         "System message": "系统消息"
       },
@@ -1382,6 +1381,10 @@
         "Username": "用户名",
         "Wechat": "微信登录",
         "Wx qr login": "微信扫码登录"
+      },
+      "status": {
+        "active": "激活",
+        "forbidden": "注销"
       },
       "team": {
         "Dataset usage": "知识库容量",

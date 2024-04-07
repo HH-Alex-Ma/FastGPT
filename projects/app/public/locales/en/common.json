@@ -28,6 +28,7 @@
     "Connection type is different": "Connection type is different",
     "Copy Module Config": "Copy config",
     "Dataset Quote Template": "Dataset Mode",
+    "Explore": "Explore",
     "Export Config Successful": "The configuration has been copied. Please check for important data",
     "Export Configs": "Export Configs",
     "Feedback Count": "User Feedback",
@@ -1218,6 +1219,7 @@
     "Apps Share": "",
     "Chat": "Chat",
     "Datasets": "DataSet",
+    "Explore": "Explore",
     "Model": "Model Center",
     "Module": "Module",
     "Plugin": "Plugin",
@@ -1377,6 +1379,10 @@
         "Username": "Username",
         "Wechat": "Wechat",
         "Wx qr login": "Wechat scan code login"
+      },
+      "status": {
+        "active": "",
+        "forbidden": ""
       },
       "team": {
         "Dataset usage": "Dataset usage",
