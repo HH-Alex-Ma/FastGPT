@@ -36,3 +36,4 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: '$(tag)'
+        arguments: --build-arg name=app
