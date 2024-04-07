@@ -1,4 +1,4 @@
-import { GET, POST, PUT } from '@/web/common/api/request';
+import { GET, POST, PUT, DELETE } from '@/web/common/api/request';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import type { ResLogin } from '@/global/support/api/userRes.d';
 import { UserAuthTypeEnum } from '@fastgpt/global/support/user/auth/constants';
@@ -78,3 +78,51 @@ export const getWXLoginQR = () =>
 
 export const getWXLoginResult = (code: string) =>
   GET<ResLogin>(`/proApi/support/user/account/login/wx/getResult`, { code });
+
+export const getUserInfo = () => GET('/support/user/account/group/getUserList');
+
+export const addUserInfo = ({
+  username,
+  nickname,
+  roleId,
+  manager
+}: {
+  username: string;
+  nickname: string;
+  roleId: string;
+  manager: number;
+}) => POST('/support/user/account/group/addUser', { username, nickname, roleId, manager });
+
+export const updateUserInfo = ({
+  id,
+  username,
+  nickname,
+  roleId,
+  manager
+}: {
+  id: string;
+  username: string;
+  nickname: string;
+  roleId: string;
+  manager: number;
+}) => PUT('/support/user/account/group/updateUser', { id, username, nickname, roleId, manager });
+
+export const delUserByID = (id: string) => DELETE(`/support/user/account/group/deleteUser`, { id });
+export const changeUserStatusById = (id: string, status: string) =>
+  PUT(`/support/user/account/group/changeStatus`, { id, status });
+
+export const getRoles = () => GET('/support/user/account/role/getRoles');
+export const addRole = ({ name, desc, apps }: { name: string; desc: string; apps: string[] }) =>
+  POST('/support/user/account/role/addRoles', { name, desc, apps });
+export const updateRole = ({
+  id,
+  name,
+  desc,
+  apps
+}: {
+  id: string;
+  name: string;
+  desc: string;
+  apps: string[];
+}) => PUT('/support/user/account/role/updateRole', { id, name, desc, apps });
+export const delRoleById = (id: string) => DELETE(`/support/user/account/role/deleteRole`, { id });

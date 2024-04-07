@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Box, useColorMode, Flex } from '@chakra-ui/react';
+import { Box, useColorMode, Flex, calc } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
@@ -11,7 +11,9 @@ import dynamic from 'next/dynamic';
 
 import Auth from './auth';
 import Navbar from './navbar';
+import NavbarHome from './navbarHome';
 import NavbarPhone from './navbarPhone';
+import NavbarPhoneHome from './navbarPhoneHome';
 const UpdateInviteModal = dynamic(() => import('@/components/support/user/team/UpdateInviteModal'));
 const NotSufficientModal = dynamic(() => import('@/components/support/wallet/NotSufficientModal'));
 const SystemMsgModal = dynamic(() => import('@/components/support/user/inform/SystemMsgModal'));
@@ -22,6 +24,9 @@ const pcUnShowLayoutRoute: Record<string, boolean> = {
   '/login': true,
   '/login/provider': true,
   '/login/fastlogin': true,
+  '/console': true,
+  '/console/provider': true,
+  '/console/fastlogin': true,
   '/chat/share': true,
   '/chat/team': true,
   '/app/edit': true,
@@ -34,6 +39,9 @@ const phoneUnShowLayoutRoute: Record<string, boolean> = {
   '/login': true,
   '/login/provider': true,
   '/login/fastlogin': true,
+  '/console': true,
+  '/console/provider': true,
+  '/console/fastlogin': true,
   '/chat/share': true,
   '/chat/team': true,
   '/tools/price': true,
@@ -90,12 +98,31 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               <Auth>{children}</Auth>
             ) : (
               <>
-                <Box h={'100%'} position={'fixed'} left={0} top={0} w={'64px'}>
-                  <Navbar unread={unread} />
-                </Box>
-                <Box h={'100%'} ml={'70px'} overflow={'overlay'}>
-                  <Auth>{children}</Auth>
-                </Box>
+                {router.pathname.startsWith('/home') ? (
+                  <>
+                    <Box w={'100%'} position={'fixed'} top={0} h={'60px'}>
+                      <NavbarHome unread={0} />
+                    </Box>
+                    <Box
+                      w={'100%'}
+                      height={'100%'}
+                      paddingBottom={'60px'}
+                      mt={'60px'}
+                      overflow={'overlay'}
+                    >
+                      <Auth>{children}</Auth>
+                    </Box>
+                  </>
+                ) : (
+                  <>
+                    <Box h={'100%'} position={'fixed'} left={0} top={0} w={'64px'}>
+                      <Navbar unread={unread} />
+                    </Box>
+                    <Box h={'100%'} ml={'70px'} overflow={'overlay'}>
+                      <Auth>{children}</Auth>
+                    </Box>
+                  </>
+                )}
               </>
             )}
           </>
@@ -111,7 +138,15 @@ const Layout = ({ children }: { children: JSX.Element }) => {
                     <Auth>{children}</Auth>
                   </Box>
                   <Box h={'50px'} borderTop={'1px solid rgba(0,0,0,0.1)'}>
-                    <NavbarPhone unread={unread} />
+                    {router.pathname.startsWith('/home') ? (
+                      <>
+                        <NavbarPhoneHome unread={0} />
+                      </>
+                    ) : (
+                      <>
+                        <NavbarPhone unread={unread} />
+                      </>
+                    )}
                   </Box>
                 </Flex>
               )}

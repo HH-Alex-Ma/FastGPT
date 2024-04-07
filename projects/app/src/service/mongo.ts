@@ -47,30 +47,52 @@ async function initRootUser(retry = 3): Promise<any> {
 
     await mongoSessionRun(async (session) => {
       // init root user
-      if (rootUser) {
-        await rootUser.updateOne({
-          password: hashStr(psw)
-        });
-      } else {
+      // 账户不存在首次初始化
+      if (!rootUser) {
         const [{ _id }] = await MongoUser.create(
           [
             {
               username: 'root',
-              password: hashStr(psw)
+              nickname: '系统管理员',
+              password: hashStr(psw),
+              manager: 1
             }
           ],
           { session }
         );
         rootId = _id;
+        // init root team
+        await createDefaultTeam({ userId: rootId, balance: 9999 * PRICE_SCALE, session });
+        console.log(`root user init:`, {
+          username: 'root',
+          password: psw
+        });
       }
-      // init root team
-      await createDefaultTeam({ userId: rootId, balance: 9999 * PRICE_SCALE, session });
+      // if (rootUser) {
+      //   await rootUser.updateOne({
+      //     password: hashStr(psw)
+      //   });
+      // } else {
+      //   const [{ _id }] = await MongoUser.create(
+      //     [
+      //       {
+      //         username: 'root',
+      //         nickname: '系统管理员',
+      //         password: hashStr(psw)
+      //       }
+      //     ],
+      //     { session }
+      //   );
+      //   rootId = _id;
+      // }
+      // // init root team
+      // await createDefaultTeam({ userId: rootId, balance: 9999 * PRICE_SCALE, session });
     });
 
-    console.log(`root user init:`, {
-      username: 'root',
-      password: psw
-    });
+    // console.log(`root user init:`, {
+    //   username: 'root',
+    //   password: psw
+    // });
   } catch (error) {
     if (retry > 0) {
       console.log('retry init root user');

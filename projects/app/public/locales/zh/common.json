@@ -589,8 +589,7 @@
             "success": "开始同步"
           }
         },
-        "training": {
-        }
+        "training": {}
       },
       "data": {
         "Auxiliary Data": "辅助数据",
@@ -1310,6 +1309,10 @@
       "User self info": "个人信息",
       "auth": {
         "Sending Code": "正在发送"
+      },
+      "status": {
+        "active": "激活",
+        "forbidden": "注销"
       },
       "inform": {
         "System message": "系统消息"

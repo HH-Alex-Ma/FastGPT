@@ -18,6 +18,20 @@ const UserSchema = new Schema({
     required: true,
     unique: true // 唯一
   },
+  nickname: {
+    type: String
+  },
+  roleId: {
+    type: String
+  },
+  // 1 是管理员，0 是非管理员
+  manager: {
+    type: Number,
+    default: 0
+  },
+  DindDing: {
+    type: String
+  },
   email: {
     type: String
   },

@@ -4,6 +4,10 @@ import { TeamItemType } from './team/type';
 export type UserModelSchema = {
   _id: string;
   username: string;
+  nickname: string;
+  roleId: string;
+  manager: number;
+  DindDing?: string;
   email?: string;
   phonePrefix?: number;
   phone?: string;
@@ -26,9 +30,19 @@ export type UserType = {
   _id: string;
   username: string;
   avatar: string;
+  manager: number;
+  DindDing?: string;
   timezone: string;
   promotionRate: UserModelSchema['promotionRate'];
   openaiAccount: UserModelSchema['openaiAccount'];
   team: TeamItemType;
   standardInfo?: standardInfoType;
+};
+
+export type RoleModelSchema = {
+  _id: string;
+  name: string;
+  desc: string;
+  apps: Array;
+  createTime: number;
 };

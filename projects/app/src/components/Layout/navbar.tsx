@@ -55,6 +55,13 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeLink: ['/dataset/list', '/dataset/detail']
       },
       {
+        label: '用户管理',
+        icon: 'support/user/userLight',
+        activeIcon: 'support/user/userFill',
+        link: '/settings',
+        activeLink: ['/settings']
+      },
+      {
         label: t('navbar.Account'),
         icon: 'support/user/userLight',
         activeIcon: 'support/user/userFill',
