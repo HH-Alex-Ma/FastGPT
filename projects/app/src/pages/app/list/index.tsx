@@ -16,6 +16,7 @@ import CreateModal from './component/CreateModal';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionIconText from '@/components/support/permission/IconText';
 import { useUserStore } from '@/web/support/user/useUserStore';
+import { ModelType } from '@fastgpt/global/support/permission/constant';
 
 const MyApps = () => {
   const { toast } = useToast();
@@ -74,100 +75,101 @@ const MyApps = () => {
         gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
         gridGap={5}
       >
-        {myApps.map((app) => (
-          <MyTooltip
-            key={app._id}
-            label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
-          >
-            <Box
-              lineHeight={1.5}
-              h={'100%'}
-              py={3}
-              px={5}
-              cursor={'pointer'}
-              borderWidth={'1.5px'}
-              borderColor={'borderColor.low'}
-              bg={'white'}
-              borderRadius={'md'}
-              userSelect={'none'}
-              position={'relative'}
-              display={'flex'}
-              flexDirection={'column'}
-              _hover={{
-                borderColor: 'primary.300',
-                boxShadow: '1.5',
-                '& .delete': {
-                  display: 'flex'
-                },
-                '& .chat': {
-                  display: 'flex'
-                }
-              }}
-              onClick={() => {
-                if (userInfo?.team.canWrite) {
-                  router.push(`/app/detail?appId=${app._id}`);
-                } else {
-                  router.push(`/chat?appId=${app._id}`);
-                }
-              }}
+        {myApps.filter((app) => app.isShow === ModelType.MINE)
+          .map((app) => (
+            <MyTooltip
+              key={app._id}
+              label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
             >
-              <Flex alignItems={'center'} h={'38px'}>
-                <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
-                <Box ml={3}>{app.name}</Box>
-                {app.isOwner && userInfo?.team.canWrite && (
-                  <IconButton
-                    className="delete"
-                    position={'absolute'}
-                    top={4}
-                    right={4}
-                    size={'xsSquare'}
-                    variant={'whiteDanger'}
-                    icon={<MyIcon name={'delete'} w={'14px'} />}
-                    aria-label={'delete'}
-                    display={['', 'none']}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openConfirm(() => onclickDelApp(app._id))();
-                    }}
-                  />
-                )}
-              </Flex>
               <Box
-                flex={1}
-                className={'textEllipsis3'}
-                py={2}
-                wordBreak={'break-all'}
-                fontSize={'sm'}
-                color={'myGray.600'}
+                lineHeight={1.5}
+                h={'100%'}
+                py={3}
+                px={5}
+                cursor={'pointer'}
+                borderWidth={'1.5px'}
+                borderColor={'borderColor.low'}
+                bg={'white'}
+                borderRadius={'md'}
+                userSelect={'none'}
+                position={'relative'}
+                display={'flex'}
+                flexDirection={'column'}
+                _hover={{
+                  borderColor: 'primary.300',
+                  boxShadow: '1.5',
+                  '& .delete': {
+                    display: 'flex'
+                  },
+                  '& .chat': {
+                    display: 'flex'
+                  }
+                }}
+                onClick={() => {
+                  if (userInfo?.team.canWrite) {
+                    router.push(`/app/detail?appId=${app._id}`);
+                  } else {
+                    router.push(`/chat?appId=${app._id}`);
+                  }
+                }}
               >
-                {app.intro || '这个应用还没写介绍~'}
-              </Box>
-              <Flex h={'34px'} alignItems={'flex-end'}>
-                <Box flex={1}>
-                  <PermissionIconText permission={app.permission} color={'myGray.600'} />
+                <Flex alignItems={'center'} h={'38px'}>
+                  <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
+                  <Box ml={3}>{app.name}</Box>
+                  {app.isOwner && userInfo?.team.canWrite && (
+                    <IconButton
+                      className="delete"
+                      position={'absolute'}
+                      top={4}
+                      right={4}
+                      size={'xsSquare'}
+                      variant={'whiteDanger'}
+                      icon={<MyIcon name={'delete'} w={'14px'} />}
+                      aria-label={'delete'}
+                      display={['', 'none']}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openConfirm(() => onclickDelApp(app._id))();
+                      }}
+                    />
+                  )}
+                </Flex>
+                <Box
+                  flex={1}
+                  className={'textEllipsis3'}
+                  py={2}
+                  wordBreak={'break-all'}
+                  fontSize={'sm'}
+                  color={'myGray.600'}
+                >
+                  {app.intro || '这个应用还没写介绍~'}
                 </Box>
-                {userInfo?.team.canWrite && (
-                  <IconButton
-                    className="chat"
-                    size={'xsSquare'}
-                    variant={'whitePrimary'}
-                    icon={
-                      <MyTooltip label={'去聊天'}>
-                        <MyIcon name={'core/chat/chatLight'} w={'14px'} />
-                      </MyTooltip>
-                    }
-                    aria-label={'chat'}
-                    display={['', 'none']}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/chat?appId=${app._id}`);
-                    }}
-                  />
-                )}
-              </Flex>
-            </Box>
-          </MyTooltip>
-        ))}
+                <Flex h={'34px'} alignItems={'flex-end'}>
+                  <Box flex={1}>
+                    {/* <PermissionIconText permission={app.permission} color={'myGray.600'} /> */}
+                  </Box>
+                  {userInfo?.team.canWrite && (
+                    <IconButton
+                      className="chat"
+                      size={'xsSquare'}
+                      variant={'whitePrimary'}
+                      icon={
+                        <MyTooltip label={'去聊天'}>
+                          <MyIcon name={'core/chat/chatLight'} w={'14px'} />
+                        </MyTooltip>
+                      }
+                      aria-label={'chat'}
+                      display={['', 'none']}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/chat?appId=${app._id}`);
+                      }}
+                    />
+                  )}
+                </Flex>
+              </Box>
+            </MyTooltip>
+          ))}
       </Grid>
       {/* (
         <ShareBox></ShareBox>

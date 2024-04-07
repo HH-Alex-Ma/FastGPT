@@ -20,3 +20,9 @@ export const PermissionTypeMap = {
     label: 'permission.Public'
   }
 };
+
+export enum ModelType {
+  MINE = 'Mine',
+  EXPLORE = 'Explore',
+  MODEL_BASE = 'ModelBase'
+}

@@ -1,5 +1,6 @@
 import { AppDetailType } from '@fastgpt/global/core/app/type.d';
 import type { OutLinkEditType } from '@fastgpt/global/support/outLink/type.d';
+import { ModelType } from '@fastgpt/global/support/permission/constant';
 
 export const defaultApp: AppDetailType = {
   _id: '',
@@ -15,7 +16,8 @@ export const defaultApp: AppDetailType = {
   permission: 'private',
   isOwner: false,
   canWrite: false,
-  teamTags: ['']
+  teamTags: [''],
+  isShow: ModelType.MINE
 };
 
 export const defaultOutLinkForm: OutLinkEditType = {

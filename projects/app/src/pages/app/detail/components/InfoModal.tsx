@@ -23,6 +23,8 @@ import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionRadio from '@/components/support/permission/Radio';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
+import { ModelType } from '@fastgpt/global/support/permission/constant';
+import MyRadio from '@/components/common/MyRadio';
 
 const InfoModal = ({
   defaultApp,
@@ -59,7 +61,8 @@ const InfoModal = ({
         name: data.name,
         avatar: data.avatar,
         intro: data.intro,
-        permission: data.permission
+        permission: data.permission,
+        isShow: data.isShow
       });
     },
     onSuccess() {
@@ -161,12 +164,46 @@ const InfoModal = ({
           bg={'myWhite.600'}
           {...register('intro')}
         />
+        {false && (
+          <Box mt={4}>
+            <Box mb={1}>{t('user.Permission')}</Box>
+            <PermissionRadio
+              value={getValues('permission')}
+              onChange={(e) => {
+                setValue('permission', e);
+                setRefresh(!refresh);
+              }}
+            />
+          </Box>
+        )}
         <Box mt={4}>
-          <Box mb={1}>{t('user.Permission')}</Box>
-          <PermissionRadio
-            value={getValues('permission')}
+          <Box mb={1}>应用范围</Box>
+          <MyRadio
+            gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
+            list={[
+              {
+                icon: 'core/app/aiLight',
+                title: '我的应用',
+                desc: '',
+                value: ModelType.MINE
+              },
+              {
+                icon: 'core/explore/exploreLight',
+                title: '探索',
+                desc: '',
+                value: ModelType.EXPLORE
+              },
+              {
+                icon: 'model',
+                title: '模型库',
+                desc: '',
+                value: ModelType.MODEL_BASE
+              }
+            ]}
+            value={getValues('isShow')}
             onChange={(e) => {
-              setValue('permission', e);
+              console.log('1', e);
+              setValue('isShow', e);
               setRefresh(!refresh);
             }}
           />

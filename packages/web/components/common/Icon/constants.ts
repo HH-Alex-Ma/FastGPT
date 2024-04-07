@@ -1,6 +1,10 @@
 // @ts-nocheck
 
 export const iconPaths = {
+  channel: () => import('./icons/common/tubiao_qudao.svg'),
+  modelBase: () => import('./icons/common/moxingku.svg'),
+  model: () => import('./icons/common/model-lib.svg'),
+  modelFill: () => import('./icons/common/bg-model.svg'),
   chatSend: () => import('./icons/chatSend.svg'),
   closeSolid: () => import('./icons/closeSolid.svg'),
   collectionLight: () => import('./icons/collectionLight.svg'),
@@ -111,6 +115,10 @@ export const iconPaths = {
   'core/modules/teamPlugin': () => import('./icons/core/modules/teamPlugin.svg'),
   'core/modules/variable': () => import('./icons/core/modules/variable.svg'),
   'core/modules/welcomeText': () => import('./icons/core/modules/welcomeText.svg'),
+  'core/explore/exploreLight': () => import('./icons/core/explore/explore.svg'),
+  'core/explore/exploreFill': () => import('./icons/core/explore/exploreFill.svg'),
+  'core/service/serviceLight': () => import('./icons/core/service/serviceLight.svg'),
+  'core/service/serviceFill': () => import('./icons/core/service/serviceFill.svg'),
   date: () => import('./icons/date.svg'),
   delete: () => import('./icons/delete.svg'),
   edit: () => import('./icons/edit.svg'),
@@ -125,7 +133,9 @@ export const iconPaths = {
   'file/fill/manual': () => import('./icons/file/fill/manual.svg'),
   'file/fill/markdown': () => import('./icons/file/fill/markdown.svg'),
   'file/fill/pdf': () => import('./icons/file/fill/pdf.svg'),
+  'file/fill/ppt': () => import('./icons/file/fill/ppt.svg'),
   'file/fill/txt': () => import('./icons/file/fill/txt.svg'),
+  'file/fill/xlsx': () => import('./icons/file/fill/xlsx.svg'),
   'file/html': () => import('./icons/file/html.svg'),
   'file/indexImport': () => import('./icons/file/indexImport.svg'),
   'file/manualImport': () => import('./icons/file/manualImport.svg'),

@@ -1,10 +1,13 @@
 {
   "App": "应用",
-  "Create New": "",
+  "Cancel": "取消",
+  "Confirm": "确认",
+  "Create New": "新建",
   "Export": "导出",
   "Folder": "文件夹",
   "Move": "移动",
   "Name": "名称",
+  "Refresh Clear": "刷新/清除",
   "Rename": "重命名",
   "Running": "运行中",
   "Select value is empty": "选择的内容为空",
@@ -148,6 +151,7 @@
     "Status": "状态",
     "Submit failed": "提交失败",
     "Submit success": "提交成功",
+    "Sync success": "同步成功",
     "System version": "系统版本",
     "Team": "团队",
     "Team Tags Set": "标签",
@@ -820,6 +824,7 @@
       "Http request props": "请求参数",
       "Http request settings": "请求配置",
       "Input Type": "输入类型",
+      "Laf sync params": "同步参数",
       "Plugin output must connect": "自定义输出必须全部连接",
       "QueryExtension": {
         "placeholder": "例如:\n关于 python 的介绍和使用等问题。\n当前对话与游戏《GTA5》有关。",
@@ -912,6 +917,9 @@
         "switch": "开关",
         "target": "外部数据",
         "textarea": "段落输入"
+      },
+      "laf": {
+        "Select laf function": "选择laf函数"
       },
       "output": {
         "Add Output": "添加出参",
@@ -1170,6 +1178,28 @@
     },
     "slogan": "让 AI 更懂你的知识"
   },
+  "model": {
+    "Model Library": "模型库"
+  },
+  "modelCenter": {
+    "channel": {
+      "channelInfo": "查看和管理所有模型的部署详情，包括性能指标和运行状态。",
+      "channelManager": "渠道管理",
+      "channelPlaceholder": "搜索渠道的 ID，名称和密钥 ..."
+    },
+    "log": {
+      "logInfo": "详细记录每次模型服务调用详情及消耗，便于追踪成本。",
+      "modelLogs": "模型日志"
+    },
+    "modelBase": "模型库",
+    "pagePre": "当前第",
+    "pageSuf": "页",
+    "token": {
+      "tokenInfo": "精确管理令牌，监控配额使用，确保服务持续运行。",
+      "tokenManager": "令牌管理",
+      "tokenPlaceholder": "搜索令牌的名称..."
+    }
+  },
   "module": {
     "Confirm Delete Module": "确认删除该自定义模块？",
     "Confirm Sync Plugin": "确认同步插件最新信息？插件的连线和输入的内容将会被清空，请确认！",
@@ -1188,7 +1218,8 @@
     "Apps": "应用",
     "Apps Share": "应用分享",
     "Chat": "聊天",
-    "Datasets": "知识库",
+    "Datasets": "知识中心",
+    "Model": "模型中心",
     "Module": "模块",
     "Plugin": "插件",
     "Store": "应用市场",
@@ -1227,19 +1258,26 @@
     "Set Public": "设为团队可用"
   },
   "plugin": {
+    "App": "选择应用",
     "Auth Header Prefix": "鉴权头部前缀",
     "Auth Method": "鉴权方法",
     "Auth Type": "鉴权类型",
     "Confirm Delete": "确认删除该插件？",
     "Create Your Plugin": "创建你的插件",
+    "Currentapp": "当前应用",
     "Custom Plugin": "自定义插件",
     "Description": "描述",
     "Edit Http Plugin": "编辑 HTTP 插件",
+    "Enter Env": "输入 laf 环境",
+    "Enter PAT": "请输入访问凭证（PAT）",
+    "Func": "选择函数",
     "Get Plugin Module Detail Failed": "获取插件信息异常",
     "HTTP Plugin": "HTTP 插件",
     "Import Plugin": "导入 HTTP 插件",
     "Import from URL": "从URL导入。https://xxxx",
     "Intro": "插件介绍",
+    "Invalid Appid": "appid 无效",
+    "Invalid Env": "laf 环境错误",
     "Invalid Schema": "Schema 无效",
     "Invalid URL": "URL 无效",
     "Key": "键",
@@ -1249,16 +1287,20 @@
     "No Intro": "这个插件没有介绍~",
     "None": "无",
     "Path": "路径",
+    "Please bind laf accout first": "请先绑定 laf 账号",
     "Plugin List": "插件列表",
     "Plugin Module": "插件模块",
     "Privacy Agreement": "隐私协议",
     "Search plugin": "搜索插件",
     "Set Name": "给插件取个名字",
+    "Synchronous app": "同步应用",
     "Synchronous version": "同步版本",
     "To Edit Plugin": "去编辑",
     "Update Your Plugin": "更新插件",
     "Value": "值",
-    "path": ""
+    "go to laf": "去编写",
+    "path": "",
+    "update params": "更新参数"
   },
   "support": {
     "account": {
@@ -1304,6 +1346,9 @@
     "user": {
       "AI point standard": "AI积分标准",
       "Avatar": "头像",
+      "Go laf env": "点击前往 laf 获取 PAT 凭证。",
+      "Laf account course": "查看绑定 laf 账号教程。",
+      "Laf account intro": "绑定你的laf账号后，你将可以在工作流中使用 laf 模块，实现在线编写代码。",
       "Need to login": "请先登录",
       "Price": "计费标准",
       "User self info": "个人信息",
@@ -1500,10 +1545,13 @@
     "Bill Detail": "账单详情",
     "Change": "变更",
     "Copy invite url": "复制邀请链接",
+    "Current laf Env": "当前 laf 环境",
     "Edit name": "点击修改昵称",
     "Invite Url": "邀请链接",
     "Invite url tip": "通过该链接注册的好友将永久与你绑定，其充值时你会获得一定余额奖励。\n此外，好友使用手机号注册时，你将立即获得 5 元奖励。\n奖励会发送到您的默认团队中。",
+    "Laf Account Setting": "laf 账号配置",
     "Language": "语言",
+    "Learn More": "查看文档",
     "Member Name": "昵称",
     "Notice": "通知",
     "Old password is error": "旧密码错误",
@@ -1518,6 +1566,7 @@
     "Promotion rate tip": "好友充值时你将获得一定比例的余额奖励",
     "Recharge Record": "支付记录",
     "Replace": "更换",
+    "Set Laf Account Failed": "设置 laf 账号异常",
     "Set OpenAI Account Failed": "设置 OpenAI 账号异常",
     "Sign Out": "登出",
     "Source": "来源",

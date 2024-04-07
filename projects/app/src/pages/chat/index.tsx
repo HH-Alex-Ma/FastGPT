@@ -82,7 +82,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
           chatId: completionChatId
         },
         onMessage: generatingMessage,
-        abortCtrl: controller
+        abortSignal: controller
       });
 
       const newTitle = getChatTitleFromChatMessage(GPTMessages2Chats(prompts)[0]);

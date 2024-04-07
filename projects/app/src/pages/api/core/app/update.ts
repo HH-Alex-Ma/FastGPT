@@ -12,7 +12,7 @@ import { getLLMModel } from '@fastgpt/service/core/ai/model';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { name, avatar, type, intro, modules, permission, teamTags } =
+    const { name, avatar, type, intro, modules, permission, teamTags, isShow } =
       req.body as AppUpdateParams;
     const { appId } = req.query as { appId: string };
 
@@ -67,6 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         avatar,
         intro,
         permission,
+        isShow,
         teamTags: teamTags,
         ...(modules && {
           modules
