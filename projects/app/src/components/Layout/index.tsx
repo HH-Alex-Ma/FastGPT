@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { getUnreadCount } from '@/web/support/user/inform/api';
 import dynamic from 'next/dynamic';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 
 import Auth from './auth';
 import Navbar from './navbar';
@@ -48,17 +49,34 @@ const phoneUnShowLayoutRoute: Record<string, boolean> = {
   '/price': true
 };
 
+const ordinaryUserLayoutRoute: Record<string, boolean> = {
+  '/home': true,
+  '/home/chat': true
+};
+
 const Layout = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
+  const { toast } = useToast();
   const { colorMode, setColorMode } = useColorMode();
   const { Loading } = useLoading();
   const { loading, setScreenWidth, isPc, feConfigs, isNotSufficientModal } = useSystemStore();
-  const { userInfo } = useUserStore();
+  const { userInfo, setUserInfo } = useUserStore();
 
   const isChatPage = useMemo(
     () => router.pathname === '/chat' && Object.values(router.query).join('').length !== 0,
     [router.pathname, router.query]
   );
+  // 路由拦截
+  useEffect(() => {
+    if (userInfo && !ordinaryUserLayoutRoute[router.pathname] && userInfo?.manager == 0) {
+      setUserInfo(null);
+      router.replace('/login');
+      toast({
+        status: 'error',
+        title: '无权访问'
+      });
+    }
+  }, [router.pathname]);
 
   useEffect(() => {
     if (colorMode === 'dark' && router.pathname !== '/chat') {
