@@ -20,9 +20,10 @@ import {
   MenuButton,
   Menu,
   Textarea,
-  IconButton,
-  Select
+  IconButton
 } from '@chakra-ui/react';
+import Select from 'react-select';
+import { getMyApps } from '@/web/core/app/api';
 import { getRoles, addRole, updateRole, delRoleById } from '@/web/support/user/api';
 import type { EditApiKeyProps } from '@/global/support/openapi/api.d';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -232,8 +233,9 @@ function EditModal({
   onEdit: () => void;
 }) {
   const { t } = useTranslation();
+  const { Loading } = useLoading();
   const isEdit = useMemo(() => !!defaultData._id, [defaultData]);
-  const { feConfigs } = useSystemStore();
+  const [apps, setApps] = useState(defaultData.apps);
 
   const {
     register,
@@ -254,13 +256,13 @@ function EditModal({
     onSuccess: onEdit
   });
 
+  const { data: myApps = [], isLoading: isGetting } = useQuery(['getMyApps'], () => getMyApps());
   return (
     <MyModal isOpen={true} iconSrc="/imgs/modal/key.svg" title={isEdit ? '编辑角色' : '创建角色'}>
-      <ModalBody>
+      <ModalBody style={{ maxHeight: '70vh', minHeight: '50vh' }}>
         <Flex alignItems={'center'}>
           <Box flex={'0 0 90px'}>{'角色名'}:</Box>
           <Input
-            disabled={isEdit}
             placeholder={'请输入角色名'}
             maxLength={20}
             {...register('name', {
@@ -274,14 +276,19 @@ function EditModal({
         </Flex>
         <Flex alignItems={'center'} mt={4}>
           <Box flex={'0 0 90px'}>{'应用权限'}:</Box>
-          <Select
-            {...register('manager', {
-              required: 'manager is empty'
-            })}
-          >
-            <option value={0}>普通用户</option>
-            <option value={1}>管理员</option>
-          </Select>
+          <div style={{ width: '100%' }}>
+            <Select
+              closeMenuOnSelect={false}
+              placeholder={'请选择应用权限'}
+              options={myApps.map((app: any) => ({
+                label: app.name,
+                value: app._id
+              }))}
+              isMulti
+              value={apps}
+              onChange={(val) => setApps(val)}
+            />
+          </div>
         </Flex>
       </ModalBody>
 
@@ -293,12 +300,15 @@ function EditModal({
         <Button
           isLoading={creating || updating}
           onClick={submitShareChat((data) =>
-            isEdit ? onclickUpdate({ ...data, id: defaultData?._id }) : onclickCreate(data)
+            isEdit
+              ? onclickUpdate({ ...data, id: defaultData?._id, apps: apps })
+              : onclickCreate({ ...data, apps: apps })
           )}
         >
           {t('common.Confirm')}
         </Button>
       </ModalFooter>
+      <Loading loading={isGetting} fixed={false} />
     </MyModal>
   );
 }

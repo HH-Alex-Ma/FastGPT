@@ -126,3 +126,6 @@ export const updateRole = ({
   apps: string[];
 }) => PUT('/support/user/account/role/updateRole', { id, name, desc, apps });
 export const delRoleById = (id: string) => DELETE(`/support/user/account/role/deleteRole`, { id });
+
+export const getOwnerApps = (id: any, tmbId: any) =>
+  GET(`/support/user/account/ownerApps/getApps`, { id, tmbId });

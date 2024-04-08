@@ -38,6 +38,7 @@ export async function getUserDetail({
   return {
     _id: user._id,
     username: user.username,
+    nickname: user.nickname,
     avatar: user.avatar,
     manager: user.manager,
     timezone: user.timezone,

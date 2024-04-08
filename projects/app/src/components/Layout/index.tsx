@@ -99,29 +99,33 @@ const Layout = ({ children }: { children: JSX.Element }) => {
             ) : (
               <>
                 {router.pathname.startsWith('/home') ? (
-                  <>
-                    <Box w={'100%'} position={'fixed'} top={0} h={'60px'}>
-                      <NavbarHome unread={0} />
-                    </Box>
-                    <Box
-                      w={'100%'}
-                      height={'100%'}
-                      paddingBottom={'60px'}
-                      mt={'60px'}
-                      overflow={'overlay'}
-                    >
-                      <Auth>{children}</Auth>
-                    </Box>
-                  </>
+                  <Auth>
+                    <>
+                      <Box w={'100%'} position={'fixed'} top={0} h={'60px'}>
+                        <NavbarHome unread={0} />
+                      </Box>
+                      <Box
+                        w={'100%'}
+                        height={'100%'}
+                        paddingBottom={'60px'}
+                        mt={'60px'}
+                        overflow={'overlay'}
+                      >
+                        {children}
+                      </Box>
+                    </>
+                  </Auth>
                 ) : (
-                  <>
-                    <Box h={'100%'} position={'fixed'} left={0} top={0} w={'64px'}>
-                      <Navbar unread={unread} />
-                    </Box>
-                    <Box h={'100%'} ml={'70px'} overflow={'overlay'}>
-                      <Auth>{children}</Auth>
-                    </Box>
-                  </>
+                  <Auth>
+                    <>
+                      <Box h={'100%'} position={'fixed'} left={0} top={0} w={'64px'}>
+                        <Navbar unread={unread} />
+                      </Box>
+                      <Box h={'100%'} ml={'70px'} overflow={'overlay'}>
+                        {children}
+                      </Box>
+                    </>
+                  </Auth>
                 )}
               </>
             )}
@@ -133,22 +137,26 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               {phoneUnShowLayoutRoute[router.pathname] || isChatPage ? (
                 <Auth>{children}</Auth>
               ) : (
-                <Flex h={'100%'} flexDirection={'column'}>
-                  <Box flex={'1 0 0'} h={0}>
-                    <Auth>{children}</Auth>
-                  </Box>
-                  <Box h={'50px'} borderTop={'1px solid rgba(0,0,0,0.1)'}>
-                    {router.pathname.startsWith('/home') ? (
-                      <>
-                        <NavbarPhoneHome unread={0} />
-                      </>
-                    ) : (
-                      <>
-                        <NavbarPhone unread={unread} />
-                      </>
-                    )}
-                  </Box>
-                </Flex>
+                <Auth>
+                  <>
+                    <Flex h={'100%'} flexDirection={'column'}>
+                      <Box flex={'1 0 0'} h={0}>
+                        {children}
+                      </Box>
+                      <Box h={'50px'} borderTop={'1px solid rgba(0,0,0,0.1)'}>
+                        {router.pathname.startsWith('/home') ? (
+                          <>
+                            <NavbarPhoneHome unread={0} />
+                          </>
+                        ) : (
+                          <>
+                            <NavbarPhone unread={unread} />
+                          </>
+                        )}
+                      </Box>
+                    </Flex>
+                  </>
+                </Auth>
               )}
             </Box>
           </>

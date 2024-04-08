@@ -16,6 +16,7 @@ import CreateModal from './component/CreateModal';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionIconText from '@/components/support/permission/IconText';
 import { useUserStore } from '@/web/support/user/useUserStore';
+import { getOwnerApps } from '@/web/support/user/api';
 
 const MyApps = () => {
   const { toast } = useToast();
@@ -58,7 +59,15 @@ const MyApps = () => {
   const { isFetching } = useQuery(['loadApps'], () => loadMyApps(true), {
     refetchOnMount: true
   });
+  const { data: ownerApps = [] as any, isLoading: isGetting } = useQuery(['getOwnerApps'], () =>
+    getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
+  );
 
+  // useEffect(() => {
+  //   console.log(userInfo);
+  //   console.log(myApps);
+  //   console.log('ownerApps', ownerApps);
+  // });
   return (
     <PageContainer
       isLoading={isFetching}
@@ -86,73 +95,75 @@ const MyApps = () => {
         ]}
         gridGap={5}
       >
-        {myApps.map((app) => (
-          <MyTooltip
-            key={app._id}
-            // label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
-          >
-            <Box
-              lineHeight={1.5}
-              h={'100%'}
-              py={3}
-              px={5}
-              cursor={'pointer'}
-              borderWidth={'1.5px'}
-              borderColor={'borderColor.low'}
-              bg={'white'}
-              borderRadius={'md'}
-              userSelect={'none'}
-              position={'relative'}
-              display={'flex'}
-              flexDirection={'column'}
-              _hover={{
-                borderColor: 'primary.300',
-                boxShadow: '1.5',
-                '& .delete': {
-                  display: 'flex'
-                },
-                '& .chat': {
-                  display: 'flex'
-                }
-              }}
-              onClick={() => {
-                router.push(`/home/chat?appId=${app._id}`);
-              }}
+        {myApps
+          .filter((app: any) => ownerApps.includes(app._id))
+          .map((app) => (
+            <MyTooltip
+              key={app._id}
+              // label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
             >
-              <Flex alignItems={'center'} h={'38px'}>
-                <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
-                <Box ml={3}>{app.name}</Box>
-                {app.isOwner && userInfo?.team.canWrite && (
-                  <IconButton
-                    className="delete"
-                    position={'absolute'}
-                    top={4}
-                    right={4}
-                    size={'xsSquare'}
-                    variant={'whiteDanger'}
-                    icon={<MyIcon name={'delete'} w={'14px'} />}
-                    aria-label={'delete'}
-                    display={['', 'none']}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openConfirm(() => onclickDelApp(app._id))();
-                    }}
-                  />
-                )}
-              </Flex>
               <Box
-                flex={1}
-                className={'textEllipsis3'}
-                py={2}
-                wordBreak={'break-all'}
-                fontSize={'sm'}
-                color={'myGray.600'}
+                lineHeight={1.5}
+                h={'100%'}
+                py={3}
+                px={5}
+                cursor={'pointer'}
+                borderWidth={'1.5px'}
+                borderColor={'borderColor.low'}
+                bg={'white'}
+                borderRadius={'md'}
+                userSelect={'none'}
+                position={'relative'}
+                display={'flex'}
+                flexDirection={'column'}
+                _hover={{
+                  borderColor: 'primary.300',
+                  boxShadow: '1.5',
+                  '& .delete': {
+                    display: 'flex'
+                  },
+                  '& .chat': {
+                    display: 'flex'
+                  }
+                }}
+                onClick={() => {
+                  router.push(`/home/chat?appId=${app._id}`);
+                }}
               >
-                {app.intro || '这个应用还没写介绍~'}
+                <Flex alignItems={'center'} h={'38px'}>
+                  <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
+                  <Box ml={3}>{app.name}</Box>
+                  {app.isOwner && userInfo?.team.canWrite && (
+                    <IconButton
+                      className="delete"
+                      position={'absolute'}
+                      top={4}
+                      right={4}
+                      size={'xsSquare'}
+                      variant={'whiteDanger'}
+                      icon={<MyIcon name={'delete'} w={'14px'} />}
+                      aria-label={'delete'}
+                      display={['', 'none']}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openConfirm(() => onclickDelApp(app._id))();
+                      }}
+                    />
+                  )}
+                </Flex>
+                <Box
+                  flex={1}
+                  className={'textEllipsis3'}
+                  py={2}
+                  wordBreak={'break-all'}
+                  fontSize={'sm'}
+                  color={'myGray.600'}
+                >
+                  {app.intro || '这个应用还没写介绍~'}
+                </Box>
               </Box>
-            </Box>
-          </MyTooltip>
-        ))}
+            </MyTooltip>
+          ))}
       </Grid>
       {/* (
         <ShareBox></ShareBox>

@@ -29,6 +29,7 @@ export type UserModelSchema = {
 export type UserType = {
   _id: string;
   username: string;
+  nickname: string;
   avatar: string;
   manager: number;
   DindDing?: string;
