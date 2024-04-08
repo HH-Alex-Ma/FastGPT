@@ -1,6 +1,5 @@
 import { Box, Grid, GridItem, Skeleton } from "@chakra-ui/react";
 
-
 // ==============================|| SKELETON TOTAL GROWTH BAR CHART ||============================== //
 
 const TotalGrowthBarChart: React.FC = () => (

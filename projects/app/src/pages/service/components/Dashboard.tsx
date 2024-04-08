@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { serviceSideProps } from '@/web/common/utils/i18n';
-import { Box, Flex, Grid, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Text, VStack } from '@chakra-ui/react';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useTranslation } from 'next-i18next';
@@ -119,10 +119,12 @@ const Dashboard = () => {
               todayValue={tokenChart?.todayValue}
             />
           </Flex>
-          <VStack spacing={5}>
+          <GridItem colSpan={{ base: 12, md: 6, lg: 4 }}>
             <StatisticalBarChart isLoading={isLoading} chartDatas={statisticalData} title={"模型统计"} />
+          </GridItem>
+          <GridItem colSpan={{ base: 12, md: 6, lg: 4 }}>
             <StatisticalBarChart isLoading={isLoading} chartDatas={logsChart} title={"令牌统计"} />
-          </VStack>
+          </GridItem>
         </Box>
       </Box>
     </Flex>

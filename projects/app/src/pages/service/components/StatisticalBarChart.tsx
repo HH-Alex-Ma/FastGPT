@@ -1,7 +1,6 @@
-import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Text, useBreakpointValue } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef } from 'react';
 import * as echarts from 'echarts';
-// project imports
 import MainCard from "./MainCard";
 import SkeletonTotalGrowthBarChart from "./TotalGrowthBarChart";
 import { useSystemStore } from "@/web/common/system/useSystemStore";
@@ -30,6 +29,7 @@ const colors = [
   '#d63031',
   '#e84393'
 ]
+
 interface StatisticalBarChartProps {
   isLoading: boolean;
   chartDatas: any;
@@ -40,6 +40,8 @@ const StatisticalBarChart: React.FC<StatisticalBarChartProps> = ({ isLoading, ch
   const { screenWidth } = useSystemStore();
   const Dom = useRef<HTMLDivElement>(null);
   const myChart = useRef<echarts.ECharts>();
+  const boxWidth = useBreakpointValue({ base: "200%", md: "700%" });
+  const legendPosition = useBreakpointValue({ base: 'bottom', md: 'top' });
   const option = useMemo(() => ({
     color: colors,
     tooltip: {
@@ -60,9 +62,9 @@ const StatisticalBarChart: React.FC<StatisticalBarChartProps> = ({ isLoading, ch
       animationEasing: "cubicOut"
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
+      left: 'auto',
+      right: '7%',
+      bottom: legendPosition === 'bottom' ? '20%' : '3%', // 根据图例的位置动态设置底部边缘的距离
       containLabel: true
     },
     plotOptions: {
@@ -77,6 +79,11 @@ const StatisticalBarChart: React.FC<StatisticalBarChartProps> = ({ isLoading, ch
         data: chartDatas?.xaxis,
         axisTick: {
           alignWithLabel: true
+        },
+        axisLabel: {
+          rotate: 45,
+          interval: 0,
+          margin: 20
         },
       }
     ],
@@ -102,10 +109,14 @@ const StatisticalBarChart: React.FC<StatisticalBarChartProps> = ({ isLoading, ch
       }
     ],
     legend: {
-      selectedMode: true
+      selectedMode: true,
+      top: legendPosition === 'top' ? 0 : 'auto',
+      bottom: legendPosition === 'bottom' ? 0 : 'auto',
+      itemGap: 20, // 增加图例项之间的间距
+      padding: [10, 0, 10, 0], // 增加图例与图表边缘的距离
     },
     series: chartDatas?.data,
-  }), [chartDatas]);
+  }), [chartDatas, legendPosition]);
 
   // init chart
   useEffect(() => {
@@ -131,39 +142,35 @@ const StatisticalBarChart: React.FC<StatisticalBarChartProps> = ({ isLoading, ch
   }, [screenWidth]);
 
   return (
-    <>
-      {isLoading ? (
-        <SkeletonTotalGrowthBarChart />
-      ) : (
-        <MainCard>
-          <Grid templateColumns="repeat(12, 1fr)" gap={3}>
-            <GridItem colSpan={12}>
-              <Grid templateColumns="repeat(1, 1fr)" alignItems="center" justifyContent="space-between" gap={3}>
-                <GridItem colSpan={1}>
-                  <Text fontSize="3xl" as='b'>{title}</Text>
-                </GridItem>
-              </Grid>
-            </GridItem>
-            <GridItem colSpan={16}>
-              {chartDatas && chartDatas.data && chartDatas.data.length > 0 ? (
-                <Box ref={Dom} style={{ width: '700%', height: '450px' }} />
-              ) : (
-                <Box
-                  minHeight="400px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Text fontSize="3xl" color="#697586">
-                    暂无数据
-                  </Text>
-                </Box>
-              )}
+    <MainCard>
+      <Grid templateColumns="repeat(12, 1fr)" gap={3}>
+        <GridItem colSpan={12}>
+          <Grid templateColumns="repeat(1, 1fr)" alignItems="center" justifyContent="space-between" gap={3}>
+            <GridItem colSpan={1}>
+              <Text fontSize="3xl" as='b'>{title}</Text>
             </GridItem>
           </Grid>
-        </MainCard>
-      )}
-    </>
+        </GridItem>
+        <GridItem colSpan={16}>
+          {isLoading ? (
+            <SkeletonTotalGrowthBarChart />
+          ) : chartDatas && chartDatas.data && chartDatas.data.length > 0 ? (
+            <Box ref={Dom} style={{ width: boxWidth, height: '800px' }} />
+          ) : (
+            <Box
+              minHeight="400px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text fontSize="3xl" color="#697586">
+                暂无数据
+              </Text>
+            </Box>
+          )}
+        </GridItem>
+      </Grid>
+    </MainCard>
   );
 };
 
