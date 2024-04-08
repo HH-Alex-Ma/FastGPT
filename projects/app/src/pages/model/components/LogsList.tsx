@@ -145,7 +145,7 @@ const LogsList = () => {
               />
             </Box>
           </SimpleGrid>
-          <Box height="36px" textAlign={'right'} style={{ marginTop: '20px' }}>
+          <Box height="36px" textAlign={'right'} style={{ marginTop: '10px' }}>
             <Button
               ml={3}
               leftIcon={<SearchIcon fontSize={'md'} />}
