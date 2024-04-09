@@ -13,6 +13,8 @@ import { clearToken, setToken } from '@/web/support/user/auth';
 import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
 import Loading from '@fastgpt/web/components/common/MyLoading';
+import { getDingLoginQR } from '@/web/support/user/api';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
 const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm'));
@@ -20,6 +22,7 @@ const WechatForm = dynamic(() => import('./components/LoginForm/WechatForm'));
 
 const Login = () => {
   const router = useRouter();
+  const { toast } = useToast();
   const { lastRoute = '' } = router.query as { lastRoute: string };
   const { feConfigs } = useSystemStore();
   const [pageType, setPageType] = useState<`${LoginPageTypeEnum}`>();
@@ -111,14 +114,20 @@ const Login = () => {
               color={'primary.700'}
               cursor={'pointer'}
               textAlign={'center'}
-              onClick={onOpen}
+              // onClick={onOpen}
+              onClick={async () => {
+                const res = await getDingLoginQR();
+                if ((res as any)?.code == 200) {
+                  router.push((res as any).url);
+                }
+              }}
             >
               无法登录，点击联系
             </Box>
           )}
         </Flex>
 
-        {isOpen && <CommunityModal onClose={onClose} />}
+        {/* {isOpen && <CommunityModal onClose={onClose} />} */}
       </Flex>
     </>
   );

@@ -23,6 +23,7 @@ const ImportantInform = dynamic(() => import('@/components/support/user/inform/I
 const pcUnShowLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
+  '/login/auth': true,
   '/login/provider': true,
   '/login/fastlogin': true,
   '/console': true,
@@ -38,6 +39,7 @@ const pcUnShowLayoutRoute: Record<string, boolean> = {
 const phoneUnShowLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
+  '/login/auth': true,
   '/login/provider': true,
   '/login/fastlogin': true,
   '/console': true,
