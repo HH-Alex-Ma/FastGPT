@@ -53,7 +53,8 @@ const phoneUnShowLayoutRoute: Record<string, boolean> = {
 
 const ordinaryUserLayoutRoute: Record<string, boolean> = {
   '/home': true,
-  '/home/chat': true
+  '/home/chat': true,
+  '/account': true
 };
 
 const Layout = ({ children }: { children: JSX.Element }) => {
@@ -118,7 +119,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               <Auth>{children}</Auth>
             ) : (
               <>
-                {router.pathname.startsWith('/home') ? (
+                {router.pathname.startsWith('/home') || userInfo?.manager == 0 ? (
                   <Auth>
                     <>
                       <Box w={'100%'} position={'fixed'} top={0} h={'60px'}>
@@ -164,7 +165,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
                         {children}
                       </Box>
                       <Box h={'50px'} borderTop={'1px solid rgba(0,0,0,0.1)'}>
-                        {router.pathname.startsWith('/home') ? (
+                        {router.pathname.startsWith('/home') || userInfo?.manager == 0 ? (
                           <>
                             <NavbarPhoneHome unread={0} />
                           </>

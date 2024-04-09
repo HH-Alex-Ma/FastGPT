@@ -63,11 +63,6 @@ const MyApps = () => {
     getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
   );
 
-  // useEffect(() => {
-  //   console.log(userInfo);
-  //   console.log(myApps);
-  //   console.log('ownerApps', ownerApps);
-  // });
   return (
     <PageContainer
       isLoading={isFetching}

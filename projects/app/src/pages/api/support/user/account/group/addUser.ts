@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (!username || !nickname) {
       throw new Error('缺少参数');
     }
-    //记录
+    //
     const userInfo = await MongoUser.findOne({
       username: username
     });

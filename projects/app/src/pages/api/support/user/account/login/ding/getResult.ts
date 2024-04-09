@@ -12,7 +12,6 @@ import dingtalkcontact_1_0, * as $dingtalkcontact_1_0 from '@alicloud/dingtalk/c
 
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
-const DING_GET_BY_UNIONID = process.env.DING_GET_BY_UNIONID ? process.env.DING_GET_BY_UNIONID : '';
 
 const createClient = (): dingtalkoauth2_1_0 => {
   let config = new $OpenApi.Config({});
@@ -26,21 +25,6 @@ const createContactClient = (): dingtalkcontact_1_0 => {
   config.protocol = 'https';
   config.regionId = 'central';
   return new dingtalkcontact_1_0(config);
-};
-
-// 获取企业内部应用的accessToken
-const getAccessToken = () => {
-  let client = createClient();
-  let getAccessTokenRequest = new $dingtalkoauth2_1_0.GetAccessTokenRequest({
-    appKey: DING_APP_KEY,
-    appSecret: DING_APP_SECRET
-  });
-  try {
-    return client.getAccessToken(getAccessTokenRequest);
-    // return result.body.access_token;
-  } catch (err: any) {
-    throw new Error(err.message);
-  }
 };
 
 const getUnionId = (access_token: string) => {
@@ -60,6 +44,9 @@ const getUnionId = (access_token: string) => {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
+    if (DING_APP_KEY == '' || DING_APP_SECRET == '') {
+      throw new Error('钉钉认证信息未配置，请优先填写配置信息');
+    }
     await connectToDatabase();
     const { authCode } = req.query as { authCode: string };
     if (!authCode) {
@@ -77,26 +64,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const access_token = userRes.body.accessToken;
       const unionIdRes = await getUnionId(access_token);
       const unionId = unionIdRes.body.unionId;
-      const accessToken = await getAccessToken();
-      const publicAccessToken = accessToken.body.accessToken;
 
-      let fetchOptions: RequestInit = {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store'
-        },
-        method: 'POST',
-        body: JSON.stringify({ unionid: unionId })
-      };
-
-      const userData = await fetch(
-        `${DING_GET_BY_UNIONID}?access_token=${publicAccessToken}`,
-        fetchOptions
-      );
-      const jsonData = await userData.json();
-      // 用户登录
-      const username = jsonData.result.userid;
-      const user = await MongoUser.findOne({ username: username });
+      const user = await MongoUser.findOne({ DindDing: unionId });
 
       if (!user) {
         throw new Error('用户不存在');
