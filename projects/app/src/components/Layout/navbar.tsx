@@ -47,13 +47,13 @@ const Navbar = ({ unread }: { unread: number }) => {
         link: `/app/list`,
         activeLink: ['/app/list', '/app/detail']
       },
-      {
-        label: t('navbar.Plugin'),
-        icon: 'common/navbar/pluginLight',
-        activeIcon: 'common/navbar/pluginFill',
-        link: `/plugin/list`,
-        activeLink: ['/plugin/list', '/plugin/edit']
-      },
+      // {
+      //   label: t('navbar.Plugin'),
+      //   icon: 'common/navbar/pluginLight',
+      //   activeIcon: 'common/navbar/pluginFill',
+      //   link: `/plugin/list`,
+      //   activeLink: ['/plugin/list', '/plugin/edit']
+      // },
       {
         label: t('navbar.Model'),
         icon: 'model',
@@ -69,11 +69,18 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeLink: ['/dataset/list', '/dataset/detail']
       },
       {
-        label: '用户管理',
+        label: t('navbar.User management'),
         icon: 'support/user/userLight',
         activeIcon: 'support/user/userFill',
         link: '/settings',
         activeLink: ['/settings']
+      },
+      {
+        label: t('navbar.Service'),
+        icon: 'core/service/serviceLight',
+        activeIcon: 'core/service/serviceFill',
+        link: '/service',
+        activeLink: ['/service']
       },
       // {
       //   label: t('navbar.Account'),

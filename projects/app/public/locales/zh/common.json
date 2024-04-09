@@ -1217,7 +1217,7 @@
   },
   "navbar": {
     "Account": "账号",
-    "Apps": "应用",
+    "Apps": "应用中心",
     "Apps Share": "应用分享",
     "Chat": "聊天",
     "Datasets": "知识中心",
@@ -1225,8 +1225,10 @@
     "Model": "模型中心",
     "Module": "模块",
     "Plugin": "插件",
+    "Service": "服务中心",
     "Store": "应用市场",
-    "Tools": "工具"
+    "Tools": "工具",
+    "User management": "用户管理"
   },
   "openapi": {
     "app key tips": "这些 key 已有当前应用标识，具体使用可参考文档",
@@ -1304,6 +1306,12 @@
     "go to laf": "去编写",
     "path": "",
     "update params": "更新参数"
+  },
+  "service": {
+    "service": {
+      "AppInfo": "全面追踪不同模型的流量使用和产生的费用，确保资源使用透明化并有效控制成本。",
+      "Appmonitor": "应用监控"
+    }
   },
   "support": {
     "account": {
