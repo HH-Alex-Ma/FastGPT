@@ -1,7 +1,12 @@
 import { setCron } from '@fastgpt/service/common/system/cron';
 import { startTrainingQueue } from '@/service/core/dataset/training/utils';
 import { clearTmpUploadFiles } from '@fastgpt/service/common/file/utils';
-import { checkInvalidDatasetFiles, checkInvalidDatasetData, checkInvalidVector } from './cronTask';
+import {
+  checkInvalidDatasetFiles,
+  checkInvalidDatasetData,
+  checkInvalidVector,
+  syncDingDingUserInfo
+} from './cronTask';
 import { checkTimerLock } from '@fastgpt/service/common/system/timerLock/utils';
 import { TimerIdEnum } from '@fastgpt/service/common/system/timerLock/constants';
 import { addHours } from 'date-fns';
@@ -54,8 +59,15 @@ const clearInvalidDataCron = () => {
   });
 };
 
+const syncDingDingUserInfoCron = () => {
+  setCron('*/1 * * * *', () => {
+    syncDingDingUserInfo();
+  });
+};
+
 export const startCron = () => {
   setTrainingQueueCron();
   setClearTmpUploadFilesCron();
   clearInvalidDataCron();
+  syncDingDingUserInfoCron();
 };

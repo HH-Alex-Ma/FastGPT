@@ -13,12 +13,6 @@ const NavbarPhone = ({ unread }: { unread: number }) => {
   const navbarList = useMemo(
     () => [
       {
-        label: t('navbar.Explore'),
-        icon: 'core/explore/exploreLight',
-        link: '/explore',
-        activeLink: ['/explore', '/explore/detail']
-      },
-      {
         label: t('navbar.Chat'),
         icon: 'core/chat/chatLight',
         activeIcon: 'core/chat/chatFill',
@@ -27,19 +21,11 @@ const NavbarPhone = ({ unread }: { unread: number }) => {
         unread: 0
       },
       {
-        label: t('navbar.Apps'),
-        icon: 'core/app/aiLight',
-        activeIcon: 'core/app/aiFill',
-        link: `/app/list`,
-        activeLink: ['/app/list', '/app/detail'],
-        unread: 0
-      },
-      {
         label: t('navbar.Model'),
         icon: 'support/user/userLight',
         link: '/model',
         activeLink: ['/model', '/model/detail']
-      },
+      }
       // {
       //   label: t('navbar.Tools'),
       //   icon: 'phoneTabbar/tool',
@@ -84,11 +70,11 @@ const NavbarPhone = ({ unread }: { unread: number }) => {
             transform={'scale(0.9)'}
             {...(item.activeLink.includes(router.pathname)
               ? {
-                color: 'primary.600'
-              }
+                  color: 'primary.600'
+                }
               : {
-                color: 'myGray.500'
-              })}
+                  color: 'myGray.500'
+                })}
             onClick={() => {
               if (item.link === router.asPath) return;
               router.push(item.link);
