@@ -9,6 +9,8 @@ import { useUserStore } from '@/web/support/user/useUserStore';
 import { getUnreadCount } from '@/web/support/user/inform/api';
 import dynamic from 'next/dynamic';
 import { useToast } from '@fastgpt/web/hooks/useToast';
+import { getTokenLogin } from '@/web/support/user/api';
+import { getToken } from '@/web/support/user/auth';
 
 import Auth from './auth';
 import Navbar from './navbar';
@@ -52,6 +54,14 @@ const phoneUnShowLayoutRoute: Record<string, boolean> = {
 };
 
 const ordinaryUserLayoutRoute: Record<string, boolean> = {
+  '/': true,
+  '/login': true,
+  '/login/auth': true,
+  '/login/provider': true,
+  '/login/fastlogin': true,
+  '/console': true,
+  '/console/provider': true,
+  '/console/fastlogin': true,
   '/home': true,
   '/home/chat': true,
   '/account': true
@@ -69,16 +79,25 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     () => router.pathname === '/chat' && Object.values(router.query).join('').length !== 0,
     [router.pathname, router.query]
   );
+
+  const authRouter = async () => {
+    const token = getToken();
+    if (token != '') {
+      const res = await getTokenLogin();
+      console.log('pathname', router.pathname);
+      if (!ordinaryUserLayoutRoute[router.pathname] && res?.manager == 0) {
+        setUserInfo(null);
+        router.replace('/login');
+        toast({
+          status: 'error',
+          title: '无权访问'
+        });
+      }
+    }
+  };
   // 路由拦截
   useEffect(() => {
-    if (userInfo && !ordinaryUserLayoutRoute[router.pathname] && userInfo?.manager == 0) {
-      setUserInfo(null);
-      router.replace('/login');
-      toast({
-        status: 'error',
-        title: '无权访问'
-      });
-    }
+    authRouter();
   }, [router.pathname]);
 
   useEffect(() => {
@@ -122,7 +141,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
                 {router.pathname.startsWith('/home') || userInfo?.manager == 0 ? (
                   <Auth>
                     <>
-                      <Box w={'100%'} position={'fixed'} top={0} h={'60px'}>
+                      <Box w={'100%'} position={'fixed'} top={0} h={'60px'} zIndex={999999}>
                         <NavbarHome unread={0} />
                       </Box>
                       <Box

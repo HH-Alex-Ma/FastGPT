@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,12 +13,7 @@ import {
   Td,
   TableContainer,
   useTheme,
-  Link,
   Input,
-  MenuList,
-  MenuItem,
-  MenuButton,
-  Menu,
   IconButton,
   Select
 } from '@chakra-ui/react';
@@ -30,23 +25,17 @@ import {
   changeUserStatusById,
   getRoles
 } from '@/web/support/user/api';
-import type { EditApiKeyProps } from '@/global/support/openapi/api.d';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import dayjs from 'dayjs';
-import { AddIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
-import { useCopyData } from '@/web/common/hooks/useCopyData';
+import { AddIcon } from '@chakra-ui/icons';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useTranslation } from 'next-i18next';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useForm } from 'react-hook-form';
 import { useRequest } from '@fastgpt/web/hooks/useRequest';
-import MyTooltip from '@/components/MyTooltip';
-import { getDocPath } from '@/web/common/system/doc';
 import MyMenu from '@/components/MyMenu';
-import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
-import { number } from 'echarts';
 import { UserStatusEnum, userStatusMap } from '@fastgpt/global/support/user/constant';
 
 const defaultEditData: any = {
@@ -61,25 +50,13 @@ const UserList = () => {
   const theme = useTheme();
   const { feConfigs } = useSystemStore();
   const [editData, setEditData] = useState<any>();
-  const { ConfirmModal, openConfirm } = useConfirm({
-    type: 'delete',
-    content: '确认删除该用户，请确认！'
-  });
+  const [removeId, setRemoveId] = useState<any>();
 
   const { mutate: onclickChange, isLoading: isChangeing } = useRequest({
     mutationFn: async (data: { id: string; status: string }) =>
       changeUserStatusById(data.id, data.status),
     successToast: '操作成功',
     errorToast: '操作失败',
-    onSuccess() {
-      refetch();
-    }
-  });
-
-  const { mutate: onclickRemove, isLoading: isDeleting } = useRequest({
-    mutationFn: async (id: string) => delUserByID(id),
-    successToast: '删除成功',
-    errorToast: '删除失败',
     onSuccess() {
       refetch();
     }
@@ -179,7 +156,11 @@ const UserList = () => {
                         label: t('common.Delete'),
                         icon: 'delete',
                         type: 'danger',
-                        onClick: openConfirm(() => onclickRemove(_id))
+                        onClick: () =>
+                          setRemoveId({
+                            _id,
+                            desc: `确认删除该用户(${nickname})信息？删除后将立即生效，删除请确认！`
+                          })
                       }
                     ]}
                   />
@@ -188,7 +169,7 @@ const UserList = () => {
             ))}
           </Tbody>
         </Table>
-        <Loading loading={isGetting || isDeleting || isChangeing || isGettingRole} fixed={false} />
+        <Loading loading={isGetting || isChangeing || isGettingRole} fixed={false} />
       </TableContainer>
 
       {!!editData && (
@@ -205,7 +186,15 @@ const UserList = () => {
           }}
         />
       )}
-      <ConfirmModal />
+      {!!removeId && (
+        <ConfirmModal
+          data={removeId}
+          onClose={() => {
+            setRemoveId(undefined);
+            refetch();
+          }}
+        />
+      )}
     </Flex>
   );
 };
@@ -325,3 +314,40 @@ function EditModal({
     </MyModal>
   );
 }
+
+const ConfirmModal = ({ data, onClose }: { data: any; onClose: () => void }) => {
+  const { t } = useTranslation();
+  const { Loading } = useLoading();
+  const { mutate: onclickRemove, isLoading: isDeleting } = useRequest({
+    mutationFn: async (id: string) => delUserByID(id),
+    successToast: '删除成功',
+    errorToast: '删除失败',
+    onSuccess: onClose
+  });
+  return (
+    <MyModal
+      isOpen={true}
+      onClose={onClose}
+      iconSrc={'common/confirm/deleteTip'}
+      title={t('common.Delete Warning')}
+      maxW={['90vw', '500px']}
+    >
+      <ModalBody pt={5}>{data.desc}</ModalBody>
+      <ModalFooter>
+        <Button variant={'whiteBase'} onClick={onClose}>
+          {t('common.Close')}
+        </Button>
+
+        <Button
+          isLoading={isDeleting}
+          bg={'red.600'}
+          ml={4}
+          onClick={() => onclickRemove(data._id)}
+        >
+          {t('common.Confirm')}
+        </Button>
+      </ModalFooter>
+      <Loading fixed={false} />
+    </MyModal>
+  );
+};

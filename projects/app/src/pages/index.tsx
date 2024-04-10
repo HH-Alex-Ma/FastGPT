@@ -6,7 +6,8 @@ import { useRouter } from 'next/router';
 const index = () => {
   const router = useRouter();
   useEffect(() => {
-    router.push('/app/list');
+    // router.push('/app/list');
+    router.push('/login');
   }, [router]);
   return <Loading></Loading>;
 };

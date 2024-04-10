@@ -9,9 +9,6 @@ import { TOKEN_ERROR_CODE } from '@fastgpt/global/common/error/errorCode';
 import { TeamErrEnum } from '@fastgpt/global/common/error/code/team';
 import { useSystemStore } from '../system/useSystemStore';
 
-const ONEAPI_SERVER_URL = process.env.NEXT_PUBLIC_ONEAPI_SERVER_URL || '';
-const ONEAPI_SERVER_TOKEN = process.env.NEXT_PUBLIC_ONEAPI_SERVER_TOKEN || '';
-
 interface ConfigType {
   headers?: { [key: string]: string };
   timeout?: number;
@@ -108,7 +105,8 @@ function responseError(err: any) {
       !(window.location.pathname === '/chat/share' || window.location.pathname === '/chat/team')
     ) {
       window.location.replace(
-        `/login?lastRoute=${encodeURIComponent(location.pathname + location.search)}`
+        // `/login?lastRoute=${encodeURIComponent(location.pathname + location.search)}`
+        `/login`
       );
     }
 

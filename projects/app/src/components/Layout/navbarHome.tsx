@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Box, BoxProps, Flex, Link, LinkProps } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { useChatStore } from '@/web/core/chat/storeChat';
@@ -12,6 +13,7 @@ import { useTranslation } from 'next-i18next';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import MyTooltip from '../MyTooltip';
 import { getDocPath } from '@/web/common/system/doc';
+import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
 
 export enum NavbarTypeEnum {
   normal = 'normal',
@@ -21,32 +23,51 @@ export enum NavbarTypeEnum {
 const NavbarHome = ({ unread }: { unread: number }) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { userInfo } = useUserStore();
+  const { userInfo, setUserInfo } = useUserStore();
+  const { openConfirm, ConfirmModal } = useConfirm({
+    content: '确认退出登录？'
+  });
 
   return (
-    <Flex
-      flexDirection={'row'}
-      alignItems={'center'}
-      pt={6}
-      h={'100%'}
-      w={'100%'}
-      userSelect={'none'}
-      // backgroundColor={'gold'}
-    >
+    <Flex alignItems={'center'} flexDirection={'row'} h={'100%'} w={'100%'} userSelect={'none'}>
       {/* logo */}
-      <Box
+      {/* <Box
         flex={'0 0 auto'}
         mb={5}
         border={'2px solid #fff'}
-        borderRadius={'50%'}
+        // borderRadius={'50%'}
         overflow={'hidden'}
-        cursor={'pointer'}
-        onClick={() => router.push('/account')}
+        // onClick={() => router.push('/account')}
+        textAlign={'center'}
       >
-        <Avatar w={'36px'} h={'36px'} src={userInfo?.avatar} fallbackSrc={HUMAN_ICON} />
-      </Box>
+        <Image boxSize="50px" objectFit="cover" src="https://bit.ly/dan-abramov" />
+      </Box> */}
       {/* 导航列表 */}
-      <Box flex={1}></Box>
+      <Flex position={'absolute'} right={'50px'} alignItems={'center'}>
+        <Menu>
+          <MenuButton>
+            <Flex alignItems={'center'}>
+              <Avatar w={'36px'} h={'36px'} src={userInfo?.avatar} fallbackSrc={HUMAN_ICON} />
+              {userInfo?.nickname}
+              <ChevronDownIcon />
+            </Flex>
+          </MenuButton>
+          <MenuList>
+            <MenuItem>修改密码</MenuItem>
+            <MenuItem
+              onClick={() => {
+                openConfirm(() => {
+                  setUserInfo(null);
+                  router.replace('/login');
+                })();
+              }}
+            >
+              退出
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+      <ConfirmModal />
     </Flex>
   );
 };
