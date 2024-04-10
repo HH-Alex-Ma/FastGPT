@@ -1,6 +1,6 @@
 {
   "name": "app",
-  "version": "4.7",
+  "version": "4.7.1",
   "private": false,
   "scripts": {
     "dev": "next dev && node --max_old_space_size=4096",
