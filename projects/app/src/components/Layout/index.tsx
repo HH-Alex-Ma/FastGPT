@@ -141,6 +141,32 @@ const Layout = ({ children }: { children: JSX.Element }) => {
                 {router.pathname.startsWith('/home') || userInfo?.manager == 0 ? (
                   <Auth>
                     <>
+                      {/* <Box
+                        position={'fixed'}
+                        h={'100%'}
+                        top={0}
+                        left={0}
+                        w={'300px'}
+                        backgroundColor={'gray.100'}
+                      >
+                        左边
+                      </Box>
+                      <Box h={'100%'} left={'300px'} position={'fixed'}>
+                        <Box w={'100%'}>
+                          <NavbarHome unread={0} />
+                        </Box>
+                        <Box
+                          h={'100%'}
+                          left={'300px'}
+                          top={'60px'}
+                          right={0}
+                          position={'fixed'}
+                          overflow={'overlay'}
+                          paddingBottom={'60px'}
+                        >
+                          {children}
+                        </Box>
+                      </Box> */}
                       <Box w={'100%'} position={'fixed'} top={0} h={'60px'} zIndex={999999}>
                         <NavbarHome unread={0} />
                       </Box>

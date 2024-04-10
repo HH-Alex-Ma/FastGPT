@@ -29,7 +29,16 @@ const NavbarHome = ({ unread }: { unread: number }) => {
   });
 
   return (
-    <Flex alignItems={'center'} flexDirection={'row'} h={'100%'} w={'100%'} userSelect={'none'}>
+    <Flex
+      alignItems={'center'}
+      flexDirection={'row'}
+      h={'60px'}
+      userSelect={'none'}
+      position={'fixed'}
+      left={300}
+      right={0}
+      zIndex={999999}
+    >
       {/* logo */}
       {/* <Box
         flex={'0 0 auto'}
@@ -43,7 +52,7 @@ const NavbarHome = ({ unread }: { unread: number }) => {
         <Image boxSize="50px" objectFit="cover" src="https://bit.ly/dan-abramov" />
       </Box> */}
       {/* 导航列表 */}
-      <Flex position={'absolute'} right={'50px'} alignItems={'center'}>
+      <Flex position={'fixed'} right={'50px'} alignItems={'center'}>
         <Menu>
           <MenuButton>
             <Flex alignItems={'center'}>
@@ -52,7 +61,7 @@ const NavbarHome = ({ unread }: { unread: number }) => {
               <ChevronDownIcon />
             </Flex>
           </MenuButton>
-          <MenuList>
+          <MenuList minW={'150px'}>
             <MenuItem>修改密码</MenuItem>
             <MenuItem
               onClick={() => {
