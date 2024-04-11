@@ -232,7 +232,7 @@ const MyInfo = () => {
                 if (val === userInfo?.team?.memberName) return;
                 try {
                   putUpdateMemberName(val);
-                } catch (error) {}
+                } catch (error) { }
               }}
             />
           </Flex>
@@ -543,7 +543,8 @@ const Other = () => {
   return (
     <Box>
       <Grid gridGap={4} mt={3}>
-        {feConfigs?.docUrl && (
+        {/* 帮助文档 */}
+        {/* {feConfigs?.docUrl && (
           <Link
             bg={'white'}
             href={getDocPath('/docs/intro')}
@@ -563,8 +564,9 @@ const Other = () => {
               {t('system.Help Document')}
             </Box>
           </Link>
-        )}
-        <Link
+        )} */}
+        {/* 机器人助手 */}
+        {/* <Link
           href={feConfigs.chatbotUrl}
           target="_blank"
           display={'flex'}
@@ -582,9 +584,9 @@ const Other = () => {
           <Box ml={2} flex={1}>
             {t('common.system.Help Chatbot')}
           </Box>
-        </Link>
-
-        {feConfigs?.lafEnv && userInfo?.team.role === TeamMemberRoleEnum.owner && (
+        </Link> */}
+        {/* laf账号 */}
+        {/* {feConfigs?.lafEnv && userInfo?.team.role === TeamMemberRoleEnum.owner && (
           <Flex
             bg={'white'}
             py={4}
@@ -608,7 +610,7 @@ const Other = () => {
               bg={userInfo?.team.lafAccount?.token ? '#67c13b' : 'myGray.500'}
             />
           </Flex>
-        )}
+        )} */}
 
         {feConfigs?.show_openai_account && (
           <Flex

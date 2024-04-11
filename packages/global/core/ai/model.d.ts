@@ -11,6 +11,7 @@ export type LLMModelItemType = {
 
   censor?: boolean;
   vision?: boolean;
+  file?: boolean;
 
   // diff function model
   datasetProcess?: boolean; // dataset
