@@ -50,7 +50,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     await connectToDatabase();
     const { authCode } = req.query as { authCode: string };
     if (!authCode) {
-      throw new Error('参数不存在');
+      jsonRes(res, {
+        code: 401,
+        error: '认证登录失败'
+      });
     }
     let client = createClient();
     let getUserTokenRequest = new $dingtalkoauth2_1_0.GetUserTokenRequest({
@@ -97,7 +100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
   } catch (err) {
     jsonRes(res, {
-      code: 500,
+      code: 400,
       error: err
     });
   }

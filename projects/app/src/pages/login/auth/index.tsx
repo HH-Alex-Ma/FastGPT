@@ -14,17 +14,21 @@ const Auth = (props: any) => {
   const { setLastChatId, setLastChatAppId } = useChatStore();
 
   const { isLoading: isGetting } = useQuery(['getDingLoginResult', authCode], () =>
-    getDingLoginResult(authCode).then((res: any) => {
-      // init store
-      setLastChatId('');
-      setLastChatAppId('');
+    getDingLoginResult(authCode)
+      .then((res: any) => {
+        // init store
+        setLastChatId('');
+        setLastChatAppId('');
 
-      setUserInfo(res.user);
-      setToken(res.token);
-      setTimeout(() => {
-        router.push('/home');
-      }, 300);
-    })
+        setUserInfo(res.user);
+        setToken(res.token);
+        setTimeout(() => {
+          router.push('/home');
+        }, 300);
+      })
+      .catch((res: any) => {
+        if (res.code == 400) router.push('/login');
+      })
   );
   return (
     <>

@@ -14,9 +14,9 @@ import { getToken } from '@/web/support/user/auth';
 
 import Auth from './auth';
 import Navbar from './navbar';
-import NavbarHome from './navbarHome';
 import NavbarPhone from './navbarPhone';
 import NavbarPhoneHome from './navbarPhoneHome';
+import HomePage from '@/pages/home/index';
 const UpdateInviteModal = dynamic(() => import('@/components/support/user/team/UpdateInviteModal'));
 const NotSufficientModal = dynamic(() => import('@/components/support/wallet/NotSufficientModal'));
 const SystemMsgModal = dynamic(() => import('@/components/support/user/inform/SystemMsgModal'));
@@ -57,11 +57,11 @@ const ordinaryUserLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
   '/login/auth': true,
-  '/login/provider': true,
-  '/login/fastlogin': true,
+  // '/login/provider': true,
+  // '/login/fastlogin': true,
   '/console': true,
-  '/console/provider': true,
-  '/console/fastlogin': true,
+  // '/console/provider': true,
+  // '/console/fastlogin': true,
   '/home': true,
   '/home/chat': true,
   '/account': true
@@ -140,46 +140,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
               <>
                 {router.pathname.startsWith('/home') || userInfo?.manager == 0 ? (
                   <Auth>
-                    <>
-                      {/* <Box
-                        position={'fixed'}
-                        h={'100%'}
-                        top={0}
-                        left={0}
-                        w={'300px'}
-                        backgroundColor={'gray.100'}
-                      >
-                        左边
-                      </Box>
-                      <Box h={'100%'} left={'300px'} position={'fixed'}>
-                        <Box w={'100%'}>
-                          <NavbarHome unread={0} />
-                        </Box>
-                        <Box
-                          h={'100%'}
-                          left={'300px'}
-                          top={'60px'}
-                          right={0}
-                          position={'fixed'}
-                          overflow={'overlay'}
-                          paddingBottom={'60px'}
-                        >
-                          {children}
-                        </Box>
-                      </Box> */}
-                      <Box w={'100%'} position={'fixed'} top={0} h={'60px'} zIndex={999999}>
-                        <NavbarHome unread={0} />
-                      </Box>
-                      <Box
-                        w={'100%'}
-                        height={'100%'}
-                        paddingBottom={'60px'}
-                        mt={'60px'}
-                        overflow={'overlay'}
-                      >
-                        {children}
-                      </Box>
-                    </>
+                    <HomePage>{children}</HomePage>
                   </Auth>
                 ) : (
                   <Auth>

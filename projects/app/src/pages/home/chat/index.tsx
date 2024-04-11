@@ -83,7 +83,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
           chatId: completionChatId
         },
         onMessage: generatingMessage,
-        abortCtrl: controller
+        abortSignal: controller
       });
 
       const newTitle = getChatTitleFromChatMessage(GPTMessages2Chats(prompts)[0]);
@@ -147,6 +147,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
         const res = await getInitChatInfo({ appId, chatId });
         const history = res.history.map((item) => ({
           ...item,
+          dataId: item.dataId || nanoid(),
           status: ChatStatusEnum.finish
         }));
 
@@ -268,7 +269,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
         w={0}
         p={[0, '0px']}
         position={'relative'}
-        insertProps={{ borderRadius: [0, '0px'] }}
+        insertProps={{ borderRadius: [0, '0px'], borderWidth: [0] }}
       >
         <Flex h={'100%'} flexDirection={['column', 'row']} bg={'white'}>
           {/* pc always show history. */}
@@ -356,7 +357,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
             />
 
             {/* chat box */}
-            <Box flex={1}>
+            <Box flex={1} pb={'15px'}>
               <ChatBox
                 ref={ChatBoxRef}
                 showEmptyIntro

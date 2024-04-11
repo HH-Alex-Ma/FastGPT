@@ -325,7 +325,7 @@ const ChatHistorySlider = ({
         )}
       </Box>
 
-      {appId && (
+      {!isPc && appId && (
         <Flex
           mt={2}
           borderTop={theme.borders.base}
