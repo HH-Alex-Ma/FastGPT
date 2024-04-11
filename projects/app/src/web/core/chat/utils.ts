@@ -1,13 +1,16 @@
 import { FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
 import { ModuleItemType } from '@fastgpt/global/core/module/type.d';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
-
+// TODO: 检查给定的模型数组中是否有任何模型支持通过聊天选择文件(图片和文件)
 export function checkChatSupportSelectFileByChatModels(models: string[] = []) {
   const llmModelList = useSystemStore.getState().llmModelList;
 
   for (const model of models) {
     const modelData = llmModelList.find((item) => item.model === model || item.name === model);
-    if (modelData?.vision) {
+    if (modelData?.file) {
+      return true;
+    }
+    else if (modelData?.vision) {
       return true;
     }
   }
