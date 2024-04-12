@@ -19,4 +19,5 @@ export interface AppUpdateParams {
   teamTags?: AppSchema['teamTags'];
   permission?: AppSchema['permission'];
   isShow?: AppSchema['isShow'];
+  appType?: AppSchema['appType'];
 }

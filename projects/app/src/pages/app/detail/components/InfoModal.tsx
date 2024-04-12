@@ -23,7 +23,7 @@ import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionRadio from '@/components/support/permission/Radio';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
-import { ModelType } from '@fastgpt/global/support/permission/constant';
+import { ModelType, AppSortType } from '@fastgpt/global/support/permission/constant';
 import MyRadio from '@/components/common/MyRadio';
 
 const InfoModal = ({
@@ -62,7 +62,8 @@ const InfoModal = ({
         avatar: data.avatar,
         intro: data.intro,
         permission: data.permission,
-        isShow: data.isShow
+        isShow: data.isShow,
+        appType: data.appType
       });
     },
     onSuccess() {
@@ -202,8 +203,32 @@ const InfoModal = ({
             ]}
             value={getValues('isShow')}
             onChange={(e) => {
-              console.log('1', e);
               setValue('isShow', e);
+              setRefresh(!refresh);
+            }}
+          />
+        </Box>
+        <Box mt={4}>
+          <Box mb={1}>应用分类</Box>
+          <MyRadio
+            gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
+            list={[
+              {
+                icon: 'core/explore/exploreLight',
+                title: '个人',
+                desc: '',
+                value: AppSortType.PERSON
+              },
+              {
+                icon: 'core/app/aiLight',
+                title: '公司',
+                desc: '',
+                value: AppSortType.COMPANY
+              }
+            ]}
+            value={getValues('appType')}
+            onChange={(e) => {
+              setValue('appType', e);
               setRefresh(!refresh);
             }}
           />

@@ -374,7 +374,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
             </Box>
           </Flex>
         </Flex>
-        <Loading fixed={false} />
+        {/* <Loading fixed={false} /> */}
       </PageContainer>
     </Flex>
   );

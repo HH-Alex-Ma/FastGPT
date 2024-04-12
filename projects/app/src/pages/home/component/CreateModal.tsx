@@ -93,7 +93,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       });
     },
     onSuccess(id: string) {
-      router.push(`/app/detail?appId=${id}`);
+      router.push(`/home/detail?appId=${id}`);
       onSuccess();
       onClose();
     },

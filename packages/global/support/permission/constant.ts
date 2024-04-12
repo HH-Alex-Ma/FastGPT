@@ -26,3 +26,7 @@ export enum ModelType {
   EXPLORE = 'Explore',
   MODEL_BASE = 'ModelBase'
 }
+export enum AppSortType {
+  COMPANY = 'Company',
+  PERSON = 'Person'
+}

@@ -11,12 +11,17 @@ import {
   MenuItem,
   useDisclosure,
   Text,
-  Image
+  Image,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  TabIndicator
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
-import { AddIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
@@ -35,6 +40,7 @@ import MyAvatar from '@/components/Avatar';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { AppListItemType } from '@fastgpt/global/core/app/type.d';
+import { AppSortType } from '@fastgpt/global/support/permission/constant';
 
 import dynamic from 'next/dynamic';
 const UpdatePswModal = dynamic(() => import('../../pages/account/components/UpdatePswModal'));
@@ -60,12 +66,18 @@ const Home = ({ children }: { children: JSX.Element }) => {
 
   const routerJump = (id: string) => {
     setActiveAppId(id);
-    if (id === 'default') {
+    if (id === 'default' || !id) {
       router.push('/home');
     } else {
-      router.push(`/home/chat?appId=${id}`);
+      if (router.pathname != '/home/detail') {
+        router.push(`/home/chat?appId=${id}`);
+      }
     }
   };
+  useEffect(() => {
+    loadMyApps(true);
+    setActiveAppId('' || authCode);
+  }, [router.pathname]);
   return (
     <>
       {isPc === true && (
@@ -85,7 +97,7 @@ const Home = ({ children }: { children: JSX.Element }) => {
               paddingBottom={'60px'}
             >
               {router.pathname == '/home' ? (
-                <MyAppList
+                <MyAppListPc
                   ownerApps={appList}
                   data={activeAppId}
                   onRefresh={() => loadMyApps(true)}
@@ -454,6 +466,246 @@ const MyAppList = ({
       <ConfirmModal />
       {isOpenCreateModal && (
         <CreateModal onClose={onCloseCreateModal} onSuccess={() => onRefresh()} />
+      )}
+    </PageContainer>
+  );
+};
+
+const MyAppListPc = ({
+  ownerApps,
+  data,
+  onEdit,
+  onRefresh
+}: {
+  ownerApps: any;
+  data: any;
+  onEdit: (id: string) => void;
+  onRefresh: () => void;
+}) => {
+  const { toast } = useToast();
+  const { t } = useTranslation();
+  const { userInfo } = useUserStore();
+  const { openConfirm, ConfirmModal } = useConfirm({
+    title: '删除提示',
+    content: '确认删除该应用所有信息？'
+  });
+  const {
+    isOpen: isOpenCreateModal,
+    onOpen: onOpenCreateModal,
+    onClose: onCloseCreateModal
+  } = useDisclosure();
+
+  /* 点击删除 */
+  const onclickDelApp = useCallback(
+    async (id: string) => {
+      try {
+        await delModelById(id);
+        toast({
+          title: '删除成功',
+          status: 'success'
+        });
+        onRefresh();
+      } catch (err: any) {
+        toast({
+          title: err?.message || '删除失败',
+          status: 'error'
+        });
+      }
+    },
+    [toast]
+  );
+  const [activeAppType, setActiveAppType] = useState(1);
+  const appTypes = [
+    {
+      id: 1,
+      name: '全部'
+    },
+    {
+      id: 2,
+      name: '企业应用'
+    },
+    {
+      id: 3,
+      name: '个人应用'
+    },
+    {
+      id: 4,
+      name: '收藏'
+    }
+  ];
+  const myApps = () => {
+    if (activeAppType == 1) {
+      return ownerApps;
+    } else if (activeAppType == 2) {
+      console.log(ownerApps);
+      return ownerApps.filter((item: any) => item.appType == AppSortType.COMPANY);
+    } else if (activeAppType == 3) {
+      return ownerApps.filter((item: any) => item.appType == AppSortType.PERSON);
+    } else {
+      return [];
+    }
+  };
+
+  return (
+    <PageContainer
+      insertProps={{ px: [5, '48px'], borderRadius: [0, '0px'], borderWidth: [0] }}
+      py={[0, '0px']}
+      pr={[0, '0px']}
+    >
+      <Flex pt={['10px']} alignItems={'center'}>
+        <Flex bgColor={'#fff'} borderRadius={'md'} boxShadow="md" alignItems={'center'} p={'5px'}>
+          {appTypes.map((item: any) => (
+            <Text
+              key={item.id}
+              fontSize="3xl"
+              minW={'100px'}
+              textAlign={'center'}
+              m={['5px']}
+              {...(item.id === activeAppType
+                ? {
+                    fontWeight: '600',
+                    color: '#447EF2'
+                  }
+                : {
+                    _hover: {
+                      boxShadow: 'lg',
+                      fontWeight: '600',
+                      color: '#447EF2'
+                    },
+                    onClick: () => {
+                      setActiveAppType(item.id);
+                    }
+                  })}
+            >
+              {item.name}
+            </Text>
+          ))}
+        </Flex>
+      </Flex>
+      <Grid
+        py={[4, 6]}
+        gridTemplateColumns={[
+          '1fr',
+          'repeat(2,1fr)',
+          'repeat(3,1fr)',
+          'repeat(4,1fr)',
+          'repeat(5,1fr)',
+          'repeat(6,1fr)'
+        ]}
+        gridGap={5}
+      >
+        {activeAppType == 1 && (
+          <MyTooltip>
+            <Box
+              lineHeight={1.5}
+              h={'100%'}
+              py={5}
+              px={5}
+              cursor={'pointer'}
+              borderWidth={'1.5px'}
+              borderColor={'borderColor.low'}
+              bg={'white'}
+              borderRadius={'md'}
+              userSelect={'none'}
+              position={'relative'}
+              display={'flex'}
+              flexDirection={'column'}
+              onClick={onOpenCreateModal}
+            >
+              <Text fontSize="lg" minW={'100px'} textAlign={'center'}>
+                <AddIcon boxSize={5} />
+              </Text>
+              <Text fontSize="lg" minW={'100px'} textAlign={'center'} py={2}>
+                创建属于你的AI应用
+              </Text>
+            </Box>
+          </MyTooltip>
+        )}
+        {myApps().map((app: any) => (
+          <MyTooltip
+            key={app._id}
+            // label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
+          >
+            <Box
+              lineHeight={1.5}
+              h={'100%'}
+              py={3}
+              px={5}
+              cursor={'pointer'}
+              borderWidth={'1.5px'}
+              borderColor={'borderColor.low'}
+              bg={'white'}
+              borderRadius={'md'}
+              userSelect={'none'}
+              position={'relative'}
+              display={'flex'}
+              flexDirection={'column'}
+              _hover={{
+                borderColor: 'primary.300',
+                boxShadow: '1.5',
+                '& .delete': {
+                  display: 'flex'
+                },
+                '& .chat': {
+                  display: 'flex'
+                }
+              }}
+              onClick={() => {
+                onEdit(app._id);
+              }}
+            >
+              <Flex alignItems={'center'} h={'38px'}>
+                <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
+                <Box ml={3}>{app.name}</Box>
+                {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (
+                  <IconButton
+                    className="delete"
+                    position={'absolute'}
+                    top={4}
+                    right={4}
+                    size={'xsSquare'}
+                    variant={'whiteDanger'}
+                    icon={<MyIcon name={'delete'} w={'14px'} />}
+                    aria-label={'delete'}
+                    display={['', 'none']}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openConfirm(() => onclickDelApp(app._id))();
+                    }}
+                  />
+                )}
+              </Flex>
+              <Box
+                flex={1}
+                className={'textEllipsis3'}
+                py={2}
+                wordBreak={'break-all'}
+                fontSize={'sm'}
+                color={'myGray.600'}
+              >
+                {app.intro || '这个应用还没写介绍~'}
+              </Box>
+            </Box>
+          </MyTooltip>
+        ))}
+      </Grid>
+
+      {myApps().length === 0 && (
+        <Flex mt={'35vh'} flexDirection={'column'} alignItems={'center'}>
+          <MyIcon name="empty" w={'48px'} h={'48px'} color={'transparent'} />
+          <Box mt={2} color={'myGray.500'}>
+            还没有应用，快去创建一个吧！
+          </Box>
+        </Flex>
+      )}
+      <ConfirmModal />
+      {isOpenCreateModal && (
+        <CreateModal
+          onClose={onCloseCreateModal}
+          onSuccess={() => {
+            onRefresh();
+          }}
+        />
       )}
     </PageContainer>
   );

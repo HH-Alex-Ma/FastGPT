@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // 根据 userId 获取模型信息
     const myApps = await MongoApp.find(
       { ...mongoRPermission({ teamId, tmbId, role }) },
-      '_id avatar name intro tmbId permission isShow'
+      '_id avatar name intro tmbId permission isShow appType'
     ).sort({
       updateTime: -1
     });
@@ -27,7 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         intro: app.intro,
         isOwner: teamOwner || String(app.tmbId) === tmbId,
         permission: app.permission,
-        isShow: app.isShow
+        isShow: app.isShow,
+        appType: app.appType
       }))
     });
   } catch (err) {

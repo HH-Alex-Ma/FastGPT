@@ -22,6 +22,7 @@ export interface AppSchema {
   inited?: boolean;
   teamTags: string[];
   isShow: string;
+  appType: string;
 }
 
 export type AppListItemType = {
@@ -32,6 +33,7 @@ export type AppListItemType = {
   isOwner: boolean;
   permission: `${PermissionTypeEnum}`;
   isShow: string;
+  appType: string;
 };
 
 export type AppDetailType = AppSchema & {

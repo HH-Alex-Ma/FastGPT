@@ -64,6 +64,7 @@ const ordinaryUserLayoutRoute: Record<string, boolean> = {
   // '/console/fastlogin': true,
   '/home': true,
   '/home/chat': true,
+  '/home/detail': true,
   '/account': true
 };
 
