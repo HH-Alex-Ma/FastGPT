@@ -60,7 +60,7 @@ const clearInvalidDataCron = () => {
 };
 
 const syncDingDingUserInfoCron = () => {
-  setCron('*/1 * * * *', () => {
+  setCron('0 0 */1 * * *', () => {
     syncDingDingUserInfo();
   });
 };

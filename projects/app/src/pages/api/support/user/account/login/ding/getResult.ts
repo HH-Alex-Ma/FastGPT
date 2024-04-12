@@ -31,15 +31,8 @@ const getUnionId = (access_token: string) => {
   let client = createContactClient();
   let getUserHeaders = new $dingtalkcontact_1_0.GetUserHeaders({});
   getUserHeaders.xAcsDingtalkAccessToken = access_token;
-  try {
-    const result = client.getUserWithOptions('me', getUserHeaders, new $Util.RuntimeOptions({}));
-    return result;
-  } catch (err: any) {
-    if (!Util.empty(err.code) && !Util.empty(err.message)) {
-      // err 中含有 code 和 message 属性，可帮助开发定位问题
-      throw new Error(err.message);
-    }
-  }
+  const result = client.getUserWithOptions('me', getUserHeaders, new $Util.RuntimeOptions({}));
+  return result;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
@@ -54,48 +47,59 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         code: 401,
         error: '认证登录失败'
       });
-    }
-    let client = createClient();
-    let getUserTokenRequest = new $dingtalkoauth2_1_0.GetUserTokenRequest({
-      clientSecret: DING_APP_SECRET,
-      clientId: DING_APP_KEY,
-      code: authCode as string,
-      grantType: 'authorization_code'
-    });
-    try {
-      const userRes = await client.getUserToken(getUserTokenRequest);
-      const access_token = userRes.body.accessToken;
-      const unionIdRes = await getUnionId(access_token);
-      const unionId = unionIdRes.body.unionId;
-
-      const user = await MongoUser.findOne({ DindDing: unionId });
-
-      if (!user) {
-        throw new Error('用户不存在');
-      }
-
-      const userDetail = await getUserDetail({
-        tmbId: user?.lastLoginTmbId,
-        userId: user._id
-      });
-
-      MongoUser.findByIdAndUpdate(user._id, {
-        lastLoginTmbId: userDetail.team.tmbId
-      });
-
-      const token = createJWT(userDetail);
-      setCookie(res, token);
-
-      jsonRes(res, {
-        data: {
-          user: userDetail,
-          token
+    } else {
+      try {
+        let client = createClient();
+        let getUserTokenRequest = new $dingtalkoauth2_1_0.GetUserTokenRequest({
+          clientSecret: DING_APP_SECRET,
+          clientId: DING_APP_KEY,
+          code: authCode as string,
+          grantType: 'authorization_code'
+        });
+        const userRes = await client.getUserToken(getUserTokenRequest);
+        if (userRes.statusCode != 200) {
+          jsonRes(res, {
+            code: 400,
+            error: '参数错误:不合法的参数'
+          });
         }
-      });
-    } catch (err: any) {
-      if (!Util.empty(err.code) && !Util.empty(err.message)) {
-        // err 中含有 code 和 message 属性，可帮助开发定位问题
-        throw new Error(err.message);
+        const access_token = userRes.body.accessToken;
+        const unionIdRes = await getUnionId(access_token);
+        const unionId = unionIdRes.body.unionId;
+        const user = await MongoUser.findOne({ DindDing: unionId });
+        if (!user) {
+          jsonRes(res, {
+            code: 400,
+            error: '用户不存在'
+          });
+        } else {
+          const userDetail = await getUserDetail({
+            tmbId: user?.lastLoginTmbId,
+            userId: user._id
+          });
+          MongoUser.findByIdAndUpdate(user._id, {
+            lastLoginTmbId: userDetail.team.tmbId
+          });
+
+          const token = createJWT(userDetail);
+          setCookie(res, token);
+
+          jsonRes(res, {
+            data: {
+              user: userDetail,
+              token
+            }
+          });
+        }
+      } catch (err: any) {
+        if (!Util.empty(err.code) && !Util.empty(err.message)) {
+          // err 中含有 code 和 message 属性，可帮助开发定位问题
+          console.log(err);
+          jsonRes(res, {
+            code: 400,
+            error: err.message
+          });
+        }
       }
     }
   } catch (err) {
