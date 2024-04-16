@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@alicloud/dingtalk": "^2.0.98",
+    "@alicloud/openapi-client": "^0.4.8",
+    "@alicloud/tea-typescript": "^1.8.0",
+    "@alicloud/tea-util": "^1.4.7",
     "@bany/curl-to-json": "^1.2.8",
     "@chakra-ui/anatomy": "2.2.1",
     "@chakra-ui/icons": "2.1.1",

@@ -28,11 +28,5 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.6.0"
-  },
-  "dependencies": {
-    "@alicloud/dingtalk": "^2.0.98",
-    "@alicloud/openapi-client": "^0.4.8",
-    "@alicloud/tea-typescript": "^1.8.0",
-    "@alicloud/tea-util": "^1.4.7"
   }
 }

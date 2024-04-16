@@ -7,19 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@alicloud/dingtalk':
-        specifier: ^2.0.98
-        version: 2.0.98
-      '@alicloud/openapi-client':
-        specifier: ^0.4.8
-        version: 0.4.8
-      '@alicloud/tea-typescript':
-        specifier: ^1.8.0
-        version: 1.8.0
-      '@alicloud/tea-util':
-        specifier: ^1.4.7
-        version: 1.4.7
     devDependencies:
       '@chakra-ui/cli':
         specifier: ^2.4.1
@@ -318,6 +305,18 @@ importers:
 
   projects/app:
     dependencies:
+      '@alicloud/dingtalk':
+        specifier: ^2.0.98
+        version: 2.0.98
+      '@alicloud/openapi-client':
+        specifier: ^0.4.8
+        version: 0.4.8
+      '@alicloud/tea-typescript':
+        specifier: ^1.8.0
+        version: 1.8.0
+      '@alicloud/tea-util':
+        specifier: ^1.4.7
+        version: 1.4.7
       '@bany/curl-to-json':
         specifier: ^1.2.8
         version: 1.2.8
@@ -10205,6 +10204,15 @@ packages:
     engines: {node: '>=18'}
     deprecated: this package has been deprecated
     requiresBuild: true
+    dependencies:
+      path2d: 0.1.1
+    dev: false
+    optional: true
+
+  /path2d@0.1.1:
+    resolution: {integrity: sha512-/+S03c8AGsDYKKBtRDqieTJv2GlkMb0bWjnqOgtF6MkjdUQ9a8ARAtxWf9NgKLGm2+WQr6+/tqJdU8HNGsIDoA==}
+    engines: {node: '>=6'}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -10221,7 +10229,7 @@ packages:
     engines: {node: '>=18'}
     optionalDependencies:
       canvas: 2.11.2(encoding@0.1.13)
-      path2d-polyfill: 2.0.1
+      path2d-polyfill: 2.1.1
     transitivePeerDependencies:
       - encoding
       - supports-color
