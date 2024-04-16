@@ -5,10 +5,10 @@ WORKDIR /app
 ARG name
 ARG proxy
 
-RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache libc6-compat && npm install -g pnpm@8.6.0
 # if proxy exists, set proxy
-RUN [ -z "$proxy" ] || pnpm config set registry https://registry.npmmirror.com
+RUN [ -z "$proxy" ] || pnpm config set registry https://regi@alicloud/tea-utilstry.npmmirror.com
 
 # copy packages and one project
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -25,7 +25,7 @@ WORKDIR /app
 
 ARG proxy
 
-RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache libc6-compat && npm install -g pnpm@8.6.0
 # if proxy exists, set proxy
 RUN [ -z "$proxy" ] || pnpm config set registry https://registry.npmmirror.com
@@ -47,7 +47,7 @@ COPY --from=mainDeps /app/packages ./packages
 COPY ./projects/$name ./projects/$name
 COPY --from=mainDeps /app/projects/$name/node_modules ./projects/$name/node_modules
 
-RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk add --no-cache libc6-compat && npm install -g pnpm@8.6.0
 RUN pnpm --filter=$name build
@@ -63,7 +63,7 @@ ARG proxy
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache curl ca-certificates \
   && update-ca-certificates
 
