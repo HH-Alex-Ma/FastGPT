@@ -4,7 +4,7 @@ import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { connectToDatabase } from '@/service/mongo';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 import { hashStr } from '@fastgpt/global/common/string/tools';
-import type { AddUserType } from '@fastgpt/global/support/user/userType.d.ts';
+import type { AddUserType } from '@fastgpt/global/support/user/userType';
 import {
   TeamMemberRoleEnum,
   TeamMemberStatusEnum
