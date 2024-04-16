@@ -1,8 +1,6 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "react-hooks/rules-of-hooks": 0,
-    "react/no-unescaped-entities": "off",
-    "@next/next/no-page-custom-font": "off"
+    "react-hooks/rules-of-hooks": 0
   }
 }
