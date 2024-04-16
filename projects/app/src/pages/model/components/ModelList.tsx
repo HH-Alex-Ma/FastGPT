@@ -236,6 +236,7 @@ const ModelList = () => {
           </DrawerHeader>
           <DrawerBody>
             <ChatBox
+              appId={''}
               ref={ChatBoxRef}
               appAvatar={appCard?.avatar}
               userAvatar={userInfo?.avatar}
