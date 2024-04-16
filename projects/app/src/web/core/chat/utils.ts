@@ -7,10 +7,7 @@ export function checkChatSupportSelectFileByChatModels(models: string[] = []) {
 
   for (const model of models) {
     const modelData = llmModelList.find((item) => item.model === model || item.name === model);
-    if (modelData?.file) {
-      return true;
-    }
-    else if (modelData?.vision) {
+    if (modelData?.vision) {
       return true;
     }
   }
