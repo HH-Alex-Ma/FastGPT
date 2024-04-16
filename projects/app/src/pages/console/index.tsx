@@ -85,10 +85,10 @@ const Login = () => {
         <Flex
           flexDirection={'column'}
           w={['100%', 'auto']}
-          h={['100%', '700px']}
+          h={['100%', '380px']}
           maxH={['100%', '90vh']}
           bg={'white'}
-          px={['5vw', '88px']}
+          px={['5vw', '50px']}
           py={'5vh'}
           borderRadius={[0, '24px']}
           boxShadow={[

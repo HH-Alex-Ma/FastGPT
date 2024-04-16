@@ -587,7 +587,7 @@ const MyAppListPc = ({
           {appTypes.map((item: any) => (
             <Text
               key={item.id}
-              fontSize="3xl"
+              fontSize="16px"
               minW={'100px'}
               textAlign={'center'}
               m={['5px']}
@@ -598,7 +598,6 @@ const MyAppListPc = ({
                   }
                 : {
                     _hover: {
-                      boxShadow: 'lg',
                       fontWeight: '600',
                       color: '#447EF2'
                     },

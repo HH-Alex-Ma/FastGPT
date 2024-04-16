@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Box, Center, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Center, Flex, useDisclosure, Icon } from '@chakra-ui/react';
 import { LoginPageTypeEnum } from '@/constants/user';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import type { ResLogin } from '@/global/support/api/userRes.d';
@@ -15,6 +15,8 @@ import Script from 'next/script';
 import Loading from '@fastgpt/web/components/common/MyLoading';
 import { getDingLoginQR } from '@/web/support/user/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
+import MyIcon from '@fastgpt/web/components/common/Icon';
+import type { IconNameType } from '@fastgpt/web/components/common/Icon/type.d';
 
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
 const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm'));
@@ -88,10 +90,10 @@ const Login = () => {
         <Flex
           flexDirection={'column'}
           w={['100%', 'auto']}
-          h={['100%', '700px']}
+          h={['100%', '450px']}
           maxH={['100%', '90vh']}
           bg={'white'}
-          px={['5vw', '88px']}
+          px={['5vw', '50px']}
           py={'5vh'}
           borderRadius={[0, '24px']}
           boxShadow={[
@@ -108,23 +110,37 @@ const Login = () => {
               </Center>
             )}
           </Box>
-          {/* {feConfigs?.concatMd && ( */}
           <Box
-            mt={8}
-            color={'primary.700'}
-            cursor={'pointer'}
-            textAlign={'center'}
-            // onClick={onOpen}
-            onClick={async () => {
-              const res = await getDingLoginQR();
-              if ((res as any)?.code == 200) {
-                router.push((res as any).url);
-              }
-            }}
+            mt={4}
+            color={'black.700'}
+            textAlign={'left'}
+            style={{ display: 'flex', alignItems: 'center' }}
           >
-            无法登录，点击联系
+            其他登录方式：
+            <MyIcon
+              mr={2}
+              name={'DingDing' as IconNameType}
+              w={'30px'}
+              cursor={'pointer'}
+              onClick={async () => {
+                const res = await getDingLoginQR();
+                if ((res as any)?.code == 200) {
+                  router.push((res as any).url);
+                }
+              }}
+            />
           </Box>
-          {/* )} */}
+          {feConfigs?.concatMd && (
+            <Box
+              mt={8}
+              color={'primary.700'}
+              cursor={'pointer'}
+              textAlign={'center'}
+              onClick={onOpen}
+            >
+              无法登录，点击联系
+            </Box>
+          )}
         </Flex>
 
         {/* {isOpen && <CommunityModal onClose={onClose} />} */}
