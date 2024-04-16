@@ -85,7 +85,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     const token = getToken();
     if (token != '') {
       const res = await getTokenLogin();
-      console.log('pathname', router.pathname);
+      // console.log('pathname', router.pathname);
       if (!ordinaryUserLayoutRoute[router.pathname] && res?.manager == 0) {
         setUserInfo(null);
         router.replace('/login');

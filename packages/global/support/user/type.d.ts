@@ -47,3 +47,10 @@ export type RoleModelSchema = {
   apps: Array;
   createTime: number;
 };
+
+export type AppCollectSchema = {
+  _id: string;
+  tmbId: string;
+  apps: string[];
+  createTime: number;
+};

@@ -18,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const roleInfo = await MongoRole.findOne({ _id: userInfo.roleId });
       roleInfo?.apps.map((app: any) => data.push(app.value));
     }
+
     const apps = await MongoApp.find({ tmbId: tmbId });
     apps.map((item: any) => data.push(item._id));
     jsonRes(res, {
