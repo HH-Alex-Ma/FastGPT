@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoCollect } from '@fastgpt/service/support/user/collect/schema';
 import { connectToDatabase } from '@/service/mongo';
-import type { AddCollectType } from '@fastgpt/global/support/user/userType.d.ts';
+import type { AddCollectType } from '@fastgpt/global/support/user/userType';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
