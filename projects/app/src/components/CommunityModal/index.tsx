@@ -4,15 +4,17 @@ import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useTranslation } from 'next-i18next';
 import Markdown from '../Markdown';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
+import { useMarkdown } from '@/web/common/hooks/useMarkdown';
 
 const CommunityModal = ({ onClose }: { onClose: () => void }) => {
+  const { data: disclaimerIntro } = useMarkdown({ url: '/disclaimer.md' });
   const { t } = useTranslation();
   const { feConfigs } = useSystemStore();
 
   return (
     <MyModal isOpen={true} onClose={onClose} iconSrc="modal/concat" title={t('home.Community')}>
-      <ModalBody textAlign={'center'}>
-        <Markdown source={feConfigs?.concatMd || ''} />
+      <ModalBody>
+        <Markdown source={disclaimerIntro} />
       </ModalBody>
 
       <ModalFooter>

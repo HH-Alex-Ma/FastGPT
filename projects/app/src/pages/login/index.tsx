@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Box, Center, Flex, useDisclosure, Icon } from '@chakra-ui/react';
+import { Box, Center, Flex, useDisclosure, Icon, Link, ModalBody } from '@chakra-ui/react';
 import { LoginPageTypeEnum } from '@/constants/user';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import type { ResLogin } from '@/global/support/api/userRes.d';
@@ -17,12 +17,19 @@ import { getDingLoginQR } from '@/web/support/user/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import type { IconNameType } from '@fastgpt/web/components/common/Icon/type.d';
+import { getDocPath } from '@/web/common/system/doc';
+import { useTranslation } from 'next-i18next';
+import MyModal from '@fastgpt/web/components/common/MyModal';
+import Markdown from '@/components/Markdown';
+import { useMarkdown } from '@/web/common/hooks/useMarkdown';
 
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
 const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm'));
 const WechatForm = dynamic(() => import('./components/LoginForm/WechatForm'));
 
 const Login = () => {
+  const { data: disclaimerIntro } = useMarkdown({ url: '/disclaimer.md' });
+  const { t } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();
   const { lastRoute = '' } = router.query as { lastRoute: string };
@@ -130,6 +137,22 @@ const Login = () => {
               }}
             />
           </Box>
+          <Flex alignItems={'center'} fontSize={'12px'} mb={'12px'}>
+            {t('support.user.login.Policy tip')}
+            <Link
+              ml={1}
+              onClick={onOpen}
+              color={'primary.500'}
+            >
+              {t('support.user.login.Terms')}
+            </Link>
+          </Flex>
+
+          <MyModal isOpen={isOpen} onClose={onClose} iconSrc="modal/concat" title={t('home.Community')}>
+            <ModalBody textAlign={'left'}>
+              <Markdown source={disclaimerIntro} />
+            </ModalBody>
+          </MyModal>
           {feConfigs?.concatMd && (
             <Box
               mt={8}
