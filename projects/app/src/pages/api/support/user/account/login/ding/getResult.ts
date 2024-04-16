@@ -6,21 +6,21 @@ import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
 import Util, * as $Util from '@alicloud/tea-util';
 import dingtalkoauth2_1_0, * as $dingtalkoauth2_1_0 from '@alicloud/dingtalk/oauth2_1_0';
-import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
+import Client, * as $OpenApi from '@alicloud/openapi-client';
 import * as $tea from '@alicloud/tea-typescript';
 import dingtalkcontact_1_0, * as $dingtalkcontact_1_0 from '@alicloud/dingtalk/contact_1_0';
 
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
 
-const createClient = (): any => {
+const createClient = (): Client => {
   let config = new $OpenApi.Config({});
   config.protocol = 'https';
   config.regionId = 'central';
   return new dingtalkoauth2_1_0(config);
 };
 
-const createContactClient = (): any => {
+const createContactClient = (): Client => {
   let config = new $OpenApi.Config({});
   config.protocol = 'https';
   config.regionId = 'central';
