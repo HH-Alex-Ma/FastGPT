@@ -13,14 +13,14 @@ import dingtalkcontact_1_0, * as $dingtalkcontact_1_0 from '@alicloud/dingtalk/c
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
 
-const createClient = (): any => {
+const createClient = () => {
   let config = new $OpenApi.Config({});
   config.protocol = 'https';
   config.regionId = 'central';
   return new dingtalkoauth2_1_0(config);
 };
 
-const createContactClient = (): any => {
+const createContactClient = () => {
   let config = new $OpenApi.Config({});
   config.protocol = 'https';
   config.regionId = 'central';
