@@ -16,6 +16,7 @@ import { ChatBoxInputFormType, ChatBoxInputType, UserInputFileItemType } from '.
 import { textareaMinH } from './constants';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { useChatProviderStore } from './Provider';
+import { readPdfFile } from '@fastgpt/service/common/file/read/pdf';
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
 const MessageInput = ({
@@ -58,12 +59,13 @@ const MessageInput = ({
 
   /* file selector and upload */
   const { File, onOpen: onOpenSelectFile } = useSelectFile({
-    fileType: 'image/*',
+    fileType: '*',
     multiple: true,
     maxCount: 10
   });
   const { mutate: uploadFile } = useRequest({
     mutationFn: async ({ file, fileIndex }: { file: UserInputFileItemType; fileIndex: number }) => {
+      console.log(file)
       if (file.type === ChatFileTypeEnum.image && file.rawFile) {
         try {
           const url = await compressImgFileAndUpload({
@@ -82,6 +84,34 @@ const MessageInput = ({
           updateFile(fileIndex, {
             ...file,
             url: `${location.origin}${url}`
+          });
+        } catch (error) {
+          removeFile(fileIndex);
+          console.log(error);
+          return Promise.reject(error);
+        }
+      } else if (file.type === ChatFileTypeEnum.file && file.rawFile) {
+        try {
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(file.rawFile);
+          const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+            reader.onload = () => {
+              resolve(reader.result as ArrayBuffer);
+            };
+            reader.onerror = (err) => {
+              console.log(err);
+              reject('Load PDF error');
+            };
+          });
+          const response = await readPdfFile({
+            buffer: Buffer.from(arrayBuffer),
+            teamId: "",
+            encoding: "utf8"
+          });
+          console.log("response readPdfFile", response);
+          updateFile(fileIndex, {
+            ...file,
+            url: `${location.origin}${response}`
           });
         } catch (error) {
           removeFile(fileIndex);
@@ -214,13 +244,13 @@ const MessageInput = ({
         overflow={'hidden'}
         {...(isPc
           ? {
-              border: '1px solid',
-              borderColor: 'rgba(0,0,0,0.12)'
-            }
+            border: '1px solid',
+            borderColor: 'rgba(0,0,0,0.12)'
+          }
           : {
-              borderTop: '1px solid',
-              borderTopColor: 'rgba(0,0,0,0.15)'
-            })}
+            borderTop: '1px solid',
+            borderTopColor: 'rgba(0,0,0,0.15)'
+          })}
       >
         {/* translate loading */}
         <Flex
@@ -288,7 +318,7 @@ const MessageInput = ({
                 className="close-icon"
                 display={['', 'none']}
               />
-              {item.type === ChatFileTypeEnum.image && (
+              {(item.type === ChatFileTypeEnum.image || item.type === ChatFileTypeEnum.file) && (
                 <Image
                   alt={'img'}
                   src={item.icon}
