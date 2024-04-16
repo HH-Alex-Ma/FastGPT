@@ -134,3 +134,8 @@ export const delRoleById = (id: string) => DELETE(`/support/user/account/role/de
 
 export const getOwnerApps = (id: any, tmbId: any) =>
   GET(`/support/user/account/ownerApps/getApps`, { id, tmbId });
+
+export const setAppCollect = (tmbId: any, apps: string, type: number) =>
+  POST(`/support/user/account/collect/addCollect`, { tmbId, apps, type });
+export const getCollectById = (tmbId: any) =>
+  GET(`/support/user/account/collect/getCollect`, { tmbId });

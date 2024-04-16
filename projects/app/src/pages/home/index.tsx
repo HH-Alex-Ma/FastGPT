@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import {
   Box,
   Grid,
@@ -11,15 +11,9 @@ import {
   MenuItem,
   useDisclosure,
   Text,
-  Image,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  TabIndicator
+  Image
 } from '@chakra-ui/react';
-import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, AddIcon, StarIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { delModelById } from '@/web/core/app/api';
@@ -34,7 +28,7 @@ import MyTooltip from '@/components/MyTooltip';
 import CreateModal from './component/CreateModal';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import { useUserStore } from '@/web/support/user/useUserStore';
-import { getOwnerApps } from '@/web/support/user/api';
+import { getOwnerApps, setAppCollect, getCollectById } from '@/web/support/user/api';
 import { HUMAN_ICON } from '@fastgpt/global/common/system/constants';
 import MyAvatar from '@/components/Avatar';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
@@ -52,7 +46,8 @@ const Home = ({ children }: { children: JSX.Element }) => {
   const { myApps, loadMyApps } = useAppStore();
   const { isPc } = useSystemStore();
   const authCode = router.query.appId as string;
-  const [activeAppId, setActiveAppId] = useState('' || authCode);
+  const [activeAppId, setActiveAppId] = useState(authCode || '');
+  const reloadCollect = useRef(false);
 
   /* 加载模型 */
   const { isFetching } = useQuery(['loadApps'], () => loadMyApps(true), {
@@ -62,6 +57,11 @@ const Home = ({ children }: { children: JSX.Element }) => {
     getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
   );
 
+  const { data: collects = [] as any, isLoading: isGettingCollect } = useQuery(
+    ['getCollectById', reloadCollect],
+    () => getCollectById(userInfo?.team.tmbId)
+  );
+
   const appList = myApps.filter((app: AppListItemType) => ownerApps.includes(app._id));
 
   const routerJump = (id: string) => {
@@ -69,15 +69,13 @@ const Home = ({ children }: { children: JSX.Element }) => {
     if (id === 'default' || !id) {
       router.push('/home');
     } else {
-      if (router.pathname != '/home/detail') {
-        router.push(`/home/chat?appId=${id}`);
-      }
+      router.push(`/home/chat?appId=${id}`);
     }
   };
   useEffect(() => {
     loadMyApps(true);
-    setActiveAppId('' || authCode);
-  }, [router.pathname]);
+    setActiveAppId(authCode || 'default');
+  }, [router.pathname, authCode]);
   return (
     <>
       {isPc === true && (
@@ -99,8 +97,12 @@ const Home = ({ children }: { children: JSX.Element }) => {
               {router.pathname == '/home' ? (
                 <MyAppListPc
                   ownerApps={appList}
+                  collects={collects}
                   data={activeAppId}
-                  onRefresh={() => loadMyApps(true)}
+                  onRefresh={() => {
+                    reloadCollect.current = !reloadCollect.current;
+                    loadMyApps(true);
+                  }}
                   onEdit={(id) => routerJump(id)}
                 />
               ) : (
@@ -126,7 +128,7 @@ const Home = ({ children }: { children: JSX.Element }) => {
           </Box>
         </>
       )}
-      <Loading loading={isGetting || isFetching} fixed={false} />
+      <Loading loading={isGetting || isFetching || isGettingCollect} fixed={false} />
     </>
   );
 };
@@ -233,7 +235,11 @@ const AsidePage = ({
     >
       <Box mx={1} px={3} h={'60px'} pt={'12.5px'}>
         <Flex alignItems={'center'} borderRadius={'md'}>
-          <Image boxSize="35px" objectFit="cover" src="https://bit.ly/dan-abramov" />
+          <Image
+            boxSize="35px"
+            objectFit="cover"
+            src="http://localhost:3000/api/system/img/6617b3c6ce2686fdde68c30b"
+          />
           <Text fontSize="18px" fontWeight={'700'} pl={'5px'}>
             e-GPT企业智能助手
           </Text>
@@ -264,7 +270,11 @@ const AsidePage = ({
                 }
               })}
         >
-          <Image boxSize="28px" objectFit="cover" src="https://bit.ly/dan-abramov" />
+          <Image
+            boxSize="28px"
+            objectFit="cover"
+            src="http://localhost:3000/api/system/img/6617b3c6ce2686fdde68c30b"
+          />
           <Box ml={2} className={'textEllipsis'} fontSize={'16px'}>
             {'应用列表'}
           </Box>
@@ -369,8 +379,8 @@ const MyAppList = ({
         <Box letterSpacing={1} fontSize={['20px', '24px']} color={'myGray.900'}>
           {t('app.My Apps') + 'New'}
         </Box>
-        {/* <Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}> */}
-        <Button leftIcon={<AddIcon />} variant={'primaryOutline'}>
+        <Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}>
+          {/* <Button leftIcon={<AddIcon />} variant={'primaryOutline'}> */}
           {t('common.New Create')}
         </Button>
       </Flex>
@@ -422,7 +432,7 @@ const MyAppList = ({
               <Flex alignItems={'center'} h={'38px'}>
                 <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
                 <Box ml={3}>{app.name}</Box>
-                {app.isOwner && userInfo?.team.canWrite && (
+                {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (
                   <IconButton
                     className="delete"
                     position={'absolute'}
@@ -474,11 +484,13 @@ const MyAppList = ({
 const MyAppListPc = ({
   ownerApps,
   data,
+  collects,
   onEdit,
   onRefresh
 }: {
   ownerApps: any;
   data: any;
+  collects: any;
   onEdit: (id: string) => void;
   onRefresh: () => void;
 }) => {
@@ -514,6 +526,25 @@ const MyAppListPc = ({
     },
     [toast]
   );
+  /* 点击收藏，取消收藏*/
+  const onclickCollectApp = useCallback(
+    async (appId: string, type: number) => {
+      try {
+        await setAppCollect(userInfo?.team.tmbId, appId, type);
+        toast({
+          title: '操作成功',
+          status: 'success'
+        });
+        onRefresh();
+      } catch (err: any) {
+        toast({
+          title: err?.message || '操作失败',
+          status: 'error'
+        });
+      }
+    },
+    [toast]
+  );
   const [activeAppType, setActiveAppType] = useState(1);
   const appTypes = [
     {
@@ -526,23 +557,22 @@ const MyAppListPc = ({
     },
     {
       id: 3,
-      name: '个人应用'
+      name: '由我创建'
     },
     {
       id: 4,
-      name: '收藏'
+      name: '我收藏的'
     }
   ];
   const myApps = () => {
     if (activeAppType == 1) {
       return ownerApps;
     } else if (activeAppType == 2) {
-      console.log(ownerApps);
       return ownerApps.filter((item: any) => item.appType == AppSortType.COMPANY);
     } else if (activeAppType == 3) {
       return ownerApps.filter((item: any) => item.appType == AppSortType.PERSON);
     } else {
-      return [];
+      return ownerApps.filter((item: any) => collects && collects.includes(item._id));
     }
   };
 
@@ -657,12 +687,49 @@ const MyAppListPc = ({
               <Flex alignItems={'center'} h={'38px'}>
                 <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
                 <Box ml={3}>{app.name}</Box>
+                <IconButton
+                  position={'absolute'}
+                  top={4}
+                  right={4}
+                  size={'xsSquare'}
+                  variant={'whitePrimary'}
+                  icon={
+                    <StarIcon
+                      boxSize={5}
+                      color={collects && collects.includes(app._id) ? 'gold' : '#CBD5E0'}
+                    />
+                  }
+                  aria-label={'chat'}
+                  border={'0'}
+                  _hover={{ bg: '#F7FAF7' }}
+                  boxShadow="none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onclickCollectApp(app._id, collects ? (collects.includes(app._id) ? 0 : 1) : 1);
+                  }}
+                />
+              </Flex>
+              <Box
+                flex={1}
+                className={'textEllipsis3'}
+                py={2}
+                wordBreak={'break-all'}
+                fontSize={'sm'}
+                color={'myGray.600'}
+              >
+                {app.intro || '这个应用还没写介绍~'}
+              </Box>
+              <Flex h={'34px'} alignItems={'flex-end'}>
+                <Box flex={1}>
+                  {/* <PermissionIconText permission={app.permission} color={'myGray.600'} /> */}
+                </Box>
+
                 {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (
                   <IconButton
                     className="delete"
-                    position={'absolute'}
-                    top={4}
-                    right={4}
+                    // position={'absolute'}
+                    // top={4}
+                    // right={4}
                     size={'xsSquare'}
                     variant={'whiteDanger'}
                     icon={<MyIcon name={'delete'} w={'14px'} />}
@@ -675,16 +742,6 @@ const MyAppListPc = ({
                   />
                 )}
               </Flex>
-              <Box
-                flex={1}
-                className={'textEllipsis3'}
-                py={2}
-                wordBreak={'break-all'}
-                fontSize={'sm'}
-                color={'myGray.600'}
-              >
-                {app.intro || '这个应用还没写介绍~'}
-              </Box>
             </Box>
           </MyTooltip>
         ))}
@@ -700,12 +757,7 @@ const MyAppListPc = ({
       )}
       <ConfirmModal />
       {isOpenCreateModal && (
-        <CreateModal
-          onClose={onCloseCreateModal}
-          onSuccess={() => {
-            onRefresh();
-          }}
-        />
+        <CreateModal onClose={onCloseCreateModal} onSuccess={() => onRefresh()} />
       )}
     </PageContainer>
   );

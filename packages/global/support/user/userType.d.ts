@@ -12,3 +12,10 @@ export type AddRoleType = {
   desc: string;
   apps: string[];
 };
+
+export type AddCollectType = {
+  id?: string;
+  tmbId: string;
+  apps: string;
+  type: Number;
+};
