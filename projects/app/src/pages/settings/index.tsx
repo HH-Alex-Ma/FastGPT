@@ -24,13 +24,13 @@ const Settings = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
 
   const tabList = [
     {
-      icon: 'support/outlink/apikeyLight',
-      label: t('user.apikey.key'),
+      icon: '',
+      label: '用户管理',
       id: TabEnum.info
     },
     {
-      icon: 'support/outlink/apikeyLight',
-      label: t('user.apikey.key'),
+      icon: '',
+      label: '角色管理',
       id: TabEnum.role
     }
   ];
