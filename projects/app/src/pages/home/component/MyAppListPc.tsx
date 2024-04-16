@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Grid, Flex, IconButton, useDisclosure, Text } from '@chakra-ui/react';
+import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon } from '@chakra-ui/react';
 import { AddIcon, StarIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
@@ -252,7 +252,9 @@ const MyAppListPc = ({
               </Box>
               <Flex h={'34px'} alignItems={'flex-end'}>
                 <Box flex={1}>
-                  {/* <PermissionIconText permission={app.permission} color={'myGray.600'} /> */}
+                  <Text color={'myGray.600'}>
+                    {app.appType === AppSortType.PERSON ? '个人应用' : '企业应用'}
+                  </Text>
                 </Box>
 
                 {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (

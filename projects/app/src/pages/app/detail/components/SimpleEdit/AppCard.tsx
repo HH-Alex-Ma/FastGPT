@@ -44,7 +44,11 @@ const AppCard = ({ appId }: { appId: string }) => {
         title: t('common.Delete Success'),
         status: 'success'
       });
-      router.replace(`/app/list`);
+      if (router.pathname.startsWith('/home')) {
+        router.replace(`/home`);
+      } else {
+        router.replace(`/app/list`);
+      }
     },
     errorToast: t('common.Delete Failed')
   });
@@ -52,7 +56,7 @@ const AppCard = ({ appId }: { appId: string }) => {
   return (
     <>
       <Box px={4}>
-        <Flex alignItems={'center'} justifyContent={'space-between'}>
+        {/* <Flex alignItems={'center'} justifyContent={'space-between'}>
           <Box fontSize={['md', 'xl']} fontWeight={'bold'}>
             <PermissionIconText permission={appDetail.permission} />
           </Box>
@@ -62,7 +66,7 @@ const AppCard = ({ appId }: { appId: string }) => {
               {appId}
             </Box>
           </Box>
-        </Flex>
+        </Flex> */}
         {/* basic info */}
         <Box
           borderWidth={'1px'}
@@ -106,14 +110,21 @@ const AppCard = ({ appId }: { appId: string }) => {
           </Box>
           <Flex>
             <Button
+              mr={3}
               size={['sm', 'md']}
               variant={'whitePrimary'}
               leftIcon={<MyIcon name={'core/chat/chatLight'} w={'16px'} />}
-              onClick={() => router.push(`/chat?appId=${appId}`)}
+              onClick={() => {
+                if (router.pathname.startsWith('/home')) {
+                  router.push(`/home/chat?appId=${appId}`);
+                } else {
+                  router.push(`/chat?appId=${appId}`);
+                }
+              }}
             >
               {t('core.Chat')}
             </Button>
-            <Button
+            {/* <Button
               mx={3}
               size={['sm', 'md']}
               variant={'whitePrimary'}
@@ -128,8 +139,8 @@ const AppCard = ({ appId }: { appId: string }) => {
               }}
             >
               {t('core.app.navbar.Publish')}
-            </Button>
-            {appDetail.canWrite && feConfigs?.show_team_chat && (
+            </Button> */}
+            {/* {appDetail.canWrite && feConfigs?.show_team_chat && (
               <Button
                 mr={3}
                 size={['sm', 'md']}
@@ -139,7 +150,7 @@ const AppCard = ({ appId }: { appId: string }) => {
               >
                 {t('common.Team Tags Set')}
               </Button>
-            )}
+            )} */}
             {appDetail.isOwner && (
               <Button
                 size={['sm', 'md']}
@@ -151,6 +162,12 @@ const AppCard = ({ appId }: { appId: string }) => {
               </Button>
             )}
           </Flex>
+        </Box>
+        <Box color={'myGray.500'} fontSize={'sm'}>
+          AppId:{' '}
+          <Box as={'span'} userSelect={'all'}>
+            {appId}
+          </Box>
         </Box>
       </Box>
       <ConfirmDelModal />

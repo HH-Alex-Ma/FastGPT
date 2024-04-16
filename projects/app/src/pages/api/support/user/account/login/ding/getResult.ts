@@ -4,35 +4,19 @@ import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { createJWT, setCookie } from '@fastgpt/service/support/permission/controller';
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
-import Util, * as $Util from '@alicloud/tea-util';
-import dingtalkoauth2_1_0, * as $dingtalkoauth2_1_0 from '@alicloud/dingtalk/oauth2_1_0';
-import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
-import * as $tea from '@alicloud/tea-typescript';
-import dingtalkcontact_1_0, * as $dingtalkcontact_1_0 from '@alicloud/dingtalk/contact_1_0';
 
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
 
-const createClient = (): any => {
-  let config = new $OpenApi.Config({});
-  config.protocol = 'https';
-  config.regionId = 'central';
-  return new dingtalkoauth2_1_0(config);
-};
-
-const createContactClient = (): any => {
-  let config = new $OpenApi.Config({});
-  config.protocol = 'https';
-  config.regionId = 'central';
-  return new dingtalkcontact_1_0(config);
-};
-
-const getUnionId = (access_token: string) => {
-  let client = createContactClient();
-  let getUserHeaders = new $dingtalkcontact_1_0.GetUserHeaders({});
-  getUserHeaders.xAcsDingtalkAccessToken = access_token;
-  const result = client.getUserWithOptions('me', getUserHeaders, new $Util.RuntimeOptions({}));
-  return result;
+const getUnionId = async (access_token: string) => {
+  let fetchOptions: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-acs-dingtalk-access-token': access_token
+    },
+    method: 'GET'
+  };
+  return await fetch('https://api.dingtalk.com/v1.0/contact/users/me', fetchOptions);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
@@ -49,23 +33,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
     } else {
       try {
-        let client = createClient();
-        let getUserTokenRequest = new $dingtalkoauth2_1_0.GetUserTokenRequest({
-          clientSecret: DING_APP_SECRET,
-          clientId: DING_APP_KEY,
-          code: authCode as string,
-          grantType: 'authorization_code'
-        });
-        const userRes = await client.getUserToken(getUserTokenRequest);
-        if (userRes.statusCode != 200) {
+        let fetchOptions: RequestInit = {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: JSON.stringify({
+            clientSecret: DING_APP_SECRET,
+            clientId: DING_APP_KEY,
+            code: authCode as string,
+            grantType: 'authorization_code'
+          })
+        };
+        const userAccessTokenResult = await fetch(
+          'https://api.dingtalk.com/v1.0/oauth2/userAccessToken',
+          fetchOptions
+        );
+        const userAccessTokenData = await userAccessTokenResult.json();
+        if (userAccessTokenResult.status != 200) {
+          console.log(userAccessTokenData);
           jsonRes(res, {
             code: 400,
             error: '参数错误:不合法的参数'
           });
         }
-        const access_token = userRes.body.accessToken;
-        const unionIdRes = await getUnionId(access_token);
-        const unionId = unionIdRes.body.unionId;
+        const access_token = userAccessTokenData.accessToken;
+        const unionResult = await getUnionId(access_token);
+        const unionData = await unionResult.json();
+        const unionId = unionData.unionId;
         const user = await MongoUser.findOne({ DindDing: unionId });
         if (!user) {
           jsonRes(res, {
@@ -92,14 +87,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           });
         }
       } catch (err: any) {
-        if (!Util.empty(err.code) && !Util.empty(err.message)) {
-          // err 中含有 code 和 message 属性，可帮助开发定位问题
-          console.log(err);
-          jsonRes(res, {
-            code: 400,
-            error: err.message
-          });
-        }
+        // err 中含有 code 和 message 属性，可帮助开发定位问题
+        console.log(err);
+        jsonRes(res, {
+          code: 400,
+          error: err.message
+        });
       }
     }
   } catch (err) {

@@ -21,10 +21,6 @@ import {
 } from '@fastgpt/global/support/user/team/constant';
 import { MongoTeam } from '@fastgpt/service/support/user/team/teamSchema';
 
-import Util, * as $Util from '@alicloud/tea-util';
-import dingtalkoauth2_1_0, * as $dingtalkoauth2_1_0 from '@alicloud/dingtalk/oauth2_1_0';
-import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
-
 /* 
   check dataset.files data. If there is no match in dataset.collections, delete it
   可能异常情况
@@ -187,21 +183,20 @@ export async function checkInvalidVector(start: Date, end: Date) {
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
 
-const createClient = (): dingtalkoauth2_1_0 => {
-  let config = new $OpenApi.Config({});
-  config.protocol = 'https';
-  config.regionId = 'central';
-  return new dingtalkoauth2_1_0(config);
-};
-
-const getAccessToken = () => {
-  let client = createClient();
-  let getAccessTokenRequest = new $dingtalkoauth2_1_0.GetAccessTokenRequest({
-    appKey: DING_APP_KEY,
-    appSecret: DING_APP_SECRET
-  });
+const getAccessToken = async () => {
   try {
-    return client.getAccessToken(getAccessTokenRequest);
+    let fetchOptions: RequestInit = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        appKey: DING_APP_KEY,
+        appSecret: DING_APP_SECRET
+      })
+    };
+    const result = await fetch('https://api.dingtalk.com/v1.0/oauth2/accessToken', fetchOptions);
+    return await result.json();
   } catch (err: any) {
     throw new Error(err.message);
   }
@@ -341,8 +336,8 @@ const getUserInfoByUserId = async (accessToken: string, nickname: string, userid
 
 export async function syncDingDingUserInfo() {
   if (DING_APP_KEY != '' && DING_APP_SECRET != '') {
-    const accessToken = await getAccessToken();
-    const publicAccessToken = accessToken.body.accessToken;
+    const accessTokenData = await getAccessToken();
+    const publicAccessToken = accessTokenData.accessToken;
     const data = await getDepartInfoList(publicAccessToken, 1);
     console.log(data);
     for (let i in data) {

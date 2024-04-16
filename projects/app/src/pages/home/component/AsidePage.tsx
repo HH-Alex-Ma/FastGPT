@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Flex, Text, Image } from '@chakra-ui/react';
 import { useTranslation } from 'next-i18next';
 import MyAvatar from '@/components/Avatar';
+import MyIcon from '@fastgpt/web/components/common/Icon';
+import { LOGO_ICON } from '@fastgpt/global/common/system/constants';
 
 const AsidePage = ({
   ownerApps,
@@ -26,11 +28,7 @@ const AsidePage = ({
     >
       <Box mx={1} px={3} h={'60px'} pt={'12.5px'}>
         <Flex alignItems={'center'} borderRadius={'md'}>
-          <Image
-            boxSize="35px"
-            objectFit="cover"
-            src="http://localhost:3000/api/system/img/6617b3c6ce2686fdde68c30b"
-          />
+          <MyAvatar w={'40px'} h={'40px'} mr={'5px'} borderRadius={'20px'} src={LOGO_ICON} />
           <Text fontSize="18px" fontWeight={'700'} pl={'5px'}>
             GenAI企业应用助手
           </Text>
@@ -61,11 +59,7 @@ const AsidePage = ({
                 }
               })}
         >
-          <Image
-            boxSize="28px"
-            objectFit="cover"
-            src="http://localhost:3000/api/system/img/6617b3c6ce2686fdde68c30b"
-          />
+          <MyIcon name={'AppList'} boxSize={'28px'} />
           <Box ml={2} className={'textEllipsis'} fontSize={'16px'}>
             {'应用列表'}
           </Box>
@@ -106,7 +100,7 @@ const AsidePage = ({
                 })}
           >
             <MyAvatar src={item.avatar} w={'28px'} />
-            <Box ml={2} className={'textEllipsis'} fontSize={'16px'}>
+            <Box ml={2} className={'textEllipsis'} fontSize={'14px'}>
               {item.name}
             </Box>
           </Flex>

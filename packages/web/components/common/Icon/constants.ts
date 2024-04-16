@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 export const iconPaths = {
+  AppList: () => import('./icons/common/app-list.svg'),
   DingDing: () => import('./icons/common/dingding.svg'),
   channel: () => import('./icons/common/tubiao_qudao.svg'),
   modelBase: () => import('./icons/common/moxingku.svg'),

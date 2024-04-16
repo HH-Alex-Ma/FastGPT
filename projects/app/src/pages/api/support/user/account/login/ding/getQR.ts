@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
-import { MongoRole } from '@fastgpt/service/support/user/role/schema';
-import { connectToDatabase } from '@/service/mongo';
 import { nanoid } from 'nanoid';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
@@ -11,8 +9,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   // const REDIRECT_URI = `http://${req.headers.host}/login/auth`;
 
   try {
-    await connectToDatabase();
-
     //记录
     const authorizeUrl = `${DING_TALK}?client_id=${DING_APP_KEY}&response_type=code&scope=openid&prompt=consent&state=${nanoid()}&redirect_uri=${REDIRECT_URI}`;
     jsonRes(res, {

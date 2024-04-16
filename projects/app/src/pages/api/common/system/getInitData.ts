@@ -41,7 +41,7 @@ const defaultFeConfigs: FastGPTFeConfigsType = {
   show_git: false,
   docUrl: '',
   openAPIDocUrl: '',
-  systemTitle: 'GenAI',
+  systemTitle: 'GenAI企业应用助手 ',
   concatMd: '',
   limit: {
     exportDatasetLimitMinutes: 0,

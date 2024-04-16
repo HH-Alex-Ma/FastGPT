@@ -29,6 +29,7 @@ import SettingLLMModel from '@/components/core/ai/SettingLLMModel';
 import { SettingAIDataType } from '@fastgpt/global/core/module/node/type';
 import DeleteIcon, { hoverDeleteStyles } from '@fastgpt/web/components/common/Icon/delete';
 import { TTSTypeEnum } from '@/constants/app';
+import { useUserStore } from '@/web/support/user/useUserStore';
 
 const DatasetSelectModal = dynamic(() => import('@/components/core/module/DatasetSelectModal'));
 const DatasetParamsModal = dynamic(() => import('@/components/core/module/DatasetParamsModal'));
@@ -58,6 +59,7 @@ const EditForm = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const { userInfo } = useUserStore();
   const { t } = useTranslation();
   const { appDetail, updateAppDetail } = useAppStore();
   const { loadAllDatasets, allDatasets } = useDatasetStore();
@@ -240,136 +242,143 @@ const EditForm = ({
           </Box>
 
           {/* dataset */}
-          <Box {...BoxStyles}>
-            <Flex alignItems={'center'}>
-              <Flex alignItems={'center'} flex={1}>
-                <MyIcon name={'core/app/simpleMode/dataset'} w={'20px'} />
-                <Box ml={2}>{t('core.dataset.Choose Dataset')}</Box>
-              </Flex>
-              <Button
-                variant={'transparentBase'}
-                leftIcon={<AddIcon fontSize={'xs'} />}
-                iconSpacing={1}
-                size={'sm'}
-                fontSize={'md'}
-                onClick={onOpenKbSelect}
-              >
-                {t('common.Choose')}
-              </Button>
-              <Button
-                variant={'transparentBase'}
-                leftIcon={<MyIcon name={'edit'} w={'14px'} />}
-                iconSpacing={1}
-                size={'sm'}
-                fontSize={'md'}
-                onClick={onOpenDatasetParams}
-              >
-                {t('common.Params')}
-              </Button>
-            </Flex>
-            {getValues('dataset.datasets').length > 0 && (
-              <Box my={3}>
-                <SearchParamsTip
-                  searchMode={searchMode}
-                  similarity={getValues('dataset.similarity')}
-                  limit={getValues('dataset.limit')}
-                  usingReRank={getValues('dataset.usingReRank')}
-                  usingQueryExtension={getValues('dataset.datasetSearchUsingExtensionQuery')}
-                />
-              </Box>
-            )}
-            <Grid
-              gridTemplateColumns={['repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))']}
-              gridGap={[2, 4]}
-            >
-              {selectDatasets.map((item) => (
-                <MyTooltip key={item._id} label={t('core.dataset.Read Dataset')}>
-                  <Flex
-                    overflow={'hidden'}
-                    alignItems={'center'}
-                    p={2}
-                    bg={'white'}
-                    boxShadow={'0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06)'}
-                    borderRadius={'md'}
-                    border={theme.borders.base}
-                    cursor={'pointer'}
-                    onClick={() =>
-                      router.push({
-                        pathname: '/dataset/detail',
-                        query: {
-                          datasetId: item._id
-                        }
-                      })
-                    }
-                  >
-                    <Avatar src={item.avatar} w={'18px'} mr={1} />
-                    <Box flex={'1 0 0'} w={0} className={'textEllipsis'} fontSize={'sm'}>
-                      {item.name}
-                    </Box>
+          {userInfo?.manager == 1 && (
+            <>
+              <Box {...BoxStyles}>
+                <Flex alignItems={'center'}>
+                  <Flex alignItems={'center'} flex={1}>
+                    <MyIcon name={'core/app/simpleMode/dataset'} w={'20px'} />
+                    <Box ml={2}>{t('core.dataset.Choose Dataset')}</Box>
                   </Flex>
-                </MyTooltip>
-              ))}
-            </Grid>
-          </Box>
-
-          {/* tool choice */}
-          <Box {...BoxStyles}>
-            <Flex alignItems={'center'}>
-              <Flex alignItems={'center'} flex={1}>
-                <MyIcon name={'core/app/toolCall'} w={'20px'} />
-                <Box ml={2}>{t('core.app.Tool call')}(实验功能)</Box>
-                <MyTooltip label={t('core.app.Tool call tip')}>
-                  <QuestionOutlineIcon ml={1} />
-                </MyTooltip>
-              </Flex>
-              <Button
-                variant={'transparentBase'}
-                leftIcon={<SmallAddIcon />}
-                iconSpacing={1}
-                mr={'-5px'}
-                size={'sm'}
-                fontSize={'md'}
-                onClick={onOpenToolsSelect}
-              >
-                {t('common.Choose')}
-              </Button>
-            </Flex>
-            <Grid
-              mt={selectedTools.length > 0 ? 2 : 0}
-              gridTemplateColumns={'repeat(2, minmax(0, 1fr))'}
-              gridGap={[2, 4]}
-            >
-              {selectedTools.map((item) => (
-                <Flex
-                  key={item.id}
-                  overflow={'hidden'}
-                  alignItems={'center'}
-                  p={2}
-                  bg={'white'}
-                  boxShadow={'0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06)'}
-                  borderRadius={'md'}
-                  border={theme.borders.base}
-                  _hover={{
-                    ...hoverDeleteStyles,
-                    borderColor: 'primary.300'
-                  }}
-                >
-                  <Avatar src={item.avatar} w={'18px'} mr={1} />
-                  <Box flex={'1 0 0'} w={0} className={'textEllipsis'} fontSize={'sm'}>
-                    {item.name}
-                  </Box>
-                  <DeleteIcon
-                    onClick={() => {
-                      setValue(
-                        'selectedTools',
-                        selectedTools.filter((tool) => tool.id !== item.id)
-                      );
-                    }}
-                  />
+                  <Button
+                    variant={'transparentBase'}
+                    leftIcon={<AddIcon fontSize={'xs'} />}
+                    iconSpacing={1}
+                    size={'sm'}
+                    fontSize={'md'}
+                    onClick={onOpenKbSelect}
+                  >
+                    {t('common.Choose')}
+                  </Button>
+                  <Button
+                    variant={'transparentBase'}
+                    leftIcon={<MyIcon name={'edit'} w={'14px'} />}
+                    iconSpacing={1}
+                    size={'sm'}
+                    fontSize={'md'}
+                    onClick={onOpenDatasetParams}
+                  >
+                    {t('common.Params')}
+                  </Button>
                 </Flex>
-              ))}
-            </Grid>
-          </Box>
+                {getValues('dataset.datasets').length > 0 && (
+                  <Box my={3}>
+                    <SearchParamsTip
+                      searchMode={searchMode}
+                      similarity={getValues('dataset.similarity')}
+                      limit={getValues('dataset.limit')}
+                      usingReRank={getValues('dataset.usingReRank')}
+                      usingQueryExtension={getValues('dataset.datasetSearchUsingExtensionQuery')}
+                    />
+                  </Box>
+                )}
+                <Grid
+                  gridTemplateColumns={['repeat(2, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))']}
+                  gridGap={[2, 4]}
+                >
+                  {selectDatasets.map((item) => (
+                    <MyTooltip key={item._id} label={t('core.dataset.Read Dataset')}>
+                      <Flex
+                        overflow={'hidden'}
+                        alignItems={'center'}
+                        p={2}
+                        bg={'white'}
+                        boxShadow={
+                          '0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06)'
+                        }
+                        borderRadius={'md'}
+                        border={theme.borders.base}
+                        cursor={'pointer'}
+                        onClick={() =>
+                          router.push({
+                            pathname: '/dataset/detail',
+                            query: {
+                              datasetId: item._id
+                            }
+                          })
+                        }
+                      >
+                        <Avatar src={item.avatar} w={'18px'} mr={1} />
+                        <Box flex={'1 0 0'} w={0} className={'textEllipsis'} fontSize={'sm'}>
+                          {item.name}
+                        </Box>
+                      </Flex>
+                    </MyTooltip>
+                  ))}
+                </Grid>
+              </Box>
+              {/* tool choice */}
+              <Box {...BoxStyles}>
+                <Flex alignItems={'center'}>
+                  <Flex alignItems={'center'} flex={1}>
+                    <MyIcon name={'core/app/toolCall'} w={'20px'} />
+                    <Box ml={2}>{t('core.app.Tool call')}(实验功能)</Box>
+                    <MyTooltip label={t('core.app.Tool call tip')}>
+                      <QuestionOutlineIcon ml={1} />
+                    </MyTooltip>
+                  </Flex>
+                  <Button
+                    variant={'transparentBase'}
+                    leftIcon={<SmallAddIcon />}
+                    iconSpacing={1}
+                    mr={'-5px'}
+                    size={'sm'}
+                    fontSize={'md'}
+                    onClick={onOpenToolsSelect}
+                  >
+                    {t('common.Choose')}
+                  </Button>
+                </Flex>
+                <Grid
+                  mt={selectedTools.length > 0 ? 2 : 0}
+                  gridTemplateColumns={'repeat(2, minmax(0, 1fr))'}
+                  gridGap={[2, 4]}
+                >
+                  {selectedTools.map((item) => (
+                    <Flex
+                      key={item.id}
+                      overflow={'hidden'}
+                      alignItems={'center'}
+                      p={2}
+                      bg={'white'}
+                      boxShadow={
+                        '0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06)'
+                      }
+                      borderRadius={'md'}
+                      border={theme.borders.base}
+                      _hover={{
+                        ...hoverDeleteStyles,
+                        borderColor: 'primary.300'
+                      }}
+                    >
+                      <Avatar src={item.avatar} w={'18px'} mr={1} />
+                      <Box flex={'1 0 0'} w={0} className={'textEllipsis'} fontSize={'sm'}>
+                        {item.name}
+                      </Box>
+                      <DeleteIcon
+                        onClick={() => {
+                          setValue(
+                            'selectedTools',
+                            selectedTools.filter((tool) => tool.id !== item.id)
+                          );
+                        }}
+                      />
+                    </Flex>
+                  ))}
+                </Grid>
+              </Box>
+            </>
+          )}
 
           {/* variable */}
           <Box {...BoxStyles}>
@@ -402,17 +411,20 @@ const EditForm = ({
               }}
             />
           </Box>
-
-          {/* tts */}
-          <Box {...BoxStyles}>
-            <TTSSelect
-              value={getValues('userGuide.tts')}
-              onChange={(e) => {
-                setValue('userGuide.tts', e);
-                setRefresh((state) => !state);
-              }}
-            />
-          </Box>
+          {userInfo?.manager == 1 && (
+            <>
+              {/* tts */}
+              <Box {...BoxStyles}>
+                <TTSSelect
+                  value={getValues('userGuide.tts')}
+                  onChange={(e) => {
+                    setValue('userGuide.tts', e);
+                    setRefresh((state) => !state);
+                  }}
+                />
+              </Box>
+            </>
+          )}
 
           {/* whisper */}
           <Box {...BoxStyles}>

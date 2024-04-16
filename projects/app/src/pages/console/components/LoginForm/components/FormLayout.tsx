@@ -79,8 +79,9 @@ const FormLayout = ({ children, setPageType, pageType }: Props) => {
           borderColor={'borderColor.base'}
           alignItems={'center'}
           justifyContent={'center'}
+          border={'none'}
         >
-          <Image src={LOGO_ICON} w={'24px'} alt={'icon'} />
+          <Image src={LOGO_ICON} w={['30px', '50px']} alt={'icon'} />
         </Flex>
         <Box ml={3} fontSize={['2xl', '3xl']} fontWeight={'bold'}>
           {feConfigs?.systemTitle}
