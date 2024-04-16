@@ -5,14 +5,10 @@ import { createJWT, setCookie } from '@fastgpt/service/support/permission/contro
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
 import Util, * as $Util from '@alicloud/tea-util';
-import * as $OpenApi from '@alicloud/openapi-client';
+import dingtalkoauth2_1_0, * as $dingtalkoauth2_1_0 from '@alicloud/dingtalk/oauth2_1_0';
+import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import * as $tea from '@alicloud/tea-typescript';
-
-// 使用类型断言
-const dingtalkoauth2_1_0 = require('@alicloud/dingtalk/oauth2_1_0') as any;
-const $dingtalkoauth2_1_0 = require('@alicloud/dingtalk/oauth2_1_0') as any;
-const dingtalkcontact_1_0 = require('@alicloud/dingtalk/contact_1_0') as any;
-const $dingtalkcontact_1_0 = require('@alicloud/dingtalk/contact_1_0') as any;
+import dingtalkcontact_1_0, * as $dingtalkcontact_1_0 from '@alicloud/dingtalk/contact_1_0';
 
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
