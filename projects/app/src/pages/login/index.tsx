@@ -107,6 +107,7 @@ const Login = () => {
             '',
             '0px 0px 1px 0px rgba(19, 51, 107, 0.20), 0px 32px 64px -12px rgba(19, 51, 107, 0.20)'
           ]}
+          position="relative"
         >
           <Box w={['100%', '380px']} flex={'1 0 0'}>
             {pageType ? (
@@ -118,7 +119,7 @@ const Login = () => {
             )}
           </Box>
           <Box
-            mt={4}
+            mb={100}
             color={'black.700'}
             textAlign={'left'}
             style={{ display: 'flex', alignItems: 'center' }}
@@ -137,7 +138,26 @@ const Login = () => {
               }}
             />
           </Box>
-          <Flex alignItems={'center'} fontSize={'12px'} mb={'12px'}>
+          {feConfigs?.concatMd && (
+            <Box
+              mt={8}
+              color={'primary.700'}
+              cursor={'pointer'}
+              textAlign={'center'}
+              onClick={onOpen}
+            >
+              无法登录，点击联系
+            </Box>
+          )}
+          <Flex
+            alignItems={'center'}
+            justifyContent={'center'}
+            fontSize={'12px'}
+            mb={'12px'}
+            position="absolute"
+            bottom={0}
+            width="75%"
+          >
             {t('support.user.login.Policy tip')}
             <Link
               ml={1}
@@ -153,17 +173,6 @@ const Login = () => {
               <Markdown source={disclaimerIntro} />
             </ModalBody>
           </MyModal>
-          {feConfigs?.concatMd && (
-            <Box
-              mt={8}
-              color={'primary.700'}
-              cursor={'pointer'}
-              textAlign={'center'}
-              onClick={onOpen}
-            >
-              无法登录，点击联系
-            </Box>
-          )}
         </Flex>
 
         {/* {isOpen && <CommunityModal onClose={onClose} />} */}

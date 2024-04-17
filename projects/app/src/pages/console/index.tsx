@@ -101,6 +101,7 @@ const Login = () => {
             '',
             '0px 0px 1px 0px rgba(19, 51, 107, 0.20), 0px 32px 64px -12px rgba(19, 51, 107, 0.20)'
           ]}
+          position="relative"
         >
           <Box w={['100%', '380px']} flex={'1 0 0'}>
             {pageType ? (
@@ -111,7 +112,15 @@ const Login = () => {
               </Center>
             )}
           </Box>
-          <Flex alignItems={'center'} fontSize={'12px'} mb={'12px'}>
+          <Flex
+            alignItems={'center'}
+            justifyContent={'center'}
+            fontSize={'12px'}
+            mb={'12px'}
+            position="absolute"
+            bottom={0}
+            width={["85%", "77%"]}
+          >
             {t('support.user.login.Policy tip')}
             <Link
               ml={1}
