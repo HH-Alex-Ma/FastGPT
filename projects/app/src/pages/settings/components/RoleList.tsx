@@ -83,8 +83,8 @@ const UserList = () => {
         <Table>
           <Thead>
             <Tr>
-              <Th>Name</Th>
-              <Th>desc</Th>
+              <Th>名称</Th>
+              <Th>描述</Th>
               <Th>{t('common.Create Time')}</Th>
               <Th />
             </Tr>
@@ -211,7 +211,7 @@ function EditModal({
         <Flex alignItems={'center'}>
           <Box flex={'0 0 90px'}>{'角色名'}:</Box>
           <Input
-            placeholder={'请输入角色名'}
+            placeholder={'请输入角色名名称'}
             maxLength={20}
             {...register('name', {
               required: 'name is empty'

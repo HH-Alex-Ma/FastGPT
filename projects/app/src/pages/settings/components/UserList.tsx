@@ -102,10 +102,10 @@ const UserList = () => {
         <Table>
           <Thead>
             <Tr>
-              <Th>Name</Th>
-              <Th>NickName</Th>
+              <Th>用户ID</Th>
+              <Th>用户名</Th>
               <Th>角色</Th>
-              <Th>Status</Th>
+              <Th>状态</Th>
               <Th>是否管理员</Th>
               <Th>{t('common.Create Time')}</Th>
               <Th />
@@ -215,7 +215,6 @@ function EditModal({
 }) {
   const { t } = useTranslation();
   const { Loading } = useLoading();
-  const [roleId, setRoleId] = useState(defaultData.roleId);
   const isEdit = useMemo(() => !!defaultData._id, [defaultData]);
 
   const {
@@ -269,13 +268,7 @@ function EditModal({
         </Flex>
         <Flex alignItems={'center'} mt={4}>
           <Box flex={'0 0 90px'}>{'角色'}:</Box>
-          <Select
-            value={roleId}
-            onChange={(e) => {
-              setRoleId(e.target.value);
-              setValue('roleId', e.target.value);
-            }}
-          >
+          <Select {...register('roleId')}>
             {roles.map(({ _id, name }) => (
               <option value={_id} key={_id}>
                 {name}
