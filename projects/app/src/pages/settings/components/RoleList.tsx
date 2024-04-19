@@ -23,7 +23,7 @@ import { getRoles, addRole, updateRole, delRoleById } from '@/web/support/user/a
 import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import dayjs from 'dayjs';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useTranslation } from 'next-i18next';
 import MyIcon from '@fastgpt/web/components/common/Icon';
@@ -37,13 +37,15 @@ const defaultEditData: any = {
   desc: '',
   apps: []
 };
-const UserList = () => {
+const RoleList = () => {
   const { t } = useTranslation();
   const { Loading } = useLoading();
   const theme = useTheme();
   const { feConfigs } = useSystemStore();
   const [editData, setEditData] = useState<any>();
   const [removeId, setRemoveId] = useState<any>();
+  const [searchText, setSearchText] = useState('');
+  const [currentPageNum, setCurrentPageNum] = useState(1);
 
   const {
     data: roleInfo = [],
@@ -51,6 +53,13 @@ const UserList = () => {
     refetch
   } = useQuery(['getRoles'], () => getRoles());
 
+  let rolesData = () => {
+    return roleInfo
+      .filter((item: any, index) => item.name.toLowerCase().includes(searchText.toLowerCase()))
+      .filter(
+        (item: any, index) => index >= (currentPageNum - 1) * 10 && index < currentPageNum * 10
+      );
+  };
   return (
     <Flex flexDirection={'column'} h={'100%'} position={'relative'}>
       <Box display={['block', 'flex']} py={[0, 3]} px={5} alignItems={'center'}>
@@ -63,6 +72,14 @@ const UserList = () => {
           <Box fontSize={'sm'} color={'myGray.600'}>
             {'管理角色信息'}
           </Box>
+        </Box>
+        <Box>
+          <Input
+            placeholder="搜索"
+            value={searchText}
+            bg={'#fff'}
+            onChange={(e) => setSearchText(e.currentTarget.value)}
+          />
         </Box>
         <Box mt={[2, 0]} textAlign={'right'}>
           <Button
@@ -90,7 +107,7 @@ const UserList = () => {
             </Tr>
           </Thead>
           <Tbody fontSize={'sm'}>
-            {roleInfo.map(({ _id, name, desc, apps, createTime }) => (
+            {rolesData().map(({ _id, name, desc, apps, createTime }) => (
               <Tr key={_id}>
                 <Td>{name}</Td>
                 <Td>{desc}</Td>
@@ -138,7 +155,69 @@ const UserList = () => {
         </Table>
         <Loading loading={isGetting} fixed={false} />
       </TableContainer>
-
+      <Flex
+        position={'absolute'}
+        bottom={'5px'}
+        w={'100%'}
+        p={5}
+        alignItems={'center'}
+        justifyContent={'flex-end'}
+      >
+        <Box ml={3}>
+          <Flex alignItems={'center'} justifyContent={'end'}>
+            <IconButton
+              isDisabled={currentPageNum === 1}
+              icon={<ArrowBackIcon />}
+              aria-label={'left'}
+              size={'smSquare'}
+              onClick={() => {
+                setCurrentPageNum(currentPageNum - 1);
+              }}
+            />
+            <Flex mx={2} alignItems={'center'}>
+              {t('modelCenter.pagePre')}&nbsp;
+              <Input
+                value={currentPageNum}
+                w={'50px'}
+                h={'30px'}
+                size={'xs'}
+                type={'number'}
+                min={1}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  if (parseInt(val) <= 0) {
+                    setCurrentPageNum(1);
+                  } else {
+                    let totalPage = Math.ceil(roleInfo.length / 10);
+                    setCurrentPageNum(parseInt(val) >= totalPage ? totalPage : parseInt(val));
+                  }
+                }}
+                onBlur={(e) => {
+                  const val = parseInt(e.target.value);
+                  if (val === currentPageNum) return;
+                  if (val < 1) {
+                    setCurrentPageNum(1);
+                  } else {
+                    setCurrentPageNum(val - 1);
+                  }
+                }}
+              />
+              &nbsp;{t('modelCenter.pageSuf')}
+            </Flex>
+            <IconButton
+              isDisabled={roleInfo.length <= currentPageNum * 10}
+              icon={<ArrowForwardIcon />}
+              aria-label={'left'}
+              size={'sm'}
+              w={'28px'}
+              h={'28px'}
+              onClick={() => {
+                setCurrentPageNum(currentPageNum + 1);
+              }}
+            />
+          </Flex>
+        </Box>
+      </Flex>
       {!!editData && (
         <EditModal
           defaultData={editData}
@@ -166,7 +245,7 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default RoleList;
 
 // edit link modal
 function EditModal({

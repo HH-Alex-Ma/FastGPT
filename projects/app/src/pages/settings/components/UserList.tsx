@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -28,7 +28,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import dayjs from 'dayjs';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useTranslation } from 'next-i18next';
 import MyIcon from '@fastgpt/web/components/common/Icon';
@@ -51,6 +51,8 @@ const UserList = () => {
   const { feConfigs } = useSystemStore();
   const [editData, setEditData] = useState<any>();
   const [removeId, setRemoveId] = useState<any>();
+  const [searchText, setSearchText] = useState('');
+  const [currentPageNum, setCurrentPageNum] = useState(1);
 
   const { mutate: onclickChange, isLoading: isChangeing } = useRequest({
     mutationFn: async (data: { id: string; status: string }) =>
@@ -70,6 +72,18 @@ const UserList = () => {
 
   const { data: roles = [], isLoading: isGettingRole } = useQuery(['getRoles'], () => getRoles());
 
+  let userData = () => {
+    return userInfo
+      .filter(
+        (item: any, index) =>
+          item.nickname.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.username.toLowerCase().includes(searchText.toLowerCase())
+      )
+      .filter(
+        (item: any, index) => index >= (currentPageNum - 1) * 10 && index < currentPageNum * 10
+      );
+  };
+
   return (
     <Flex flexDirection={'column'} h={'100%'} position={'relative'}>
       <Box display={['block', 'flex']} py={[0, 3]} px={5} alignItems={'center'}>
@@ -82,6 +96,17 @@ const UserList = () => {
           <Box fontSize={'sm'} color={'myGray.600'}>
             {'管理账户信息'}
           </Box>
+        </Box>
+        <Box>
+          <Input
+            placeholder="搜索"
+            value={searchText}
+            bg={'#fff'}
+            onChange={(e) => {
+              setSearchText(e.currentTarget.value);
+              setCurrentPageNum(1);
+            }}
+          />
         </Box>
         <Box mt={[2, 0]} textAlign={'right'}>
           <Button
@@ -112,7 +137,7 @@ const UserList = () => {
             </Tr>
           </Thead>
           <Tbody fontSize={'sm'}>
-            {userInfo.map(({ _id, username, nickname, status, roleId, manager, createTime }) => (
+            {userData().map(({ _id, username, nickname, status, roleId, manager, createTime }) => (
               <Tr key={_id}>
                 <Td>{username}</Td>
                 <Td>{nickname}</Td>
@@ -171,7 +196,69 @@ const UserList = () => {
         </Table>
         <Loading loading={isGetting || isChangeing || isGettingRole} fixed={false} />
       </TableContainer>
-
+      <Flex
+        position={'absolute'}
+        bottom={'5px'}
+        w={'100%'}
+        p={5}
+        alignItems={'center'}
+        justifyContent={'flex-end'}
+      >
+        <Box ml={3}>
+          <Flex alignItems={'center'} justifyContent={'end'}>
+            <IconButton
+              isDisabled={currentPageNum === 1}
+              icon={<ArrowBackIcon />}
+              aria-label={'left'}
+              size={'smSquare'}
+              onClick={() => {
+                setCurrentPageNum(currentPageNum - 1);
+              }}
+            />
+            <Flex mx={2} alignItems={'center'}>
+              {t('modelCenter.pagePre')}&nbsp;
+              <Input
+                value={currentPageNum}
+                w={'50px'}
+                h={'30px'}
+                size={'xs'}
+                type={'number'}
+                min={1}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  if (parseInt(val) <= 0) {
+                    setCurrentPageNum(1);
+                  } else {
+                    let totalPage = Math.ceil(userInfo.length / 10);
+                    setCurrentPageNum(parseInt(val) >= totalPage ? totalPage : parseInt(val));
+                  }
+                }}
+                onBlur={(e) => {
+                  const val = parseInt(e.target.value);
+                  if (val === currentPageNum) return;
+                  if (val < 1) {
+                    setCurrentPageNum(1);
+                  } else {
+                    setCurrentPageNum(val - 1);
+                  }
+                }}
+              />
+              &nbsp;{t('modelCenter.pageSuf')}
+            </Flex>
+            <IconButton
+              isDisabled={userInfo.length <= currentPageNum * 10}
+              icon={<ArrowForwardIcon />}
+              aria-label={'left'}
+              size={'sm'}
+              w={'28px'}
+              h={'28px'}
+              onClick={() => {
+                setCurrentPageNum(currentPageNum + 1);
+              }}
+            />
+          </Flex>
+        </Box>
+      </Flex>
       {!!editData && (
         <EditModal
           defaultData={editData}

@@ -130,7 +130,7 @@ const MyAppListPc = ({
 
   return (
     <PageContainer
-      insertProps={{ px: [5, '48px'], borderRadius: [0, '0px'], borderWidth: [0] }}
+      insertProps={{ px: [5, '48px'], borderRadius: [0, '0px'], borderWidth: [0], bg: '#F0F2F5' }}
       py={[0, '0px']}
       pr={[0, '0px']}
     >
@@ -166,6 +166,7 @@ const MyAppListPc = ({
           <Input
             placeholder="搜索"
             value={searchText}
+            bg={'#fff'}
             onChange={(e) => setSearchText(e.currentTarget.value)}
           />
         </Box>
