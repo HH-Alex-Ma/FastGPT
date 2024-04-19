@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon } from '@chakra-ui/react';
+import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon, Input } from '@chakra-ui/react';
 import { AddIcon, StarIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
@@ -32,6 +32,8 @@ const MyAppListPc = ({
   const router = useRouter();
   const { t } = useTranslation();
   const { userInfo } = useUserStore();
+  const [searchText, setSearchText] = useState('');
+
   const { openConfirm, ConfirmModal } = useConfirm({
     title: '删除提示',
     content: '确认删除该应用所有信息？'
@@ -101,23 +103,38 @@ const MyAppListPc = ({
   ];
   const myApps = () => {
     if (activeAppType == 1) {
-      return ownerApps;
+      return ownerApps.filter((item: any) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      );
     } else if (activeAppType == 2) {
-      return ownerApps.filter((item: any) => item.appType == AppSortType.COMPANY);
+      return ownerApps.filter(
+        (item: any) =>
+          item.appType == AppSortType.COMPANY &&
+          item.name.toLowerCase().includes(searchText.toLowerCase())
+      );
     } else if (activeAppType == 3) {
-      return ownerApps.filter((item: any) => item.appType == AppSortType.PERSON);
+      return ownerApps.filter(
+        (item: any) =>
+          item.appType == AppSortType.PERSON &&
+          item.name.toLowerCase().includes(searchText.toLowerCase())
+      );
     } else {
-      return ownerApps.filter((item: any) => collects && collects.includes(item._id));
+      return ownerApps.filter(
+        (item: any) =>
+          collects &&
+          collects.includes(item._id) &&
+          item.name.toLowerCase().includes(searchText.toLowerCase())
+      );
     }
   };
 
   return (
     <PageContainer
-      insertProps={{ px: [5, '48px'], borderRadius: [0, '0px'], borderWidth: [0] }}
+      insertProps={{ px: [5, '48px'], borderRadius: [0, '0px'], borderWidth: [0], bg: '#F0F2F5' }}
       py={[0, '0px']}
       pr={[0, '0px']}
     >
-      <Flex pt={['10px']} alignItems={'center'}>
+      <Flex pt={['10px']} alignItems={'center'} justifyContent={'space-between'}>
         <Flex bgColor={'#fff'} borderRadius={'md'} boxShadow="md" alignItems={'center'} p={'5px'}>
           {appTypes.map((item: any) => (
             <Text
@@ -145,6 +162,14 @@ const MyAppListPc = ({
             </Text>
           ))}
         </Flex>
+        <Box>
+          <Input
+            placeholder="搜索"
+            value={searchText}
+            bg={'#fff'}
+            onChange={(e) => setSearchText(e.currentTarget.value)}
+          />
+        </Box>
       </Flex>
       <Grid
         py={[4, 6]}
@@ -158,7 +183,7 @@ const MyAppListPc = ({
         ]}
         gridGap={5}
       >
-        {activeAppType == 1 && (
+        {/* {activeAppType == 1 && (
           <MyTooltip>
             <Box
               lineHeight={1.5}
@@ -184,7 +209,7 @@ const MyAppListPc = ({
               </Text>
             </Box>
           </MyTooltip>
-        )}
+        )} */}
         {myApps().map((app: any) => (
           <MyTooltip key={app._id}>
             <Box
@@ -215,65 +240,49 @@ const MyAppListPc = ({
                 onEdit(app._id);
               }}
             >
-              <Flex alignItems={'center'} h={'38px'}>
-                <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
-                <Box ml={3}>{app.name}</Box>
-                <IconButton
-                  position={'absolute'}
-                  top={4}
-                  right={4}
-                  size={'xsSquare'}
-                  variant={'whitePrimary'}
-                  icon={
-                    <StarIcon
-                      boxSize={5}
-                      color={collects && collects.includes(app._id) ? 'gold' : '#CBD5E0'}
-                    />
-                  }
-                  aria-label={'collect'}
-                  border={'0'}
-                  _hover={{ bg: '#F7FAF7' }}
-                  boxShadow="none"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onclickCollectApp(app._id, collects ? (collects.includes(app._id) ? 0 : 1) : 1);
-                  }}
-                />
-              </Flex>
-              <Box
-                flex={1}
-                className={'textEllipsis3'}
-                py={2}
-                wordBreak={'break-all'}
-                fontSize={'sm'}
-                color={'myGray.600'}
-              >
-                {app.intro || '这个应用还没写介绍~'}
+              <Box position={'absolute'} h={'70px'} w={'70px'} mt={'5px'} ml={'-5px'}>
+                <Avatar src={app.avatar} borderRadius={'35px'} w={'70px'} />
               </Box>
-              <Flex h={'34px'} alignItems={'flex-end'}>
-                <Box flex={1}>
-                  <Text color={'myGray.600'}>
-                    {app.appType === AppSortType.PERSON ? '个人应用' : '企业应用'}
-                  </Text>
-                </Box>
-
-                {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (
-                  <>
-                    <IconButton
-                      className="delete"
-                      size={'xsSquare'}
-                      variant={'whiteDanger'}
-                      icon={<MyIcon name={'delete'} w={'14px'} />}
-                      aria-label={'delete'}
-                      display={['', 'none']}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openConfirm(() => onclickDelApp(app._id))();
-                      }}
-                    />
+              <Box ml={'80px'}>
+                <Flex alignItems={'center'}>
+                  <Box
+                    className="textEllipsis"
+                    width={'130px'}
+                    h={'24px'}
+                    lineHeight={'24px'}
+                    fontSize={'16px'}
+                    fontWeight={700}
+                  >
+                    {app.name}
+                  </Box>
+                  <IconButton
+                    position={'absolute'}
+                    top={3}
+                    right={4}
+                    size={'xsSquare'}
+                    variant={'whitePrimary'}
+                    icon={
+                      <StarIcon
+                        boxSize={5}
+                        color={collects && collects.includes(app._id) ? 'gold' : '#CBD5E0'}
+                      />
+                    }
+                    aria-label={'collect'}
+                    border={'0'}
+                    _hover={{ bg: '#F7FAF7' }}
+                    boxShadow="none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onclickCollectApp(
+                        app._id,
+                        collects ? (collects.includes(app._id) ? 0 : 1) : 1
+                      );
+                    }}
+                  />
+                  {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (
                     <IconButton
                       position={'absolute'}
-                      top={4}
+                      top={3}
                       right={12}
                       size={'xsSquare'}
                       variant={'whiteDanger'}
@@ -287,9 +296,47 @@ const MyAppListPc = ({
                         router.push(`/home/detail?appId=${app._id}`);
                       }}
                     />
-                  </>
-                )}
-              </Flex>
+                  )}
+                </Flex>
+                <Box
+                  flex={1}
+                  style={{
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    textOverflow: 'ellipsis',
+                    marginBottom: '2px',
+                    height: '45px'
+                  }}
+                  wordBreak={'break-all'}
+                  fontSize={'14px'}
+                  color={'myGray.600'}
+                >
+                  {app.intro || '这个应用还没写介绍~'}
+                </Box>
+                <Flex justifyContent="space-between" h={'15px'} bottom={1} alignItems={'center'}>
+                  <Text color={'myGray.600'} fontSize={'12px'}>
+                    {app.appType === AppSortType.PERSON ? '个人应用' : '企业应用'}
+                  </Text>
+                  {app.isOwner && userInfo?.team.canWrite && app.appType === AppSortType.PERSON && (
+                    <>
+                      <IconButton
+                        className="delete"
+                        size={'xsSquare'}
+                        variant={'whiteDanger'}
+                        icon={<MyIcon name={'delete'} w={'14px'} />}
+                        aria-label={'delete'}
+                        display={['', 'none']}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openConfirm(() => onclickDelApp(app._id))();
+                        }}
+                      />
+                    </>
+                  )}
+                </Flex>
+              </Box>
             </Box>
           </MyTooltip>
         ))}

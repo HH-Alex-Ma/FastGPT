@@ -60,7 +60,8 @@ const clearInvalidDataCron = () => {
 };
 
 const syncDingDingUserInfoCron = () => {
-  setCron('0 0 */1 * * *', () => {
+  const DING_CRON = process.env.DING_CRON ? process.env.DING_CRON : '0 0 */1 * * *';
+  setCron(DING_CRON, () => {
     syncDingDingUserInfo();
   });
 };
