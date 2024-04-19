@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { serviceSideProps } from '@/web/common/utils/i18n';
@@ -13,6 +13,7 @@ import { getOwnerApps, getCollectById } from '@/web/support/user/api';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { AppListItemType } from '@fastgpt/global/core/app/type.d';
+import CreateModal from './component/CreateModal';
 
 const Home = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
@@ -39,12 +40,20 @@ const Home = ({ children }: { children: JSX.Element }) => {
 
   const appList = myApps.filter((app: AppListItemType) => ownerApps.includes(app._id));
 
+  const {
+    isOpen: isOpenCreateModal,
+    onOpen: onOpenCreateModal,
+    onClose: onCloseCreateModal
+  } = useDisclosure();
+
   const routerJump = (id: string) => {
     setActiveAppId(id);
-    if (id === 'default' || !id) {
-      router.push('/home');
-    } else {
-      router.push(`/home/chat?appId=${id}`);
+    if (id != 'create') {
+      if (id === 'default' || !id) {
+        router.push('/home');
+      } else {
+        router.push(`/home/chat?appId=${id}`);
+      }
     }
   };
   useEffect(() => {
@@ -56,7 +65,12 @@ const Home = ({ children }: { children: JSX.Element }) => {
       {isPc === true && (
         <>
           <Box position={'fixed'} h={'100%'} top={0} left={0} w={'260px'}>
-            <AsidePage ownerApps={appList} data={activeAppId} onEdit={(id) => routerJump(id)} />
+            <AsidePage
+              ownerApps={appList}
+              data={activeAppId}
+              onCreate={onOpenCreateModal}
+              onEdit={(id) => routerJump(id)}
+            />
           </Box>
           <Box h={'100%'} left={'260px'} position={'fixed'}>
             <HeaderPage />
@@ -102,6 +116,9 @@ const Home = ({ children }: { children: JSX.Element }) => {
             )}
           </Box>
         </>
+      )}
+      {isOpenCreateModal && (
+        <CreateModal onClose={onCloseCreateModal} onSuccess={() => loadMyApps(true)} />
       )}
       <Loading loading={isGetting || isFetching || isGettingCollect} fixed={false} />
     </>

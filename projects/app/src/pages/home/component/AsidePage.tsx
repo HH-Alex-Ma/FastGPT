@@ -8,11 +8,13 @@ import { LOGO_ICON } from '@fastgpt/global/common/system/constants';
 const AsidePage = ({
   ownerApps,
   data,
-  onEdit
+  onEdit,
+  onCreate
 }: {
   ownerApps: any;
   data: any;
   onEdit: (id: string) => void;
+  onCreate: () => void;
 }) => {
   const { t } = useTranslation();
 
@@ -22,7 +24,7 @@ const AsidePage = ({
       h={'100%'}
       py={[0, '0px']}
       pr={[0, '0px']}
-      backgroundColor={'#efefef'}
+      backgroundColor={'#ffffff'}
       borderRight={'1px'}
       borderColor={'#e1e1e1'}
     >
@@ -34,34 +36,70 @@ const AsidePage = ({
           </Text>
         </Flex>
       </Box>
-      <Box h={'60px'} mx={1} borderTop={'1px'} borderColor={'#e1e1e1'} pt={'5px'}>
+      <Box mx={1} mt={'10px'} pt={'5px'}>
+        {/* borderTop={'1px'} borderColor={'#e1e1e1'} */}
         <Flex
           key={'default'}
           py={3}
           px={3}
-          mb={3}
+          // mb={3}
+          mx={2}
           cursor={'pointer'}
           borderRadius={'md'}
           alignItems={'center'}
+          justifyItems={'center'}
           {...('default' === data
             ? {
-                bg: 'white',
+                bg: '#E5EAFF',
                 boxShadow: 'md',
-                fontWeight: '700',
+                // fontWeight: '700',
                 color: '#447EF2'
               }
             : {
                 _hover: {
-                  bg: '#fff'
+                  bg: '#E5EAFF'
                 },
                 onClick: () => {
                   onEdit('default');
                 }
               })}
         >
-          <MyIcon name={'AppList'} boxSize={'28px'} />
-          <Box ml={2} className={'textEllipsis'} fontSize={'16px'}>
+          <MyIcon name={'AppList'} boxSize={'18px'} />
+          <Box ml={4} className={'textEllipsis'} fontSize={'16px'}>
             {'应用列表'}
+          </Box>
+        </Flex>
+      </Box>
+      <Box mx={1} mt={'5px'}>
+        <Flex
+          key={'default'}
+          py={3}
+          px={3}
+          // mb={3}
+          mx={2}
+          cursor={'pointer'}
+          borderRadius={'md'}
+          alignItems={'center'}
+          {...('create' === data
+            ? {
+                bg: '#E5EAFF',
+                boxShadow: 'md',
+                // fontWeight: '700',
+                color: '#447EF2'
+              }
+            : {
+                _hover: {
+                  bg: '#E5EAFF'
+                },
+                onClick: () => {
+                  onCreate();
+                  onEdit('create');
+                }
+              })}
+        >
+          <MyIcon name={'common/addCircleLight'} boxSize={'18px'} />
+          <Box ml={4} className={'textEllipsis'} fontSize={'16px'}>
+            {'创建应用'}
           </Box>
         </Flex>
       </Box>
@@ -72,11 +110,13 @@ const AsidePage = ({
         overflow={'overlay'}
         borderTop={'1px'}
         borderColor={'#e1e1e1'}
+        mt={'5px'}
         pt={'5px'}
       >
         {ownerApps.map((item: any) => (
           <Flex
             key={item._id}
+            mx={2}
             py={3}
             px={3}
             mb={3}
@@ -85,14 +125,14 @@ const AsidePage = ({
             alignItems={'center'}
             {...(item._id === data
               ? {
-                  bg: 'white',
+                  bg: '#E5EAFF',
                   boxShadow: 'md',
-                  fontWeight: '700',
+                  // fontWeight: '700',
                   color: '#447EF2'
                 }
               : {
                   _hover: {
-                    bg: '#fff'
+                    bg: '#E5EAFF'
                   },
                   onClick: () => {
                     onEdit(item._id);
@@ -100,7 +140,7 @@ const AsidePage = ({
                 })}
           >
             <MyAvatar src={item.avatar} w={'28px'} />
-            <Box ml={2} className={'textEllipsis'} fontSize={'14px'}>
+            <Box ml={2} className={'textEllipsis'} fontSize={'16px'}>
               {item.name}
             </Box>
           </Flex>
