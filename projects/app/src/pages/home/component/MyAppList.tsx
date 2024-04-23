@@ -66,7 +66,7 @@ const MyAppList = ({
     >
       <Flex pt={[4, '15px']} alignItems={'center'} justifyContent={'space-between'}>
         <Box letterSpacing={1} fontSize={['20px', '24px']} color={'myGray.900'}>
-          {t('app.My Apps') + 'New'}
+          {t('app.My Apps')}
         </Box>
         <Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}>
           {t('common.New Create')}
@@ -74,14 +74,7 @@ const MyAppList = ({
       </Flex>
       <Grid
         py={[4, 6]}
-        gridTemplateColumns={[
-          '1fr',
-          'repeat(2,1fr)',
-          'repeat(3,1fr)',
-          'repeat(4,1fr)',
-          'repeat(5,1fr)',
-          'repeat(6,1fr)'
-        ]}
+        gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
         gridGap={5}
       >
         {ownerApps.map((app: any) => (

@@ -26,6 +26,7 @@ const pcUnShowLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
   '/login/auth': true,
+  '/login/ding': true,
   '/login/provider': true,
   '/login/fastlogin': true,
   '/console': true,
@@ -42,6 +43,7 @@ const phoneUnShowLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
   '/login/auth': true,
+  '/login/ding': true,
   '/login/provider': true,
   '/login/fastlogin': true,
   '/console': true,
@@ -57,11 +59,8 @@ const ordinaryUserLayoutRoute: Record<string, boolean> = {
   '/': true,
   '/login': true,
   '/login/auth': true,
-  // '/login/provider': true,
-  // '/login/fastlogin': true,
+  '/login/ding': true,
   '/console': true,
-  // '/console/provider': true,
-  // '/console/fastlogin': true,
   '/home': true,
   '/home/chat': true,
   '/home/detail': true,
@@ -85,7 +84,6 @@ const Layout = ({ children }: { children: JSX.Element }) => {
     const token = getToken();
     if (token != '') {
       const res = await getTokenLogin();
-      // console.log('pathname', router.pathname);
       if (!ordinaryUserLayoutRoute[router.pathname] && res?.manager == 0) {
         setUserInfo(null);
         router.replace('/login');

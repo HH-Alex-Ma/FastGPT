@@ -173,43 +173,9 @@ const MyAppListPc = ({
       </Flex>
       <Grid
         py={[4, 6]}
-        gridTemplateColumns={[
-          '1fr',
-          'repeat(2,1fr)',
-          'repeat(3,1fr)',
-          'repeat(4,1fr)',
-          'repeat(5,1fr)',
-          'repeat(6,1fr)'
-        ]}
+        gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
         gridGap={5}
       >
-        {/* {activeAppType == 1 && (
-          <MyTooltip>
-            <Box
-              lineHeight={1.5}
-              h={'100%'}
-              py={5}
-              px={5}
-              cursor={'pointer'}
-              borderWidth={'1.5px'}
-              borderColor={'borderColor.low'}
-              bg={'white'}
-              borderRadius={'md'}
-              userSelect={'none'}
-              position={'relative'}
-              display={'flex'}
-              flexDirection={'column'}
-              onClick={onOpenCreateModal}
-            >
-              <Text fontSize="lg" minW={'100px'} textAlign={'center'}>
-                <AddIcon boxSize={5} />
-              </Text>
-              <Text fontSize="lg" minW={'100px'} textAlign={'center'} py={2}>
-                创建属于你的AI应用
-              </Text>
-            </Box>
-          </MyTooltip>
-        )} */}
         {myApps().map((app: any) => (
           <MyTooltip key={app._id}>
             <Box
