@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
+import { MongoRole } from '@fastgpt/service/support/user/role/schema';
 import { connectToDatabase } from '@/service/mongo';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 import { hashStr } from '@fastgpt/global/common/string/tools';
@@ -27,11 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     let userId = userInfo?._id || '';
 
     if (!userInfo) {
+      const roleInfo = await MongoRole.findOne({ default: 1 });
       const [{ _id }] = await MongoUser.create([
         {
           username: username,
           nickname: nickname,
-          roleId: roleId,
+          roleId: roleId && roleId != '' ? roleId : roleInfo ? roleInfo?._id : '',
           manager: manager,
           password: hashStr(psw)
         }

@@ -12,6 +12,7 @@ import { MongoDatasetCollection } from '@fastgpt/service/core/dataset/collection
 import { MongoDatasetData } from '@fastgpt/service/core/dataset/data/schema';
 import { MongoDatasetTraining } from '@fastgpt/service/core/dataset/training/schema';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
+import { MongoRole } from '@fastgpt/service/support/user/role/schema';
 import { connectToDatabase } from '@/service/mongo';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 import { hashStr } from '@fastgpt/global/common/string/tools';
@@ -290,11 +291,12 @@ const insertUserInfo = async (uid: string, nickname: string, unionId: string) =>
   let userId = userInfo?._id || '';
 
   if (!userInfo) {
+    const roleInfo = await MongoRole.findOne({ default: 1 });
     const [{ _id }] = await MongoUser.create([
       {
         username: uid,
         nickname: nickname,
-        roleId: '',
+        roleId: roleInfo ? roleInfo?._id : '',
         DindDing: unionId,
         password: hashStr(psw)
       }
@@ -339,7 +341,7 @@ export async function syncDingDingUserInfo() {
     const accessTokenData = await getAccessToken();
     const publicAccessToken = accessTokenData.accessToken;
     const data = await getDepartInfoList(publicAccessToken, 1);
-    console.log(data);
+    // console.log(data);
     for (let i in data) {
       await getUserInfoByUserId(publicAccessToken, data[i].name, data[i].userid);
     }

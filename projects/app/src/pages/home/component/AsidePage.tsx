@@ -84,7 +84,6 @@ const AsidePage = ({
             ? {
                 bg: '#E5EAFF',
                 boxShadow: 'md',
-                // fontWeight: '700',
                 color: '#447EF2'
               }
             : {
@@ -93,7 +92,7 @@ const AsidePage = ({
                 },
                 onClick: () => {
                   onCreate();
-                  onEdit('create');
+                  // onEdit('create');
                 }
               })}
         >
@@ -127,7 +126,6 @@ const AsidePage = ({
               ? {
                   bg: '#E5EAFF',
                   boxShadow: 'md',
-                  // fontWeight: '700',
                   color: '#447EF2'
                 }
               : {
