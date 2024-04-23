@@ -1,5 +1,6 @@
 import { PRICE_SCALE } from '@fastgpt/global/support/wallet/constants';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
+import { MongoRole } from '@fastgpt/service/support/user/role/schema';
 import { connectMongo } from '@fastgpt/service/common/mongo/init';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import { createDefaultTeam } from '@fastgpt/service/support/user/team/controller';
@@ -49,6 +50,13 @@ async function initRootUser(retry = 3): Promise<any> {
       // init root user
       // 账户不存在首次初始化
       if (!rootUser) {
+        await MongoRole.create([
+          {
+            name: '普通用户',
+            desc: '系统初始化默认角色',
+            default: 1
+          }
+        ]);
         const [{ _id }] = await MongoUser.create(
           [
             {
@@ -68,31 +76,7 @@ async function initRootUser(retry = 3): Promise<any> {
           password: psw
         });
       }
-      // if (rootUser) {
-      //   await rootUser.updateOne({
-      //     password: hashStr(psw)
-      //   });
-      // } else {
-      //   const [{ _id }] = await MongoUser.create(
-      //     [
-      //       {
-      //         username: 'root',
-      //         nickname: '系统管理员',
-      //         password: hashStr(psw)
-      //       }
-      //     ],
-      //     { session }
-      //   );
-      //   rootId = _id;
-      // }
-      // // init root team
-      // await createDefaultTeam({ userId: rootId, balance: 9999 * PRICE_SCALE, session });
     });
-
-    // console.log(`root user init:`, {
-    //   username: 'root',
-    //   password: psw
-    // });
   } catch (error) {
     if (retry > 0) {
       console.log('retry init root user');

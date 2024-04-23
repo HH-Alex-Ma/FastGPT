@@ -123,7 +123,7 @@ const UserList = () => {
           </Button>
         </Box>
       </Box>
-      <TableContainer mt={2} position={'relative'} minH={'300px'}>
+      <TableContainer mt={2} mb={'60px'} overflowY={'auto'} position={'relative'} minH={'300px'}>
         <Table>
           <Thead>
             <Tr>

@@ -45,6 +45,7 @@ export type RoleModelSchema = {
   name: string;
   desc: string;
   apps: Array;
+  default: number;
   createTime: number;
 };
 

@@ -14,7 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const info = await MongoRole.findOne({ _id: id });
     if (info) {
-      await MongoRole.findOneAndRemove({ _id: id });
+      if (info.default != 1) {
+        await MongoRole.findOneAndRemove({ _id: id });
+      } else {
+        throw new Error('系统默认角色禁止删除');
+      }
     } else {
       throw new Error('该角色不存在，请稍后再试');
     }

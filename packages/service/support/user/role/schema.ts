@@ -15,6 +15,10 @@ const RoleSchema = new Schema({
     type: Array,
     default: []
   },
+  default: {
+    type: Number,
+    default: 0
+  },
   createTime: {
     type: Date,
     default: () => new Date()

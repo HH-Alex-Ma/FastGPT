@@ -145,39 +145,41 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)']}
               gridGap={[2, 4]}
             >
-              {appTemplates.map((item) => (
-                <Card
-                  key={item.id}
-                  border={theme.borders.base}
-                  p={3}
-                  borderRadius={'md'}
-                  cursor={'pointer'}
-                  boxShadow={'sm'}
-                  {...(getValues('templateId') === item.id
-                    ? {
-                        bg: 'myWhite.600'
-                      }
-                    : {
-                        _hover: {
-                          boxShadow: 'md'
+              {appTemplates
+                .filter((item) => item.id != 'simpleDatasetChat' && item.id != 'CQ')
+                .map((item) => (
+                  <Card
+                    key={item.id}
+                    border={theme.borders.base}
+                    p={3}
+                    borderRadius={'md'}
+                    cursor={'pointer'}
+                    boxShadow={'sm'}
+                    {...(getValues('templateId') === item.id
+                      ? {
+                          bg: 'myWhite.600'
                         }
-                      })}
-                  onClick={() => {
-                    setValue('templateId', item.id);
-                    setRefresh((state) => !state);
-                  }}
-                >
-                  <Flex alignItems={'center'}>
-                    <Avatar src={item.avatar} borderRadius={'md'} w={'20px'} />
-                    <Box ml={3} fontWeight={'bold'}>
-                      {t(item.name)}
+                      : {
+                          _hover: {
+                            boxShadow: 'md'
+                          }
+                        })}
+                    onClick={() => {
+                      setValue('templateId', item.id);
+                      setRefresh((state) => !state);
+                    }}
+                  >
+                    <Flex alignItems={'center'}>
+                      <Avatar src={item.avatar} borderRadius={'md'} w={'20px'} />
+                      <Box ml={3} fontWeight={'bold'}>
+                        {t(item.name)}
+                      </Box>
+                    </Flex>
+                    <Box fontSize={'sm'} mt={4}>
+                      {t(item.intro)}
                     </Box>
-                  </Flex>
-                  <Box fontSize={'sm'} mt={4}>
-                    {t(item.intro)}
-                  </Box>
-                </Card>
-              ))}
+                  </Card>
+                ))}
             </Grid>
           </>
         )}
