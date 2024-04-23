@@ -3,16 +3,16 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- main
+- blzy
 
 resources:
 - repo: self
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '179a6e4d-d52e-4032-bf8a-ed2674efd604'
-  imageRepository: 'hhkcfindit'
-  containerRegistry: 'fastgptdemo.azurecr.io'
+  dockerRegistryServiceConnection: 'faf3d8f7-dd81-412e-97d5-6ff4ad3eb841'
+  imageRepository: 'genai-dev'
+  containerRegistry: 'blcontainerreg.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
 
