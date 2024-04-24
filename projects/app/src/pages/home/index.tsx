@@ -80,7 +80,6 @@ const Home = ({ children }: { children: JSX.Element }) => {
               top={'60px'}
               right={0}
               position={'fixed'}
-              overflow={'overlay'}
               paddingBottom={'60px'}
             >
               {router.pathname == '/home' ? (
