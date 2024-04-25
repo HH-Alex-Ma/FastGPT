@@ -66,7 +66,8 @@ type AuthResponseType = {
   outLinkUserId?: string;
 };
 
-export default withNextCors(async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default withNextCors(
+  async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.on('close', () => {
     res.end();
   });
@@ -74,7 +75,6 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     console.log('error: ', 'request error');
     res.end();
   });
-
   const {
     chatId,
     appId,
@@ -89,6 +89,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     messages = [],
     variables = {}
   } = req.body as Props;
+
   try {
     const originIp = requestIp.getClientIp(req);
 

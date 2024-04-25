@@ -65,7 +65,7 @@ const MessageInput = ({
   });
   const { mutate: uploadFile } = useRequest({
     mutationFn: async ({ file, fileIndex }: { file: UserInputFileItemType; fileIndex: number }) => {
-      console.log(file)
+      console.log("file", file)
       if (file.type === ChatFileTypeEnum.image && file.rawFile) {
         try {
           const url = await compressImgFileAndUpload({
@@ -153,13 +153,14 @@ const MessageInput = ({
                   rawFile: file,
                   type: ChatFileTypeEnum.file,
                   name: file.name,
-                  icon: 'file/pdf'
+                  icon: ''
                 });
               }
             })
         )
       );
       appendFile(loadFiles);
+      console.log("loadFiles", loadFiles)
 
       loadFiles.forEach((file, i) =>
         uploadFile({
