@@ -66,8 +66,7 @@ type AuthResponseType = {
   outLinkUserId?: string;
 };
 
-export default withNextCors(
-  async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default withNextCors(async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.on('close', () => {
     res.end();
   });

@@ -13,13 +13,13 @@ import {
 import { TeamErrEnum } from '@fastgpt/global/common/error/code/team';
 import { useSystemStore } from '../system/useSystemStore';
 
-type StreamFetchProps = {
+type ImageFetchProps = {
   url?: string;
   data: Record<string, any>;
   onMessage: StartChatFnProps['generatingMessage'];
   abortSignal: AbortController;
 };
-type StreamResponseType = {
+type ImageResponseType = {
   responseText: string;
   [DispatchNodeResponseKeyEnum.nodeResponse]: ChatHistoryItemResType[];
 };
@@ -30,24 +30,14 @@ export const ImageFetch = ({
   data,
   onMessage,
   abortSignal
-}: StreamFetchProps) =>
-  new Promise<StreamResponseType>(async (resolve, reject) => {
+}: ImageFetchProps) =>
+  new Promise<ImageResponseType>(async (resolve, reject) => {
     const timeoutId = setTimeout(() => {
       abortSignal.abort('Time out');
     }, 60000);
 
     // response data
     let responseText = '';
-    let responseQueue: (
-      | { event: SseResponseEventEnum.fastAnswer | SseResponseEventEnum.answer; text: string }
-      | {
-          event:
-            | SseResponseEventEnum.toolCall
-            | SseResponseEventEnum.toolParams
-            | SseResponseEventEnum.toolResponse;
-          [key: string]: any;
-        }
-    )[] = [];
     let errMsg: string | undefined;
     let responseData: ChatHistoryItemResType[] = [];
     let finished = false;
@@ -69,49 +59,11 @@ export const ImageFetch = ({
       });
     };
 
-    const isAnswerEvent = (event: `${SseResponseEventEnum}`) =>
-      event === SseResponseEventEnum.answer || event === SseResponseEventEnum.fastAnswer;
-    // animate response to make it looks smooth
-    function animateResponseText() {
-      // abort message
-      if (abortSignal.signal.aborted) {
-        responseQueue.forEach((item) => {
-          onMessage(item);
-          if (isAnswerEvent(item.event)) {
-            responseText += item.text;
-          }
-        });
-        return finish();
-      }
-
-      if (responseQueue.length > 0) {
-        const fetchCount = Math.max(1, Math.round(responseQueue.length / 30));
-        for (let i = 0; i < fetchCount; i++) {
-          const item = responseQueue[i];
-          onMessage(item);
-          if (isAnswerEvent(item.event)) {
-            responseText += item.text;
-          }
-        }
-
-        responseQueue = responseQueue.slice(fetchCount);
-      }
-
-      if (finished && responseQueue.length === 0) {
-        return finish();
-      }
-
-      requestAnimationFrame(animateResponseText);
-    }
-    // start animation
-    animateResponseText();
-
     try {
-      // auto complete variables
       const variables = data?.variables || {};
       variables.cTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
-
-      const requestData = {
+      // send request
+      await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,72 +72,31 @@ export const ImageFetch = ({
         signal: abortSignal.signal,
         body: JSON.stringify({
           ...data,
-          variables,
-          detail: true,
-          stream: false
+          variables
         })
-      };
-
-      // send request
-      await fetchEventSource(url, {
-        ...requestData,
-        async onopen(res) {
-          clearTimeout(timeoutId);
-          const contentType = res.headers.get('content-type');
-
-          // not stream
-          if (contentType?.startsWith('text/plain')) {
-            return failedFinish(await res.clone().text());
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            return res.json();
           }
-
-          // failed stream
-          if (
-            !res.ok ||
-            !res.headers.get('content-type')?.startsWith(EventStreamContentType) ||
-            res.status !== 200
-          ) {
-            try {
-              failedFinish(await res.clone().json());
-            } catch {
-              const errText = await res.clone().text();
-              if (!errText.startsWith('event: error')) {
-                failedFinish();
-              }
-            }
-          }
-        },
-        onmessage({ event, data }) {
-          // parse text to json
+        })
+        .then((body) => {
           const parseJson = (() => {
             try {
-              return JSON.parse(data);
+              return JSON.parse(body.data);
             } catch (error) {
               return {};
             }
           })();
-          console.log(parseJson, event);
-          if (event === SseResponseEventEnum.answer) {
-            const text = parseJson.choices?.[0]?.delta?.content || '';
-            for (const item of text) {
-              responseQueue.push({
-                event,
-                text: item
-              });
-            }
-          }
-        },
-        onclose() {
+          const text = parseJson.choices?.[0]?.delta?.content || '';
+          responseText = text;
+          responseData = [];
+          console.log(data);
+        })
+        .finally(() => {
           finished = true;
-        },
-        onerror(err) {
-          if (err instanceof FatalError) {
-            throw err;
-          }
-          clearTimeout(timeoutId);
-          failedFinish(getErrText(err));
-        },
-        openWhenHidden: true
-      });
+          finish();
+        });
     } catch (err: any) {
       clearTimeout(timeoutId);
 
@@ -195,7 +106,6 @@ export const ImageFetch = ({
         return;
       }
       console.log(err, 'fetch error');
-
       failedFinish(err);
     }
   });
