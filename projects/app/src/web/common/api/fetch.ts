@@ -167,7 +167,7 @@ export const streamFetch = ({
               return {};
             }
           })();
-          console.log(parseJson, event);
+          // console.log(parseJson, event);
           if (event === SseResponseEventEnum.answer) {
             const text = parseJson.choices?.[0]?.delta?.content || '';
             for (const item of text) {

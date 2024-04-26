@@ -39,6 +39,8 @@ const MdImage = ({ src }: { src?: string }) => {
         referrerPolicy="no-referrer"
         minW={'120px'}
         minH={'120px'}
+        maxW={'500px'}
+        maxH={'500px'}
         my={1}
         onLoad={() => {
           setIsLoading(false);

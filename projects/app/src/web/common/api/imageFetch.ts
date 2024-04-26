@@ -1,17 +1,9 @@
-import { SseResponseEventEnum } from '@fastgpt/global/core/module/runtime/constants';
 import { getErrText } from '@fastgpt/global/common/error/utils';
 import type { ChatHistoryItemResType } from '@fastgpt/global/core/chat/type.d';
 import type { StartChatFnProps } from '@/components/ChatBox/type.d';
 import { getToken } from '@/web/support/user/auth';
 import { DispatchNodeResponseKeyEnum } from '@fastgpt/global/core/module/runtime/constants';
 import dayjs from 'dayjs';
-import {
-  // refer to https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web
-  EventStreamContentType,
-  fetchEventSource
-} from '@fortaine/fetch-event-source';
-import { TeamErrEnum } from '@fastgpt/global/common/error/code/team';
-import { useSystemStore } from '../system/useSystemStore';
 
 type ImageFetchProps = {
   url?: string;
@@ -63,7 +55,7 @@ export const ImageFetch = ({
       const variables = data?.variables || {};
       variables.cTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
       // send request
-      await fetch(url, {
+      fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,17 +73,10 @@ export const ImageFetch = ({
           }
         })
         .then((body) => {
-          const parseJson = (() => {
-            try {
-              return JSON.parse(body.data);
-            } catch (error) {
-              return {};
-            }
-          })();
-          const text = parseJson.choices?.[0]?.delta?.content || '';
-          responseText = text;
-          responseData = [];
-          console.log(data);
+          responseText = body.data.result.choices?.[0]?.delta?.content || '';
+          responseData = body.data.responseData;
+          finished = true;
+          finish();
         })
         .finally(() => {
           finished = true;

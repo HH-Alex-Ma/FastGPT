@@ -81,8 +81,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     messages = [],
     variables = {}
   } = req.body as Props;
-  console.log('我通了');
-  let maxRunTimes = 200;
   try {
     const originIp = requestIp.getClientIp(req);
     await connectToDatabase();
@@ -169,42 +167,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const imageUrl = result.data[0].url;
     const imageContent = result.data[0].revised_prompt;
 
-    /* Inject data into module input */
-
     // save chat
+    let assistantResponses: any[] = [
+      {
+        type: 'text',
+        text: {
+          content: `![img](${imageUrl}) ${imageContent}`
+        }
+      }
+    ];
+
+    const time = Date.now();
+    let flowResponses: any[] = [
+      {
+        moduleName: 'AI 对话',
+        moduleType: 'chatNode',
+        totalPoints: 0,
+        model: model[0].value,
+        tokens: 2000,
+        query: text,
+        maxToken: 2000,
+        historyPreview: [
+          {
+            obj: 'Human',
+            value: text
+          },
+          {
+            obj: 'AI',
+            value: imageContent
+          }
+        ],
+        contextTotalLen: 0,
+        runningTime: (time - runningTime) / 1000
+      }
+    ];
     if (chatId) {
-      let assistantResponses: any[] = [
-        {
-          type: 'file',
-          file: {
-            type: 'image',
-            name: '',
-            // url: 'http://localhost:3000/api/system/img/662b01bf99ae9475d0f127c8'
-            url: imageUrl
-          }
-        },
-        {
-          type: 'text',
-          text: {
-            content: imageContent
-          }
-        }
-      ];
-      const time = Date.now();
-      let flowResponses: any[] = [
-        {
-          moduleName: 'AI 对话',
-          moduleType: 'chatNode',
-          totalPoints: 0,
-          model: model[0].value,
-          tokens: 2000,
-          query: text,
-          maxToken: 2000,
-          historyPreview: [],
-          contextTotalLen: 0,
-          runningTime: ((time - runningTime) / 1000).toFixed(2)
-        }
-      ];
       const isOwnerUse = !shareId && !spaceTeamId && String(tmbId) === String(app.tmbId);
       await saveChat({
         chatId,
@@ -244,16 +241,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return jsonRes(res, {
       data: {
-        id: chatId || '',
-        model: '',
-        usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 1 },
-        choices: [
-          {
-            delta: { role: 'assistant', content: '你好啊' },
-            finish_reason: 'stop',
-            index: 0
-          }
-        ]
+        result: {
+          id: chatId || '',
+          model: '',
+          usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 1 },
+          choices: [
+            {
+              delta: { role: 'assistant', content: `![${imageContent}](${imageUrl})` },
+              finish_reason: 'stop',
+              index: 0
+            }
+          ]
+        },
+        responseData: flowResponses
       }
     });
   } catch (err) {
