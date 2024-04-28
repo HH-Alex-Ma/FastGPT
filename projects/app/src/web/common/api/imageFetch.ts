@@ -5,7 +5,6 @@ import type { StartChatFnProps } from '@/components/ChatBox/type.d';
 import { getToken } from '@/web/support/user/auth';
 import { DispatchNodeResponseKeyEnum } from '@fastgpt/global/core/module/runtime/constants';
 import dayjs from 'dayjs';
-import { error } from 'console';
 
 type ImageFetchProps = {
   url?: string;

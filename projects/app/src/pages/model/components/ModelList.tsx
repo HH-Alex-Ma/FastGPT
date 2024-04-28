@@ -31,6 +31,8 @@ import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { streamFetch } from '@/web/common/api/fetch';
 import { checkChatSupportSelectFileByModules } from '@/web/core/chat/utils';
 import { ModelType } from '@fastgpt/global/support/permission/constant';
+import { getInitChatInfo } from '@/web/core/chat/api';
+import { ImageFetch } from '@/web/common/api/imageFetch';
 
 const ModelList = () => {
   const { toast } = useToast();
@@ -51,9 +53,18 @@ const ModelList = () => {
   const [modules, setModules] = useState<ModuleItemType[]>([]);
 
   const startChat = useCallback(
-    async ({ chatList, controller, generatingMessage, variables }: StartChatFnProps) => {
+    async ({ chatList, controller, generatingMessage, variables, messages }: StartChatFnProps) => {
       let historyMaxLen = 0;
-
+      const prompts = messages.slice(-2);
+      const res = await getInitChatInfo({});
+      let data: any = {
+        data: {
+          messages: prompts,
+          variables,
+        },
+        onMessage: generatingMessage,
+        abortSignal: controller
+      };
       modules.forEach((module) => {
         module.inputs.forEach((input) => {
           if (
@@ -68,19 +79,21 @@ const ModelList = () => {
       const history = chatList.slice(-historyMaxLen - 2, -2);
 
       // 流请求，获取数据
-      const { responseText, responseData } = await streamFetch({
-        url: '/api/core/chat/chatTest',
-        data: {
-          history,
-          prompt: chatList[chatList.length - 2].value,
-          modules,
-          variables,
-          appId: appCard?._id,
-          appName: `调试-${appDetail.name}`
-        },
-        onMessage: generatingMessage,
-        abortSignal: controller
-      });
+      const { responseText, responseData } =
+        res.app.chatModels?.length == 1 && res.app.chatModels.includes('dall-e-3')
+          ? await ImageFetch(data)
+          : await streamFetch({
+            url: '/api/core/chat/chatTest',
+            data: {
+              history,
+              prompt: chatList[chatList.length - 2].value,
+              modules,
+              variables,
+              appName: `调试-${appDetail.name}`
+            },
+            onMessage: generatingMessage,
+            abortSignal: controller
+          });
 
       return { responseText, responseData };
     },

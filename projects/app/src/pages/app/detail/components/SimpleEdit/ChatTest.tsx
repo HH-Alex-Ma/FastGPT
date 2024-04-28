@@ -14,6 +14,8 @@ import { getGuideModule } from '@fastgpt/global/core/module/utils';
 import { checkChatSupportSelectFileByModules } from '@/web/core/chat/utils';
 import { AppTypeEnum } from '@fastgpt/global/core/app/constants';
 import { ImageFetch } from '@/web/common/api/imageFetch';
+import { nanoid } from 'nanoid';
+import { getInitChatInfo } from '@/web/core/chat/api';
 
 const ChatTest = ({ appId }: { appId: string }) => {
   const { t } = useTranslation();
@@ -23,8 +25,20 @@ const ChatTest = ({ appId }: { appId: string }) => {
   const [modules, setModules] = useState<ModuleItemType[]>([]);
 
   const startChat = useCallback(
-    async ({ chatList, controller, generatingMessage, variables }: StartChatFnProps) => {
+    async ({ chatList, controller, generatingMessage, variables, messages }: StartChatFnProps) => {
       let historyMaxLen = 0;
+      const prompts = messages.slice(-2);
+      const completionChatId = nanoid();
+      const res = await getInitChatInfo({ appId });
+      let data: any = {
+        data: {
+          messages: prompts,
+          variables,
+          appId
+        },
+        onMessage: generatingMessage,
+        abortSignal: controller
+      };
 
       modules.forEach((module) => {
         module.inputs.forEach((input) => {
@@ -39,74 +53,22 @@ const ChatTest = ({ appId }: { appId: string }) => {
       });
       const history = chatList.slice(-historyMaxLen - 2, -2);
 
-      let model;
-      for (const module of modules) {
-        for (const input of module.inputs) {
-          if (input.key === 'model') {
-            model = input.value;
-            break;
-          }
-        }
-        if (model) {
-          break;
-        }
-      }
-      console.log("model", model);
-      let responseText, responseData;
-      // 流请求，获取数据
-      if (model === 'dall-e-3') {
-        ({ responseText, responseData } = await ImageFetch({
-          data: {
-            history,
-            prompt: chatList[chatList.length - 2].value,
-            modules,
-            variables,
-            appId,
-            appName: `调试-${appDetail.name}`,
-          },
-          onMessage: generatingMessage,
-          abortSignal: controller
-        }));
-        console.log("history", history);
-        console.log("prompt", prompt);
-        console.log("prompt", modules);
-        console.log("variables", variables);
-        console.log("appId", appId);
-        console.log("appDetail.name", appDetail.name);
-        console.log('responseText:', responseText);
-        console.log('responseData:', responseData);
-        console.log('responseData:', generatingMessage);
-      } else {
-        ({ responseText, responseData } = await streamFetch({
-          url: '/api/core/chat/chatTest',
-          data: {
-            history,
-            prompt: chatList[chatList.length - 2].value,
-            modules,
-            variables,
-            appId,
-            appName: `调试-${appDetail.name}`
-          },
-          onMessage: generatingMessage,
-          abortSignal: controller
-        }));
-        console.log('responseText:', responseText);
-        console.log('responseData:', responseData);
-      }
-
-      // const { responseText, responseData } = await streamFetch({
-      //   url: '/api/core/chat/chatTest',
-      //   data: {
-      //     history,
-      //     prompt: chatList[chatList.length - 2].value,
-      //     modules,
-      //     variables,
-      //     appId,
-      //     appName: `调试-${appDetail.name}`
-      //   },
-      //   onMessage: generatingMessage,
-      //   abortSignal: controller
-      // });
+      const { responseText, responseData } =
+        res.app.chatModels?.length == 1 && res.app.chatModels.includes('dall-e-3')
+          ? await ImageFetch(data)
+          : await streamFetch({
+            url: '/api/core/chat/chatTest',
+            data: {
+              history,
+              prompt: chatList[chatList.length - 2].value,
+              modules,
+              variables,
+              appId,
+              appName: `调试-${appDetail.name}`
+            },
+            onMessage: generatingMessage,
+            abortSignal: controller
+          });
 
       return { responseText, responseData };
     },
