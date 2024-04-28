@@ -36,6 +36,7 @@ import { setEntryEntries } from '@fastgpt/service/core/workflow/dispatch/utils';
 import { UserChatItemType } from '@fastgpt/global/core/chat/type';
 import { DispatchNodeResponseKeyEnum } from '@fastgpt/global/core/module/runtime/constants';
 import { getAIApi } from '@fastgpt/service/core/ai/config';
+import { error } from 'console';
 
 type FastGptWebChatProps = {
   chatId?: string; // undefined: nonuse history, '': new chat, 'xxxxx': use history
@@ -150,10 +151,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let chatModule = setEntryEntries(app.modules).filter(
       (item: any) => item.moduleId == 'chatModule'
     );
-    console.log('chatModule', chatModule);
     const model = chatModule[0].inputs.filter((item: any) => item.key === 'model');
-    console.log('model', model);
-
     let runningTime = Date.now();
 
     const ai = getAIApi();
@@ -162,8 +160,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       model: model[0].value,
       size: '1024x1024'
     });
-    console.log('result', result.data[0].revised_prompt);
-    console.log('result', result.data[0].url);
     const imageUrl = result.data[0].url;
     const imageContent = result.data[0].revised_prompt;
 
@@ -184,7 +180,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         moduleType: 'chatNode',
         totalPoints: 0,
         model: model[0].value,
-        tokens: 2000,
+        tokens: 0,
         query: text,
         maxToken: 2000,
         historyPreview: [
@@ -197,7 +193,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             value: imageContent
           }
         ],
-        contextTotalLen: 0,
+        contextTotalLen: 2,
         runningTime: (time - runningTime) / 1000
       }
     ];
@@ -247,7 +243,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 1 },
           choices: [
             {
-              delta: { role: 'assistant', content: `![${imageContent}](${imageUrl})` },
+              delta: { role: 'assistant', content: `![img](${imageUrl}) ${imageContent}` },
               finish_reason: 'stop',
               index: 0
             }

@@ -91,8 +91,6 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
           ? await ImageFetch(data)
           : await streamFetch(data);
       const newTitle = getChatTitleFromChatMessage(GPTMessages2Chats(prompts)[0]);
-      console.log('responseText', responseText);
-      console.log('responseData', responseData);
       // new chat
       if (completionChatId !== chatId) {
         const newHistory: ChatHistoryItemType = {
@@ -128,7 +126,6 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
         title: newTitle,
         history: ChatBoxRef.current?.getChatHistories() || state.history
       }));
-
       return { responseText, responseData, isNewChat: forbidRefresh.current };
     },
     [appId, chatId, histories, pushHistory, router, setChatData, updateHistory]

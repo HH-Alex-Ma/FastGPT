@@ -1,9 +1,11 @@
+import { SseResponseEventEnum } from '@fastgpt/global/core/module/runtime/constants';
 import { getErrText } from '@fastgpt/global/common/error/utils';
 import type { ChatHistoryItemResType } from '@fastgpt/global/core/chat/type.d';
 import type { StartChatFnProps } from '@/components/ChatBox/type.d';
 import { getToken } from '@/web/support/user/auth';
 import { DispatchNodeResponseKeyEnum } from '@fastgpt/global/core/module/runtime/constants';
 import dayjs from 'dayjs';
+import { error } from 'console';
 
 type ImageFetchProps = {
   url?: string;
@@ -30,6 +32,16 @@ export const ImageFetch = ({
 
     // response data
     let responseText = '';
+    let responseQueue: (
+      | { event: SseResponseEventEnum.fastAnswer | SseResponseEventEnum.answer; text: string }
+      | {
+          event:
+            | SseResponseEventEnum.toolCall
+            | SseResponseEventEnum.toolParams
+            | SseResponseEventEnum.toolResponse;
+          [key: string]: any;
+        }
+    )[] = [];
     let errMsg: string | undefined;
     let responseData: ChatHistoryItemResType[] = [];
     let finished = false;
@@ -50,6 +62,38 @@ export const ImageFetch = ({
         responseText
       });
     };
+    const isAnswerEvent = (event: `${SseResponseEventEnum}`) =>
+      event === SseResponseEventEnum.answer || event === SseResponseEventEnum.fastAnswer;
+
+    function animateResponseText() {
+      if (abortSignal.signal.aborted) {
+        responseQueue.forEach((item) => {
+          onMessage(item);
+          if (isAnswerEvent(item.event)) {
+            responseText = item.text;
+          }
+        });
+        return finish();
+      }
+      if (responseQueue.length > 0) {
+        const fetchCount = Math.max(1, Math.round(responseQueue.length / 30));
+        for (let i = 0; i < fetchCount; i++) {
+          const item = responseQueue[i];
+          onMessage(item);
+          if (isAnswerEvent(item.event)) {
+            responseText += item.text;
+          }
+        }
+
+        responseQueue = responseQueue.slice(fetchCount);
+      }
+      if (finished && responseQueue.length === 0) {
+        return finish();
+      }
+      requestAnimationFrame(animateResponseText);
+    }
+    // start animation
+    animateResponseText();
 
     try {
       const variables = data?.variables || {};
@@ -70,17 +114,29 @@ export const ImageFetch = ({
         .then((res) => {
           if (res.status === 200) {
             return res.json();
+          } else {
+            failedFinish('请求错误，请稍后再试...');
           }
         })
         .then((body) => {
-          responseText = body.data.result.choices?.[0]?.delta?.content || '';
-          responseData = body.data.responseData;
+          if (body) {
+            const eventHeader = SseResponseEventEnum.flowNodeStatus;
+            const infoHeader = {
+              status: 'running',
+              name: 'AI 对话'
+            };
+            onMessage({ eventHeader, ...infoHeader });
+
+            const text = body.data.result.choices?.[0]?.delta?.content || '';
+            const event = SseResponseEventEnum.answer;
+            responseQueue.push({
+              event,
+              text: text
+            });
+            responseData = body.data.responseData;
+          }
           finished = true;
-          finish();
-        })
-        .finally(() => {
-          finished = true;
-          finish();
+          return;
         });
     } catch (err: any) {
       clearTimeout(timeoutId);
