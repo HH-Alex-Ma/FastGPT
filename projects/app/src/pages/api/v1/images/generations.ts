@@ -36,7 +36,7 @@ import { setEntryEntries } from '@fastgpt/service/core/workflow/dispatch/utils';
 import { UserChatItemType } from '@fastgpt/global/core/chat/type';
 import { DispatchNodeResponseKeyEnum } from '@fastgpt/global/core/module/runtime/constants';
 import { getAIApi } from '@fastgpt/service/core/ai/config';
-import { error } from 'console';
+import { uploadMongoImg } from '@fastgpt/service/common/file/image/controller';
 
 type FastGptWebChatProps = {
   chatId?: string; // undefined: nonuse history, '': new chat, 'xxxxx': use history
@@ -163,12 +163,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const imageUrl = result.data[0].url;
     const imageContent = result.data[0].revised_prompt;
 
+    const imageResult = await uploadImagesByUrl(imageUrl as string, teamId);
+    const imageContentUrl =
+      getCurrentServerLocation() == '' ? imageUrl : `${getCurrentServerLocation()}${imageResult}`;
     // save chat
     let assistantResponses: any[] = [
       {
         type: 'text',
         text: {
-          content: `![img](${imageUrl}) ${imageContent}`
+          content: `![img](${imageContentUrl}) ${imageContent}`
         }
       }
     ];
@@ -235,6 +238,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    addLog.info(`generations running time: ${(Date.now() - runningTime) / 1000}s`);
+
     return jsonRes(res, {
       data: {
         result: {
@@ -243,7 +248,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 1 },
           choices: [
             {
-              delta: { role: 'assistant', content: `![img](${imageUrl}) ${imageContent}` },
+              delta: { role: 'assistant', content: `![img](${imageContentUrl}) ${imageContent}` },
               finish_reason: 'stop',
               index: 0
             }
@@ -417,4 +422,36 @@ const authHeaderRequest = async ({
     authType,
     canWrite
   };
+};
+
+const uploadImagesByUrl = async (imgUrl: string, teamId: string) => {
+  try {
+    const response = await fetch(imgUrl);
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    var base64String = arrayBufferToBase64(arrayBuffer);
+    return uploadMongoImg({
+      teamId,
+      type: 'chatImage',
+      base64Img: 'data:image/jpeg;base64,' + base64String
+    });
+  } catch (error) {
+    throw new Error('源数据错误，存储失败');
+  }
+};
+
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  var binary = '';
+  var bytes = new Uint8Array(buffer);
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  // 对二进制字符串进行base64编码
+  return btoa(binary);
+}
+
+const getCurrentServerLocation = () => {
+  const url = process.env.REDIRECT_URI ? process.env.REDIRECT_URI : '';
+  return url != '' ? url.split('/login/auth')[0] : '';
 };

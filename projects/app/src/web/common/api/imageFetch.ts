@@ -120,13 +120,11 @@ export const ImageFetch = ({
         })
         .then((body) => {
           if (body) {
-            const eventHeader = SseResponseEventEnum.flowNodeStatus;
-            const infoHeader = {
+            onMessage({
+              event: SseResponseEventEnum.flowNodeStatus,
               status: 'running',
               name: 'AI 对话'
-            };
-            onMessage({ eventHeader, ...infoHeader });
-
+            });
             const text = body.data.result.choices?.[0]?.delta?.content || '';
             const event = SseResponseEventEnum.answer;
             responseQueue.push({
