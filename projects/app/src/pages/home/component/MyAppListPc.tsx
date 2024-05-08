@@ -221,7 +221,7 @@ const MyAppListPc = ({
                   <Flex alignItems={'center'}>
                     <Box
                       className="textEllipsis"
-                      width={'130px'}
+                      width={'200px'}
                       h={'24px'}
                       lineHeight={'24px'}
                       fontSize={'16px'}
