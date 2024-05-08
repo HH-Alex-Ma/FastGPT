@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // check limit
-    await checkTeamDatasetLimit(teamId);
+    // await checkTeamDatasetLimit(teamId);
 
     const { _id } = await MongoDataset.create({
       name,

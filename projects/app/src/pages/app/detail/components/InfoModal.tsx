@@ -191,19 +191,19 @@ const InfoModal = ({
                     title: '我的应用',
                     desc: '',
                     value: ModelType.MINE
-                  },
-                  {
-                    icon: 'core/explore/exploreLight',
-                    title: '探索',
-                    desc: '',
-                    value: ModelType.EXPLORE
-                  },
-                  {
-                    icon: 'model',
-                    title: '模型库',
-                    desc: '',
-                    value: ModelType.MODEL_BASE
                   }
+                  // {
+                  //   icon: 'core/explore/exploreLight',
+                  //   title: '探索',
+                  //   desc: '',
+                  //   value: ModelType.EXPLORE
+                  // },
+                  // {
+                  //   icon: 'model',
+                  //   title: '模型库',
+                  //   desc: '',
+                  //   value: ModelType.MODEL_BASE
+                  // }
                 ]}
                 value={getValues('isShow')}
                 onChange={(e) => {

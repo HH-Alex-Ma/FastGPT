@@ -68,10 +68,10 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
     const listen =
       process.env.NODE_ENV === 'production'
         ? (e: any) => {
-          e.preventDefault();
-          e.returnValue = '内容已修改，确认离开页面吗？';
-        }
-        : () => { };
+            e.preventDefault();
+            e.returnValue = '内容已修改，确认离开页面吗？';
+          }
+        : () => {};
     window.addEventListener('beforeunload', listen);
 
     return () => {
@@ -172,7 +172,9 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
             />
           </Box>
           <Box flex={'1 0 0'} h={[0, '100%']} overflow={['overlay', '']}>
-            {currentTab === TabEnum.simpleEdit && <SimpleEdit appId={appId} />}
+            {currentTab === TabEnum.simpleEdit && (
+              <SimpleEdit appId={appId} showGlobalVariables={false} />
+            )}
             {currentTab === TabEnum.adEdit && appDetail && (
               <FlowEdit app={appDetail} onClose={() => setCurrentTab(TabEnum.simpleEdit)} />
             )}

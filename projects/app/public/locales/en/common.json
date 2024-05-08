@@ -391,7 +391,7 @@
       },
       "tip": {
         "Add a intro to app": "Add a intro to app",
-        "chatNodeSystemPromptTip": "Indicates the fixed guide word of the model. If this content is adjusted, the model chat direction can be guided. The content is fixed at the beginning of the context. You can use variables such as {{language}}",
+        "chatNodeSystemPromptTip": "Fixed prompts for the model, by adjusting this content, can guide the direction of the model's conversation. This content will be fixed at the beginning of the context.",
         "userGuideTip": "You can set the guide language before the session, set global variables, set next guidelines ",
         "variableTip": "You can ask the user to fill in something as a specific variable for this round of conversation before the conversation starts. This module is located after the opening boot.\nvariables can be injected into other modules with string input in the form of {{variable key}}, such as: prompts, qualifiers, etc.",
         "welcomeTextTip": "Before each conversation begins, send an initial content. Support standard Markdown syntax, additional tags can be used :\n[shortcut button]: The user can send the question directly after clicking "

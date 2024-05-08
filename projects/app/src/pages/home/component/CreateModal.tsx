@@ -146,7 +146,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               gridGap={[2, 4]}
             >
               {appTemplates
-                .filter((item) => item.id != 'simpleDatasetChat' && item.id != 'CQ')
+                .filter((item) => item.id == 'simpleChat')
                 .map((item) => (
                   <Card
                     key={item.id}

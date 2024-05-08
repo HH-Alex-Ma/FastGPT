@@ -130,7 +130,8 @@ const AIChatSettingsModal = ({
             {selectedModel?.maxContext || 4096}Tokens
           </Box>
         </Flex>
-        <Flex mt={8}>
+        {/* 隐藏函数调用 */}
+        {/* <Flex mt={8}>
           <Box {...LabelStyles} mr={2}>
             {t('core.ai.Support tool')}
             <QuestionTip ml={1} label={t('core.module.template.AI support tool tip')} />
@@ -138,7 +139,7 @@ const AIChatSettingsModal = ({
           <Box flex={1} ml={'10px'}>
             {selectedModel?.usedInToolCall ? '支持' : '不支持'}
           </Box>
-        </Flex>
+        </Flex> */}
         <Flex mt={8}>
           <Box {...LabelStyles} mr={2}>
             {t('core.app.Temperature')}

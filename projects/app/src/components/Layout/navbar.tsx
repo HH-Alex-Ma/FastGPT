@@ -26,13 +26,13 @@ const Navbar = ({ unread }: { unread: number }) => {
   const { lastChatAppId, lastChatId } = useChatStore();
   const navbarList = useMemo(
     () => [
-      {
-        label: t('navbar.Explore'),
-        icon: 'core/explore/exploreLight',
-        activeIcon: 'core/explore/exploreFill',
-        link: '/explore',
-        activeLink: ['/explore', '/explore/detail']
-      },
+      // {
+      //   label: t('navbar.Explore'),
+      //   icon: 'core/explore/exploreLight',
+      //   activeIcon: 'core/explore/exploreFill',
+      //   link: '/explore',
+      //   activeLink: ['/explore', '/explore/detail']
+      // },
       // {
       //   label: t('navbar.Chat'),
       //   icon: 'core/chat/chatLight',
@@ -81,7 +81,7 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeIcon: 'core/service/serviceFill',
         link: '/service',
         activeLink: ['/service']
-      },
+      }
       // {
       //   label: t('navbar.Account'),
       //   icon: 'support/user/userLight',
@@ -140,22 +140,22 @@ const Navbar = ({ unread }: { unread: number }) => {
             {...itemStyles}
             {...(item.activeLink.includes(router.pathname)
               ? {
-                color: 'primary.600',
-                bg: 'white',
-                boxShadow:
-                  '0px 0px 1px 0px rgba(19, 51, 107, 0.08), 0px 4px 4px 0px rgba(19, 51, 107, 0.05)'
-              }
-              : {
-                color: 'myGray.500',
-                bg: 'transparent',
-                _hover: {
-                  bg: 'rgba(255,255,255,0.9)'
+                  color: 'primary.600',
+                  bg: 'white',
+                  boxShadow:
+                    '0px 0px 1px 0px rgba(19, 51, 107, 0.08), 0px 4px 4px 0px rgba(19, 51, 107, 0.05)'
                 }
-              })}
+              : {
+                  color: 'myGray.500',
+                  bg: 'transparent',
+                  _hover: {
+                    bg: 'rgba(255,255,255,0.9)'
+                  }
+                })}
             {...(item.link !== router.asPath
               ? {
-                onClick: () => router.push(item.link)
-              }
+                  onClick: () => router.push(item.link)
+                }
               : {})}
           >
             <MyIcon

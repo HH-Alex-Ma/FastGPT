@@ -25,11 +25,11 @@ enum TabEnum {
 const Model = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
   const { t } = useTranslation();
   const tabList = [
-    {
-      icon: 'modelBase',
-      label: t('modelCenter.modelBase'),
-      id: TabEnum.models
-    },
+    // {
+    //   icon: 'modelBase',
+    //   label: t('modelCenter.modelBase'),
+    //   id: TabEnum.models
+    // },
     {
       icon: 'channel',
       label: t('modelCenter.channel.channelManager'),

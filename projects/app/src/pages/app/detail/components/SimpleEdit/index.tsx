@@ -7,7 +7,12 @@ import ChatTest from './ChatTest';
 import AppCard from './AppCard';
 import EditForm from './EditForm';
 
-const SimpleEdit = ({ appId }: { appId: string }) => {
+interface SimpleEditProps {
+  appId: string;
+  showGlobalVariables: boolean;
+}
+
+const SimpleEdit: React.FC<SimpleEditProps> = ({ appId, showGlobalVariables }) => {
   const { isPc } = useSystemStore();
   const { parentRef, divRef, isSticky } = useSticky();
 
@@ -25,7 +30,7 @@ const SimpleEdit = ({ appId }: { appId: string }) => {
         <AppCard appId={appId} />
 
         <Box mt={2}>
-          <EditForm divRef={divRef} isSticky={isSticky} />
+          <EditForm divRef={divRef} isSticky={isSticky} showGlobalVariables={showGlobalVariables} />
         </Box>
       </Box>
       {isPc && <ChatTest appId={appId} />}

@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const { teamId, tmbId } = await authUserNotVisitor({ req, authToken: true });
 
     // 上限校验
-    await checkTeamAppLimit(teamId);
+    // await checkTeamAppLimit(teamId);
 
     // 创建模型
     const response = await MongoApp.create({

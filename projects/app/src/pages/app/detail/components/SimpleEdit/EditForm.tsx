@@ -52,10 +52,12 @@ const LabelStyles: BoxProps = {
 
 const EditForm = ({
   divRef,
-  isSticky
+  isSticky,
+  showGlobalVariables
 }: {
   divRef: React.RefObject<HTMLDivElement>;
   isSticky: boolean;
+  showGlobalVariables?: boolean;
 }) => {
   const theme = useTheme();
   const router = useRouter();
@@ -242,7 +244,7 @@ const EditForm = ({
           </Box>
 
           {/* dataset */}
-          {userInfo?.manager == 1 && (
+          {userInfo?.manager == 1 && showGlobalVariables && (
             <>
               <Box {...BoxStyles}>
                 <Flex alignItems={'center'}>
@@ -318,78 +320,82 @@ const EditForm = ({
                 </Grid>
               </Box>
               {/* tool choice */}
-              <Box {...BoxStyles}>
-                <Flex alignItems={'center'}>
-                  <Flex alignItems={'center'} flex={1}>
-                    <MyIcon name={'core/app/toolCall'} w={'20px'} />
-                    <Box ml={2}>{t('core.app.Tool call')}(实验功能)</Box>
-                    <MyTooltip label={t('core.app.Tool call tip')}>
-                      <QuestionOutlineIcon ml={1} />
-                    </MyTooltip>
-                  </Flex>
-                  <Button
-                    variant={'transparentBase'}
-                    leftIcon={<SmallAddIcon />}
-                    iconSpacing={1}
-                    mr={'-5px'}
-                    size={'sm'}
-                    fontSize={'md'}
-                    onClick={onOpenToolsSelect}
-                  >
-                    {t('common.Choose')}
-                  </Button>
-                </Flex>
-                <Grid
-                  mt={selectedTools.length > 0 ? 2 : 0}
-                  gridTemplateColumns={'repeat(2, minmax(0, 1fr))'}
-                  gridGap={[2, 4]}
-                >
-                  {selectedTools.map((item) => (
-                    <Flex
-                      key={item.id}
-                      overflow={'hidden'}
-                      alignItems={'center'}
-                      p={2}
-                      bg={'white'}
-                      boxShadow={
-                        '0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06)'
-                      }
-                      borderRadius={'md'}
-                      border={theme.borders.base}
-                      _hover={{
-                        ...hoverDeleteStyles,
-                        borderColor: 'primary.300'
-                      }}
-                    >
-                      <Avatar src={item.avatar} w={'18px'} mr={1} />
-                      <Box flex={'1 0 0'} w={0} className={'textEllipsis'} fontSize={'sm'}>
-                        {item.name}
-                      </Box>
-                      <DeleteIcon
-                        onClick={() => {
-                          setValue(
-                            'selectedTools',
-                            selectedTools.filter((tool) => tool.id !== item.id)
-                          );
-                        }}
-                      />
+              {showGlobalVariables && (
+                <Box {...BoxStyles}>
+                  <Flex alignItems={'center'}>
+                    <Flex alignItems={'center'} flex={1}>
+                      <MyIcon name={'core/app/toolCall'} w={'20px'} />
+                      <Box ml={2}>{t('core.app.Tool call')}(实验功能)</Box>
+                      <MyTooltip label={t('core.app.Tool call tip')}>
+                        <QuestionOutlineIcon ml={1} />
+                      </MyTooltip>
                     </Flex>
-                  ))}
-                </Grid>
-              </Box>
+                    <Button
+                      variant={'transparentBase'}
+                      leftIcon={<SmallAddIcon />}
+                      iconSpacing={1}
+                      mr={'-5px'}
+                      size={'sm'}
+                      fontSize={'md'}
+                      onClick={onOpenToolsSelect}
+                    >
+                      {t('common.Choose')}
+                    </Button>
+                  </Flex>
+                  <Grid
+                    mt={selectedTools.length > 0 ? 2 : 0}
+                    gridTemplateColumns={'repeat(2, minmax(0, 1fr))'}
+                    gridGap={[2, 4]}
+                  >
+                    {selectedTools.map((item) => (
+                      <Flex
+                        key={item.id}
+                        overflow={'hidden'}
+                        alignItems={'center'}
+                        p={2}
+                        bg={'white'}
+                        boxShadow={
+                          '0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06)'
+                        }
+                        borderRadius={'md'}
+                        border={theme.borders.base}
+                        _hover={{
+                          ...hoverDeleteStyles,
+                          borderColor: 'primary.300'
+                        }}
+                      >
+                        <Avatar src={item.avatar} w={'18px'} mr={1} />
+                        <Box flex={'1 0 0'} w={0} className={'textEllipsis'} fontSize={'sm'}>
+                          {item.name}
+                        </Box>
+                        <DeleteIcon
+                          onClick={() => {
+                            setValue(
+                              'selectedTools',
+                              selectedTools.filter((tool) => tool.id !== item.id)
+                            );
+                          }}
+                        />
+                      </Flex>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
             </>
           )}
 
           {/* variable */}
-          <Box {...BoxStyles}>
-            <VariableEdit
-              variables={variables}
-              onChange={(e) => {
-                setValue('userGuide.variables', e);
-                setRefresh(!refresh);
-              }}
-            />
-          </Box>
+          {showGlobalVariables && (
+            <Box {...BoxStyles}>
+              <VariableEdit
+                variables={variables}
+                onChange={(e) => {
+                  setValue('userGuide.variables', e);
+                  setRefresh(!refresh);
+                }}
+              />
+            </Box>
+          )}
 
           {/* welcome */}
           <Box {...BoxStyles}>

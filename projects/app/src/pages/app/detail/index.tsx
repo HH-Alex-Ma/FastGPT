@@ -190,7 +190,9 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
             />
           </Box>
           <Box flex={'1 0 0'} h={[0, '100%']} overflow={['overlay', '']}>
-            {currentTab === TabEnum.simpleEdit && <SimpleEdit appId={appId} />}
+            {currentTab === TabEnum.simpleEdit && (
+              <SimpleEdit appId={appId} showGlobalVariables={true} />
+            )}
             {currentTab === TabEnum.adEdit && appDetail && (
               <FlowEdit app={appDetail} onClose={onCloseFlowEdit} />
             )}
