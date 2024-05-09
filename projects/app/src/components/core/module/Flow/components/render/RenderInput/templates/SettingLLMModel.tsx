@@ -27,7 +27,9 @@ const SelectAiModelRender = ({ item, inputs = [], moduleId }: RenderInputProps) 
   );
 
   const llmModelData: SettingAIDataType = {
-    model: inputs.find((input) => input.key === ModuleInputKeyEnum.aiModel)?.value ?? '',
+    model:
+      inputs.find((input) => input.key === ModuleInputKeyEnum.aiModel)?.value ??
+      'gpt-3.5-turbo-16k',
     maxToken:
       inputs.find((input) => input.key === ModuleInputKeyEnum.aiChatMaxToken)?.value ?? 2048,
     temperature:

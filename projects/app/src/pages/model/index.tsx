@@ -114,7 +114,7 @@ const Model = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
 export async function getServerSideProps(content: any) {
   return {
     props: {
-      currentTab: content?.query?.currentTab || TabEnum.models,
+      currentTab: content?.query?.currentTab || TabEnum.channels,
       ...(await serviceSideProps(content))
     }
   };

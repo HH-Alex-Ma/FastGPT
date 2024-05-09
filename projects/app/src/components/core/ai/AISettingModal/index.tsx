@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useTranslation } from 'next-i18next';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
 import {
   Box,
   BoxProps,
@@ -69,6 +70,8 @@ const AIChatSettingsModal = ({
     width: ['80px', '90px']
   };
 
+  const router = useRouter();
+
   return (
     <MyModal
       isOpen
@@ -131,15 +134,17 @@ const AIChatSettingsModal = ({
           </Box>
         </Flex>
         {/* 隐藏函数调用 */}
-        {/* <Flex mt={8}>
-          <Box {...LabelStyles} mr={2}>
-            {t('core.ai.Support tool')}
-            <QuestionTip ml={1} label={t('core.module.template.AI support tool tip')} />
-          </Box>
-          <Box flex={1} ml={'10px'}>
-            {selectedModel?.usedInToolCall ? '支持' : '不支持'}
-          </Box>
-        </Flex> */}
+        {router.pathname != '/home' && (
+          <Flex mt={8}>
+            <Box {...LabelStyles} mr={2}>
+              {t('core.ai.Support tool')}
+              <QuestionTip ml={1} label={t('core.module.template.AI support tool tip')} />
+            </Box>
+            <Box flex={1} ml={'10px'}>
+              {selectedModel?.usedInToolCall ? '支持' : '不支持'}
+            </Box>
+          </Flex>
+        )}
         <Flex mt={8}>
           <Box {...LabelStyles} mr={2}>
             {t('core.app.Temperature')}
