@@ -137,10 +137,10 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
         </Flex>
         {!feConfigs?.hide_app_flow && (
           <>
-            <Box mt={[4, 7]} mb={[0, 3]} color={'myGray.800'} fontWeight={'bold'}>
+            {/* <Box mt={[4, 7]} mb={[0, 3]} color={'myGray.800'} fontWeight={'bold'}>
               {t('core.app.Select app from template')}
-            </Box>
-            <Grid
+            </Box> */}
+            {/* <Grid
               userSelect={'none'}
               gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)']}
               gridGap={[2, 4]}
@@ -157,13 +157,13 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                     boxShadow={'sm'}
                     {...(getValues('templateId') === item.id
                       ? {
-                          bg: 'myWhite.600'
-                        }
+                        bg: 'myWhite.600'
+                      }
                       : {
-                          _hover: {
-                            boxShadow: 'md'
-                          }
-                        })}
+                        _hover: {
+                          boxShadow: 'md'
+                        }
+                      })}
                     onClick={() => {
                       setValue('templateId', item.id);
                       setRefresh((state) => !state);
@@ -180,7 +180,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                     </Box>
                   </Card>
                 ))}
-            </Grid>
+            </Grid> */}
           </>
         )}
       </ModalBody>
