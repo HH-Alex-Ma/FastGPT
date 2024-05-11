@@ -41,7 +41,7 @@ function App({ Component, pageProps }: AppProps) {
   const { i18n } = useTranslation();
   const { loadGitStar, setInitd, feConfigs } = useSystemStore();
   const [scripts, setScripts] = useState<FastGPTFeConfigsType['scripts']>([]);
-  const [title, setTitle] = useState(process.env.SYSTEM_NAME || 'Gen AI企业应用助手');
+  const [title, setTitle] = useState(process.env.SYSTEM_NAME || 'GenAI企业应用助手');
 
   useEffect(() => {
     // get init data
@@ -105,7 +105,7 @@ function App({ Component, pageProps }: AppProps) {
         <title>{title}</title>
         <meta
           name="description"
-          content={`${title} 企业应用助手是一款企业级AI应用开发平台，致力于快速构建和管理AI应用，通过一体化的数据处理与直观的工作流编排，加速AI在企业全价值链中的实际落地，释放业务潜能。`}
+          content={`${title} 是一款企业级AI应用开发平台，致力于快速构建和管理AI应用，通过一体化的数据处理与直观的工作流编排，加速AI在企业全价值链中的实际落地，释放业务潜能。`}
         />
         <meta
           name="viewport"
