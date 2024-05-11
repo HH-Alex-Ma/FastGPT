@@ -56,8 +56,11 @@ import { SseResponseEventEnum } from '@fastgpt/global/core/module/runtime/consta
 import ChatProvider, { useChatProviderStore } from './Provider';
 
 import ChatItem from './components/ChatItem';
+import ExternalChatItem from './components/ExternalChatItem';
 
 import dynamic from 'next/dynamic';
+import ExternalReponse from './ExternalReponse';
+
 const ResponseTags = dynamic(() => import('./ResponseTags'));
 const FeedbackModal = dynamic(() => import('./FeedbackModal'));
 const ReadFeedbackModal = dynamic(() => import('./ReadFeedbackModal'));
@@ -935,11 +938,22 @@ const ChatBox = (
                         onReadUserDislike: onReadUserDislike(item)
                       })}
                     >
+                      {/* 引用 */}
                       <ResponseTags
                         flowResponses={item.responseData}
                         showDetail={!shareId && !teamId}
                       />
-
+                      {/* 外部引用 */}
+                      <ExternalReponse
+                        flowResponses={item.responseData}
+                        showDetail={!shareId && !teamId}
+                      />
+                      {/* 外部消息 */}
+                      <ExternalChatItem
+                        type={item.obj}
+                        chat={item}
+                        isLastChild={index === chatHistories.length - 1}
+                      />
                       {/* custom feedback */}
                       {item.customFeedbacks && item.customFeedbacks.length > 0 && (
                         <Box>
@@ -977,6 +991,7 @@ const ChatBox = (
               </Box>
             ))}
           </Box>
+          <Box id={'external quote'}></Box>
         </Box>
       </Box>
       {/* message input */}

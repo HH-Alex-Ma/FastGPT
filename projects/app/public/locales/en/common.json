@@ -430,6 +430,7 @@
       "Custom History Title Description": "If set to empty, chat history will be followed automatically.",
       "Debug test": "Test",
       "Exit Chat": "Exit",
+      "External Quote": "External Quote",
       "Failed to initialize chat": "Failed to initialize chat",
       "Feedback Failed": "Feedback Failed",
       "Feedback Mark": "Mark",
