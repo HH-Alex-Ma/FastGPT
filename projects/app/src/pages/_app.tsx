@@ -41,7 +41,7 @@ function App({ Component, pageProps }: AppProps) {
   const { i18n } = useTranslation();
   const { loadGitStar, setInitd, feConfigs } = useSystemStore();
   const [scripts, setScripts] = useState<FastGPTFeConfigsType['scripts']>([]);
-  const [title, setTitle] = useState(process.env.SYSTEM_NAME || 'AI');
+  const [title, setTitle] = useState(process.env.SYSTEM_NAME || 'Gen AI企业应用助手');
 
   useEffect(() => {
     // get init data
@@ -53,16 +53,16 @@ function App({ Component, pageProps }: AppProps) {
       setTitle(systemTitle || 'GenAI企业应用助手');
 
       // log fastgpt
-      if (!isPlus) {
-        console.log(
-          '%cWelcome to FastGPT',
-          'font-family:Arial; color:#3370ff ; font-size:18px; font-weight:bold;',
-          `GitHub：https://github.com/labring/FastGPT`
-        );
-      }
-      if (show_git) {
-        loadGitStar();
-      }
+      // if (!isPlus) {
+      //   console.log(
+      //     '%cWelcome to FastGPT',
+      //     'font-family:Arial; color:#3370ff ; font-size:18px; font-weight:bold;',
+      //     `GitHub：https://github.com/labring/FastGPT`
+      //   );
+      // }
+      // if (show_git) {
+      //   loadGitStar();
+      // }
 
       setScripts(scripts || []);
       setInitd();
@@ -105,7 +105,7 @@ function App({ Component, pageProps }: AppProps) {
         <title>{title}</title>
         <meta
           name="description"
-          content={`${title} 是一个大模型应用编排系统，提供开箱即用的数据处理、模型调用等能力，可以快速的构建知识库并通过 Flow 可视化进行工作流编排，实现复杂的知识库场景！`}
+          content={`${title} 企业应用助手是一款企业级AI应用开发平台，致力于快速构建和管理AI应用，通过一体化的数据处理与直观的工作流编排，加速AI在企业全价值链中的实际落地，释放业务潜能。`}
         />
         <meta
           name="viewport"

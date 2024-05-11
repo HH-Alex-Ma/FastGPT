@@ -232,7 +232,7 @@ const MyInfo = () => {
                 if (val === userInfo?.team?.memberName) return;
                 try {
                   putUpdateMemberName(val);
-                } catch (error) { }
+                } catch (error) {}
               }}
             />
           </Flex>
@@ -250,12 +250,12 @@ const MyInfo = () => {
             </Button>
           </Flex>
         )}
-        <Flex mt={6} alignItems={'center'}>
+        {/* <Flex mt={6} alignItems={'center'}>
           <Box flex={'0 0 80px'}>{t('user.Team')}:&nbsp;</Box>
           <Box flex={1}>
             <TeamMenu />
           </Box>
-        </Flex>
+        </Flex> */}
         {feConfigs.isPlus && (
           <Box mt={6} whiteSpace={'nowrap'}>
             <Flex alignItems={'center'}>
