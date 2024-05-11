@@ -134,8 +134,8 @@
     }
   ],
   "whisperModel": {
-    "model": "whisper",
-    "name": "Whisper",
+    "model": "whisper-1",
+    "name": "Whisper-1",
     "charsPointsPrice": 0
   }
 }
