@@ -117,7 +117,7 @@ const HeaderPage = () => {
             <MenuButton>
               <Flex alignItems={'center'}>
                 <Avatar
-                  w={'36px'}
+                  w={'37px'}
                   h={'36px'}
                   mr={'10px'}
                   src={userInfo?.avatar}
