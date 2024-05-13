@@ -10,6 +10,7 @@ import { MongoApp } from '@fastgpt/service/core/app/schema';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
+    await authCert({ req, authToken: true });
     let data: string[] = [];
     const { id, tmbId } = req.query as { id: string; tmbId: string };
     //记录

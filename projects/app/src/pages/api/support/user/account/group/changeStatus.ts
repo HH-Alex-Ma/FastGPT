@@ -3,10 +3,17 @@ import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { connectToDatabase } from '@/service/mongo';
 import { UserStatusEnum } from '@fastgpt/global/support/user/constant';
+import { authCert } from '@fastgpt/service/support/permission/auth/common';
+import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
+    const { tmbId } = await authCert({ req, authToken: true });
+    const tmb = await MongoTeamMember.findById(tmbId);
+    if (!tmb) {
+      throw new Error('can not find it');
+    }
     const { id, status } = req.body as { id: string; status: string };
 
     if (!id || !status) {
