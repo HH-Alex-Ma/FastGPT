@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       throw new Error('钉钉认证信息未配置，请优先填写配置信息');
     }
     await connectToDatabase();
+
     const { authCode } = req.query as { authCode: string };
     if (!authCode) {
       jsonRes(res, {

@@ -11,9 +11,16 @@ import {
   TeamMemberStatusEnum
 } from '@fastgpt/global/support/user/team/constant';
 import { MongoTeam } from '@fastgpt/service/support/user/team/teamSchema';
+import { authCert } from '@fastgpt/service/support/permission/auth/common';
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
+    const { tmbId } = await authCert({ req, authToken: true });
+    const tmb = await MongoTeamMember.findById(tmbId);
+    if (!tmb) {
+      throw new Error('can not find it');
+    }
     const { username, nickname, roleId, manager } = req.body as AddUserType;
 
     if (!username || !nickname) {
