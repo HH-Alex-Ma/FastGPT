@@ -13,7 +13,7 @@ import { clearToken, setToken } from '@/web/support/user/auth';
 import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
 import Loading from '@fastgpt/web/components/common/MyLoading';
-import { getDingLoginQR } from '@/web/support/user/api';
+import { getDingLoginQR, getADLoginQR } from '@/web/support/user/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import type { IconNameType } from '@fastgpt/web/components/common/Icon/type.d';
@@ -137,6 +137,18 @@ const Login = () => {
                 }
               }}
             />
+            <MyIcon
+              mr={2}
+              name={'DingDing' as IconNameType}
+              w={'30px'}
+              cursor={'pointer'}
+              onClick={async () => {
+                const res = await getADLoginQR();
+                if ((res as any)?.code == 200) {
+                  router.push((res as any).url);
+                }
+              }}
+            />
           </Box>
           {feConfigs?.concatMd && (
             <Box
@@ -159,16 +171,17 @@ const Login = () => {
             width="75%"
           >
             {t('support.user.login.Policy tip')}
-            <Link
-              ml={1}
-              onClick={onOpen}
-              color={'primary.500'}
-            >
+            <Link ml={1} onClick={onOpen} color={'primary.500'}>
               {t('support.user.login.Terms')}
             </Link>
           </Flex>
 
-          <MyModal isOpen={isOpen} onClose={onClose} iconSrc="modal/concat" title={t('home.Community')}>
+          <MyModal
+            isOpen={isOpen}
+            onClose={onClose}
+            iconSrc="modal/concat"
+            title={t('home.Community')}
+          >
             <ModalBody textAlign={'left'}>
               <Markdown source={disclaimerIntro} />
             </ModalBody>

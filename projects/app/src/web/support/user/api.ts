@@ -81,8 +81,13 @@ export const getWXLoginResult = (code: string) =>
 
 export const getDingLoginQR = () => GET('/support/user/account/login/ding/getQR');
 
+export const getADLoginQR = () => GET('/support/user/account/login/ad/getQR');
+
 export const getDingLoginResult = (authCode: string) =>
   GET(`/support/user/account/login/ding/getResult`, { authCode });
+
+export const getADLoginResult = (authCode: string) =>
+  GET(`/support/user/account/login/ad/getResult`, { authCode });
 
 export const getUserInfo = () => GET('/support/user/account/group/getUserList');
 
