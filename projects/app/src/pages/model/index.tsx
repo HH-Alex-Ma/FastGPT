@@ -30,16 +30,16 @@ const Model = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
     //   label: t('modelCenter.modelBase'),
     //   id: TabEnum.models
     // },
-    {
-      icon: 'channel',
-      label: t('modelCenter.channel.channelManager'),
-      id: TabEnum.channels
-    },
-    {
-      icon: 'support/outlink/apikeyLight',
-      label: t('modelCenter.token.tokenManager'),
-      id: TabEnum.tokens
-    },
+    // {
+    //   icon: 'channel',
+    //   label: t('modelCenter.channel.channelManager'),
+    //   id: TabEnum.channels
+    // },
+    // {
+    //   icon: 'support/outlink/apikeyLight',
+    //   label: t('modelCenter.token.tokenManager'),
+    //   id: TabEnum.tokens
+    // },
     {
       icon: 'core/app/logsLight',
       label: t('modelCenter.log.modelLogs'),
@@ -114,7 +114,7 @@ const Model = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
 export async function getServerSideProps(content: any) {
   return {
     props: {
-      currentTab: content?.query?.currentTab || TabEnum.channels,
+      currentTab: content?.query?.currentTab || TabEnum.logs,
       ...(await serviceSideProps(content))
     }
   };
