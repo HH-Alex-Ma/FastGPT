@@ -287,6 +287,7 @@
       "Max tokens": "回复上限",
       "Name and avatar": "头像 & 名称",
       "Question Guide": "猜你想问",
+      "External Quote": "外部引用",
       "Question Guide Tip": "对话结束后，会为生成 3 个引导性问题。",
       "Quote prompt": "引用模板提示词",
       "Quote templates": "引用内容模板",

@@ -11,7 +11,7 @@ import {
   AccordionIcon,
   Image
 } from '@chakra-ui/react';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ChatController, { type ChatControllerProps } from './ChatController';
 import ChatAvatar from './ChatAvatar';
 import { MessageCardStyle } from '../constants';
@@ -79,6 +79,11 @@ const ChatItem = ({
 
   const { isChatting } = useChatProviderStore();
   const { chat } = chatControllerProps;
+  const [isRendered, setIsRendered] = useState(false);
+
+  useEffect(() => {
+    setIsRendered(true);
+  }, []);
 
   const ContentCard = useMemo(() => {
     if (type === 'Human') {

@@ -49,7 +49,11 @@ import MessageInput from './MessageInput';
 import ChatBoxDivider from '../core/chat/Divider';
 import { OutLinkChatAuthProps } from '@fastgpt/global/support/permission/chat';
 import { getNanoid } from '@fastgpt/global/common/string/tools';
-import { ChatItemValueTypeEnum, ChatRoleEnum } from '@fastgpt/global/core/chat/constants';
+import {
+  ChatItemValueTypeEnum,
+  ChatRoleEnum,
+  ChatStatusEnum
+} from '@fastgpt/global/core/chat/constants';
 import { formatChatValue2InputType } from './utils';
 import { textareaMinH } from './constants';
 import { SseResponseEventEnum } from '@fastgpt/global/core/module/runtime/constants';
@@ -146,6 +150,7 @@ const ChatBox = (
   }>();
   const [adminMarkData, setAdminMarkData] = useState<AdminMarkType & { chatItemId: string }>();
   const [questionGuides, setQuestionGuide] = useState<string[]>([]);
+  const [isChatItemRendered, setIsChatItemRendered] = useState(false);
 
   const {
     welcomeText,
@@ -176,6 +181,7 @@ const ChatBox = (
     }
   });
   const { setValue, watch, handleSubmit } = chatForm;
+  const [currentText, setCurrentText] = useState('');
   const variables = watch('variables');
   const chatStarted = watch('chatStarted');
   const variableIsFinish = useMemo(() => {
@@ -446,9 +452,11 @@ const ChatBox = (
           }
         ];
 
+        console.log('text', text);
         // 插入内容
         setChatHistories(newChatList);
-
+        setCurrentText(text);
+        console.log('currentText after setCurrentText', text);
         // 清空输入内容
         resetInputVal({});
         setQuestionGuide([]);
@@ -555,7 +563,8 @@ const ChatBox = (
       splitText2Audio,
       startSegmentedAudio,
       t,
-      toast
+      toast,
+      currentText
     ]
   );
 
@@ -949,11 +958,14 @@ const ChatBox = (
                         showDetail={!shareId && !teamId}
                       />
                       {/* 外部消息 */}
-                      <ExternalChatItem
-                        type={item.obj}
-                        chat={item}
-                        isLastChild={index === chatHistories.length - 1}
-                      />
+                      {!statusBoxData && (
+                        <ExternalChatItem
+                          type={item.obj}
+                          chat={item}
+                          isLastChild={index === chatHistories.length - 1}
+                          text={currentText}
+                        />
+                      )}
                       {/* custom feedback */}
                       {item.customFeedbacks && item.customFeedbacks.length > 0 && (
                         <Box>
@@ -991,7 +1003,6 @@ const ChatBox = (
               </Box>
             ))}
           </Box>
-          <Box id={'external quote'}></Box>
         </Box>
       </Box>
       {/* message input */}
