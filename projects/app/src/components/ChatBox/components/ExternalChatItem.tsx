@@ -42,76 +42,78 @@ const colorMap = {
     color: 'green.700'
   }
 };
-let mockJson = {
-  status: 200,
-  message: '',
-  data: [
-    {
-      invention_title: '一种同轴磁性齿轮的定子铁心的形状优化方法',
-      assignees: '中国航空工业集团公司金城南京机电液压工程研究中心',
-      relevancy: '98%'
-    },
-    {
-      invention_title:
-        'Connection disc structure parameter optimization method and device, equipment and medium',
-      assignees: '盛瑞传动股份有限公司',
-      relevancy: '95%'
-    },
-    {
-      invention_title: 'Design method for laminated coupling of reciprocating compressor',
-      assignees: '西南石油大学',
-      relevancy: '94%'
-    },
-    {
-      invention_title:
-        'Method and device for optimizing structure of elastic part, storage medium and electronic equipment',
-      assignees: '海信(山东)冰箱有限公司',
-      relevancy: '93%'
-    },
-    {
-      invention_title: '一种复合材料/金属混合齿轮结构设计及制备方法',
-      assignees: '北京航空航天大学',
-      relevancy: '93%'
-    },
-    {
-      invention_title: '一种连接盘结构参数优化方法、装置、设备及介质',
-      assignees: '盛瑞传动股份有限公司',
-      relevancy: '93%'
-    },
-    {
-      invention_title: 'Electric wheel rotor shell lightweight design method',
-      assignees: '上海理工大学',
-      relevancy: '93%'
-    },
-    {
-      invention_title: '一种矿用自卸车轮毂驱动单元概念设计方法',
-      assignees: '徐州徐工矿业机械有限公司',
-      relevancy: '92%'
-    },
-    {
-      invention_title:
-        'Multi-objective optimization design method for gear stress release hole based on interval analysis',
-      assignees: '广州大学',
-      relevancy: '92%'
-    },
-    {
-      invention_title:
-        'Design method of elliptical pull rod holes uniformly distributed in circumferential direction of wheel disc of gas turbine',
-      assignees: '西安交通大学',
-      relevancy: '92%'
-    }
-  ]
-};
 
-let externalData = [];
+// let mockJson = {
+//   status: 200,
+//   message: '',
+//   data: [
+//     {
+//       invention_title: '一种同轴磁性齿轮的定子铁心的形状优化方法',
+//       assignees: '中国航空工业集团公司金城南京机电液压工程研究中心',
+//       relevancy: '98%'
+//     },
+//     {
+//       invention_title:
+//         'Connection disc structure parameter optimization method and device, equipment and medium',
+//       assignees: '盛瑞传动股份有限公司',
+//       relevancy: '95%'
+//     },
+//     {
+//       invention_title: 'Design method for laminated coupling of reciprocating compressor',
+//       assignees: '西南石油大学',
+//       relevancy: '94%'
+//     },
+//     {
+//       invention_title:
+//         'Method and device for optimizing structure of elastic part, storage medium and electronic equipment',
+//       assignees: '海信(山东)冰箱有限公司',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: '一种复合材料/金属混合齿轮结构设计及制备方法',
+//       assignees: '北京航空航天大学',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: '一种连接盘结构参数优化方法、装置、设备及介质',
+//       assignees: '盛瑞传动股份有限公司',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: 'Electric wheel rotor shell lightweight design method',
+//       assignees: '上海理工大学',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: '一种矿用自卸车轮毂驱动单元概念设计方法',
+//       assignees: '徐州徐工矿业机械有限公司',
+//       relevancy: '92%'
+//     },
+//     {
+//       invention_title:
+//         'Multi-objective optimization design method for gear stress release hole based on interval analysis',
+//       assignees: '广州大学',
+//       relevancy: '92%'
+//     },
+//     {
+//       invention_title:
+//         'Design method of elliptical pull rod holes uniformly distributed in circumferential direction of wheel disc of gas turbine',
+//       assignees: '西安交通大学',
+//       relevancy: '92%'
+//     }
+//   ]
+// };
 
-for (let item of mockJson.data) {
-  externalData.push({
-    invention_title: item.invention_title,
-    assignees: item.assignees,
-    relevancy: item.relevancy
-  });
-}
+// let externalData = [];
+
+// for (let item of mockJson.data) {
+//   externalData.push({
+//     invention_title: item.invention_title,
+//     assignees: item.assignees,
+//     relevancy: item.relevancy
+//   });
+// }
+
 interface ExternalDataItem {
   invention_title: string;
   assignees: string;
@@ -157,19 +159,19 @@ const ChatItem = ({
 
   const { isChatting } = useChatProviderStore();
   const { chat } = chatControllerProps;
-  // 智慧芽接口相关
-  // const [externalData, setExternalData] = useState<ExternalDataItem[] | undefined>();
+  // 智慧芽接口
+  const [externalData, setExternalData] = useState<ExternalDataItem[] | undefined>();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     console.log("getExternalData text", text)
-  //     const data = await getExternalData(text);
-  //     console.log("data", data);
-  //     setExternalData(data);
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log('getExternalData text', text);
+      const data = await getExternalData(text);
+      setExternalData(data);
+      console.log('data', data);
+    };
 
-  //   fetchData();
-  // }, [text]);
+    fetchData();
+  }, [text]);
 
   const ExternalContentCard = useMemo(() => {
     if (type === 'Human') {
@@ -184,7 +186,7 @@ const ChatItem = ({
     }
     /* AI */
     return (
-      <Flex flexDirection={'column'} key={chat.dataId} gap={2}>
+      <Flex flexDirection={'column'} gap={2}>
         {externalData &&
           externalData.map((value, index) => (
             <div key={index}>

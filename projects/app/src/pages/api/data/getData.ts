@@ -20,11 +20,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       body: JSON.stringify({ text: text })
     };
     const response = await fetch(EXTERNEL_URL, fetchOptions);
-    console.log('response', response);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
+    console.log('getData data', data);
     jsonRes(res, data);
   } catch (err) {
     jsonRes(res, {
