@@ -25,17 +25,29 @@ export const postFastLogin = (params: FastLoginProps) =>
   POST<ResLogin>('/proApi/support/user/account/login/fastLogin', params);
 
 export const postRegister = ({
+  companyName,
+  nickName,
+  department,
+  email,
   username,
   password,
   code,
   inviterId
 }: {
+  companyName: string;
+  nickName: string;
+  department: string;
+  email: string;
   username: string;
   code: string;
   password: string;
   inviterId?: string;
 }) =>
-  POST<ResLogin>(`/proApi/support/user/account/register/emailAndPhone`, {
+  POST<ResLogin>(`/support/user/account/register/emailAndPhone`, {
+    companyName,
+    nickName,
+    department,
+    email,
     username,
     code,
     inviterId,

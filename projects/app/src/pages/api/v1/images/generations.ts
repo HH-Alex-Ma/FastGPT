@@ -452,6 +452,6 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
 }
 
 const getCurrentServerLocation = () => {
-  const url = process.env.REDIRECT_URI ? process.env.REDIRECT_URI : '';
-  return url != '' ? url.split('/login/auth')[0] : '';
+  const dall_Url = process.env.DALL3_URI ? process.env.DALL3_URI : '';
+  return dall_Url != '' ? dall_Url : '';
 };

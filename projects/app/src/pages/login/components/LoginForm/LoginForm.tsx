@@ -9,7 +9,10 @@ import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { getDocPath } from '@/web/common/system/doc';
 import { useTranslation } from 'next-i18next';
 import FormLayout from './components/FormLayout';
-
+import MyIcon from '@fastgpt/web/components/common/Icon';
+import type { IconNameType } from '@fastgpt/web/components/common/Icon/type.d';
+import { getDingLoginQR, getADLoginQR } from '@/web/support/user/api';
+import { useRouter } from 'next/router';
 interface Props {
   setPageType: Dispatch<`${LoginPageTypeEnum}`>;
   loginSuccess: (e: ResLogin) => void;
@@ -23,6 +26,7 @@ interface LoginFormType {
 const LoginForm = ({ setPageType, loginSuccess }: Props) => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const router = useRouter();
   const { feConfigs } = useSystemStore();
   const {
     register,
@@ -59,15 +63,15 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
 
   const isCommunityVersion = feConfigs?.show_register === false && !feConfigs?.isPlus;
 
-  const loginOptions = [
-    feConfigs?.show_phoneLogin ? t('support.user.login.Phone number') : '',
-    feConfigs?.show_emailLogin ? t('support.user.login.Email') : '',
-    t('support.user.login.Username')
-  ].filter(Boolean);
+  // const loginOptions = [
+  //   feConfigs?.show_phoneLogin ? t('support.user.login.Phone number') : '',
+  //   feConfigs?.show_emailLogin ? t('support.user.login.Email') : '',
+  //   t('support.user.login.Username')
+  // ].filter(Boolean);
 
-  const placeholder = isCommunityVersion
-    ? t('support.user.login.Root login')
-    : loginOptions.join('/');
+  // const placeholder = isCommunityVersion
+  //   ? t('support.user.login.Root login')
+  //   : loginOptions.join('/');
 
   return (
     <FormLayout setPageType={setPageType} pageType={LoginPageTypeEnum.passwordLogin}>
@@ -82,7 +86,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
         <FormControl isInvalid={!!errors.username}>
           <Input
             bg={'myGray.50'}
-            placeholder={placeholder}
+            placeholder={'用户名'}
             {...register('username', {
               required: true
             })}
@@ -92,11 +96,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
           <Input
             bg={'myGray.50'}
             type={'password'}
-            placeholder={
-              isCommunityVersion
-                ? t('support.user.login.Root password placeholder')
-                : t('support.user.login.Password')
-            }
+            placeholder={t('support.user.login.Password')}
             {...register('password', {
               required: true,
               maxLength: {
@@ -163,6 +163,44 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
             </Flex>
           </>
         )}
+      </Box>
+      {/* <Box color={'black.700'} textAlign={'left'} style={{ display: 'flex', alignItems: 'center' }}>
+        没有账户？
+        <Link onClick={() => setPageType(LoginPageTypeEnum.register)} color={'blue.500'}>
+          立即注册
+        </Link>
+      </Box> */}
+      <Box
+        mt={1}
+        color={'black.700'}
+        textAlign={'left'}
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
+        其他登录方式：
+        {/* <MyIcon
+          mr={2}
+          name={'DingDing' as IconNameType}
+          w={'30px'}
+          cursor={'pointer'}
+          onClick={async () => {
+            const res = await getDingLoginQR();
+            if ((res as any)?.code == 200) {
+              router.push((res as any).url);
+            }
+          }}
+        /> */}
+        <MyIcon
+          mr={2}
+          name={'Azure' as IconNameType}
+          w={'30px'}
+          cursor={'pointer'}
+          onClick={async () => {
+            const res = await getADLoginQR();
+            if ((res as any)?.code == 200) {
+              router.push((res as any).url);
+            }
+          }}
+        />
       </Box>
     </FormLayout>
   );

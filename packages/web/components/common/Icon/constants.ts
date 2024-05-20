@@ -3,6 +3,7 @@
 export const iconPaths = {
   AppList: () => import('./icons/common/app-list.svg'),
   DingDing: () => import('./icons/common/dingding.svg'),
+  Azure: () => import('./icons/common/weiruanazure.svg'),
   channel: () => import('./icons/common/tubiao_qudao.svg'),
   modelBase: () => import('./icons/common/moxingku.svg'),
   model: () => import('./icons/common/model-lib.svg'),

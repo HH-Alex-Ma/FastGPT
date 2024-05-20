@@ -19,3 +19,14 @@ export type AddCollectType = {
   apps: string;
   type: Number;
 };
+
+export type RegisterUserType = {
+  companyName: string;
+  nickName: string;
+  department: string;
+  email: string;
+  username: string;
+  code: string;
+  password: string;
+  inviterId: string;
+};

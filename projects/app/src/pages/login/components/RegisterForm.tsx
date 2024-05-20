@@ -1,5 +1,5 @@
 import React, { useState, Dispatch, useCallback } from 'react';
-import { FormControl, Box, Input, Button } from '@chakra-ui/react';
+import { FormControl, Box, Input, Button, FormErrorMessage } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { LoginPageTypeEnum } from '@/constants/user';
 import { postRegister } from '@/web/support/user/api';
@@ -17,6 +17,10 @@ interface Props {
 }
 
 interface RegisterType {
+  companyName: string;
+  nickName: string;
+  department: string;
+  email: string;
   username: string;
   password: string;
   password2: string;
@@ -51,11 +55,23 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
   const [requesting, setRequesting] = useState(false);
 
   const onclickRegister = useCallback(
-    async ({ username, password, code }: RegisterType) => {
+    async ({
+      companyName,
+      nickName,
+      department,
+      email,
+      username,
+      password,
+      code
+    }: RegisterType) => {
       setRequesting(true);
       try {
         loginSuccess(
           await postRegister({
+            companyName,
+            nickName,
+            department,
+            email,
             username,
             code,
             password,
@@ -67,16 +83,16 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           status: 'success'
         });
         // auto register template app
-        setTimeout(() => {
-          appTemplates.forEach((template) => {
-            postCreateApp({
-              avatar: template.avatar,
-              name: t(template.name),
-              modules: template.modules,
-              type: template.type
-            });
-          });
-        }, 100);
+        // setTimeout(() => {
+        //   appTemplates.forEach((template) => {
+        //     postCreateApp({
+        //       avatar: template.avatar,
+        //       name: t(template.name),
+        //       modules: template.modules,
+        //       type: template.type
+        //     });
+        //   });
+        // }, 100);
       } catch (error: any) {
         toast({
           title: error.message || '注册异常',
@@ -90,30 +106,74 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
 
   return (
     <>
-      <Box fontWeight={'bold'} fontSize={'2xl'} textAlign={'center'}>
+      <Box fontWeight={'bold'} fontSize={'2xl'} textAlign={'left'}>
         注册 {feConfigs?.systemTitle} 账号
       </Box>
       <Box
-        mt={'42px'}
+        mt={'22px'}
         onKeyDown={(e) => {
           if (e.keyCode === 13 && !e.shiftKey && !requesting) {
             handleSubmit(onclickRegister)();
           }
         }}
       >
-        <FormControl isInvalid={!!errors.username}>
+        <FormControl isInvalid={!!errors.companyName}>
           <Input
             bg={'myGray.50'}
-            placeholder="邮箱/手机号"
+            placeholder="请输入企业名称"
+            {...register('companyName', {
+              required: '请输入企业名称'
+            })}
+          ></Input>
+          <FormErrorMessage>企业名称不能为空</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.department}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入所在部门"
+            {...register('department', {
+              required: '部门不能为空'
+            })}
+          ></Input>
+          <FormErrorMessage>部门不能为空</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.nickName}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入姓名"
+            {...register('nickName', {
+              required: '姓名不能为空'
+            })}
+          ></Input>
+          <FormErrorMessage>姓名不能为空</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.email}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入邮箱"
+            {...register('email', {
+              // required: '邮箱不能为空',
+              // pattern: {
+              //   value: /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/,
+              //   message: '邮箱格式错误'
+              // }
+            })}
+          ></Input>
+          <FormErrorMessage>邮箱错误，请重新输入</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.username}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入手机号"
             {...register('username', {
-              required: '邮箱/手机号不能为空',
+              required: '手机号不能为空',
               pattern: {
-                value:
-                  /(^1[3456789]\d{9}$)|(^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$)/,
-                message: '邮箱/手机号格式错误'
+                value: /^1[3456789]\d{9}$/,
+                message: '手机号格式错误'
               }
             })}
           ></Input>
+          <FormErrorMessage>手机号错误，请重新输入</FormErrorMessage>
         </FormControl>
         <FormControl
           mt={6}
@@ -126,7 +186,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
             bg={'myGray.50'}
             flex={1}
             maxLength={8}
-            placeholder="验证码"
+            placeholder="请输入验证码"
             {...register('code', {
               required: '验证码不能为空'
             })}
@@ -153,19 +213,27 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           <Input
             bg={'myGray.50'}
             type={'password'}
-            placeholder="密码(4~20位)"
+            placeholder="请输入密码(8~20位)"
             {...register('password', {
               required: '密码不能为空',
+              pattern: {
+                value:
+                  /^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*,\._])[0-9a-zA-Z!@#$%^&*,\\._]{8,20}$/,
+                message: '密码必须包含大小写字母,特殊字符和数字，且长度不低于8位'
+              },
               minLength: {
-                value: 4,
-                message: '密码最少 4 位最多 20 位'
+                value: 8,
+                message: '密码最少 8 位最多 20 位'
               },
               maxLength: {
                 value: 20,
-                message: '密码最少 4 位最多 20 位'
+                message: '密码最少 8 位最多 20 位'
               }
             })}
           ></Input>
+          <FormErrorMessage>
+            密码必须包含大小写字母,特殊字符和数字，且长度不低于8位最多 20 位
+          </FormErrorMessage>
         </FormControl>
         <FormControl mt={6} isInvalid={!!errors.password2}>
           <Input

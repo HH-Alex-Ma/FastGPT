@@ -6,6 +6,7 @@ import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+  const AD_CLIENT_URL = process.env.AD_CLIENT_URL ? process.env.AD_CLIENT_URL : '';
   try {
     await connectToDatabase();
 
@@ -16,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         error: '认证登录失败'
       });
     } else {
-      const result = await fetch(`http://127.0.0.1:8000/api/ad/oauth?code=${authCode}`);
+      const result = await fetch(`${AD_CLIENT_URL}/api/ad/oauth?code=${authCode}`);
       const resultDate = await result.text();
       const user = await MongoUser.findOne({ username: resultDate });
       if (!user) {

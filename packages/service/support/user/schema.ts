@@ -7,6 +7,12 @@ import { UserStatusEnum, userStatusMap } from '@fastgpt/global/support/user/cons
 export const userCollectionName = 'users';
 
 const UserSchema = new Schema({
+  companyName: {
+    type: String
+  },
+  department: {
+    type: String
+  },
   status: {
     type: String,
     enum: Object.keys(userStatusMap),

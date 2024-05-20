@@ -2,9 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+  const AD_CLIENT_URL = process.env.AD_CLIENT_URL ? process.env.AD_CLIENT_URL : '';
   try {
     //记录
-    const result = await fetch('http://127.0.0.1:8000/api/ad/authorize');
+    const result = await fetch(AD_CLIENT_URL + '/api/ad/authorize');
     const resultDate = await result.text();
     console.log(resultDate);
     jsonRes(res, {

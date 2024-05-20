@@ -13,10 +13,7 @@ import { clearToken, setToken } from '@/web/support/user/auth';
 import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
 import Loading from '@fastgpt/web/components/common/MyLoading';
-import { getDingLoginQR, getADLoginQR } from '@/web/support/user/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
-import MyIcon from '@fastgpt/web/components/common/Icon';
-import type { IconNameType } from '@fastgpt/web/components/common/Icon/type.d';
 import { getDocPath } from '@/web/common/system/doc';
 import { useTranslation } from 'next-i18next';
 import MyModal from '@fastgpt/web/components/common/MyModal';
@@ -80,11 +77,11 @@ const Login = () => {
 
   return (
     <>
-      {feConfigs.googleClientVerKey && (
+      {/* {feConfigs.googleClientVerKey && (
         <Script
           src={`https://www.recaptcha.net/recaptcha/api.js?render=${feConfigs.googleClientVerKey}`}
         ></Script>
-      )}
+      )} */}
       <Flex
         alignItems={'center'}
         justifyContent={'center'}
@@ -97,7 +94,7 @@ const Login = () => {
         <Flex
           flexDirection={'column'}
           w={['100%', 'auto']}
-          h={['100%', '450px']}
+          h={['100%', 'auto']}
           maxH={['100%', '90vh']}
           bg={'white'}
           px={['5vw', '50px']}
@@ -118,39 +115,8 @@ const Login = () => {
               </Center>
             )}
           </Box>
-          <Box
-            mb={100}
-            color={'black.700'}
-            textAlign={'left'}
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
-            其他登录方式：
-            <MyIcon
-              mr={2}
-              name={'DingDing' as IconNameType}
-              w={'30px'}
-              cursor={'pointer'}
-              onClick={async () => {
-                const res = await getDingLoginQR();
-                if ((res as any)?.code == 200) {
-                  router.push((res as any).url);
-                }
-              }}
-            />
-            <MyIcon
-              mr={2}
-              name={'DingDing' as IconNameType}
-              w={'30px'}
-              cursor={'pointer'}
-              onClick={async () => {
-                const res = await getADLoginQR();
-                if ((res as any)?.code == 200) {
-                  router.push((res as any).url);
-                }
-              }}
-            />
-          </Box>
-          {feConfigs?.concatMd && (
+
+          {/* {feConfigs?.concatMd && (
             <Box
               mt={8}
               color={'primary.700'}
@@ -160,7 +126,7 @@ const Login = () => {
             >
               无法登录，点击联系
             </Box>
-          )}
+          )} */}
           <Flex
             alignItems={'center'}
             justifyContent={'center'}

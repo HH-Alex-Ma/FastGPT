@@ -60,10 +60,12 @@ const clearInvalidDataCron = () => {
 };
 
 const syncDingDingUserInfoCron = () => {
-  const DING_CRON = process.env.DING_CRON ? process.env.DING_CRON : '0 0 */1 * * *';
-  setCron(DING_CRON, () => {
-    syncDingDingUserInfo();
-  });
+  const DING_CRON = process.env.DING_CRON ? process.env.DING_CRON : '';
+  if (DING_CRON != '') {
+    setCron(DING_CRON, () => {
+      syncDingDingUserInfo();
+    });
+  }
 };
 
 export const startCron = () => {
