@@ -1,5 +1,5 @@
 import React, { useState, Dispatch, useCallback } from 'react';
-import { FormControl, Box, Input, Button } from '@chakra-ui/react';
+import { FormControl, Box, Input, Button, FormErrorMessage } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { LoginPageTypeEnum } from '@/constants/user';
 import { postRegister } from '@/web/support/user/api';
@@ -17,6 +17,10 @@ interface Props {
 }
 
 interface RegisterType {
+  companyName: string;
+  nickname: string;
+  department: string;
+  email: string;
   username: string;
   password: string;
   password2: string;
@@ -51,11 +55,23 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
   const [requesting, setRequesting] = useState(false);
 
   const onclickRegister = useCallback(
-    async ({ username, password, code }: RegisterType) => {
+    async ({
+      companyName,
+      nickname,
+      department,
+      email,
+      username,
+      password,
+      code
+    }: RegisterType) => {
       setRequesting(true);
       try {
         loginSuccess(
           await postRegister({
+            companyName,
+            nickname,
+            department,
+            email,
             username,
             code,
             password,
@@ -101,19 +117,64 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           }
         }}
       >
-        <FormControl isInvalid={!!errors.username}>
+        {' '}
+        <FormControl isInvalid={!!errors.companyName}>
           <Input
             bg={'myGray.50'}
-            placeholder="邮箱/手机号"
+            placeholder="请输入企业名称"
+            {...register('companyName', {
+              required: '请输入企业名称'
+            })}
+          ></Input>
+          <FormErrorMessage>企业名称不能为空</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.department}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入所在部门"
+            {...register('department', {
+              required: '部门不能为空'
+            })}
+          ></Input>
+          <FormErrorMessage>部门不能为空</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.nickname}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入姓名"
+            {...register('nickname', {
+              required: '姓名不能为空'
+            })}
+          ></Input>
+          <FormErrorMessage>姓名不能为空</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.email}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入邮箱"
+            {...register('email', {
+              // required: '邮箱不能为空',
+              // pattern: {
+              //   value: /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/,
+              //   message: '邮箱格式错误'
+              // }
+            })}
+          ></Input>
+          <FormErrorMessage>邮箱错误，请重新输入</FormErrorMessage>
+        </FormControl>
+        <FormControl mt={6} isInvalid={!!errors.username}>
+          <Input
+            bg={'myGray.50'}
+            placeholder="请输入手机号"
             {...register('username', {
-              required: '邮箱/手机号不能为空',
+              required: '手机号不能为空',
               pattern: {
-                value:
-                  /(^1[3456789]\d{9}$)|(^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$)/,
-                message: '邮箱/手机号格式错误'
+                value: /^1[3456789]\d{9}$/,
+                message: '手机号格式错误'
               }
             })}
           ></Input>
+          <FormErrorMessage>手机号错误，请重新输入</FormErrorMessage>
         </FormControl>
         <FormControl
           mt={6}

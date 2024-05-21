@@ -16,10 +16,10 @@ import { getUserDetail } from '@fastgpt/service/support/user/controller';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { companyName, nickName, department, email, username, password, code, inviterId } =
+    const { companyName, nickname, department, email, username, password, code, inviterId } =
       req.body as RegisterUserType;
 
-    console.log(companyName, nickName, department, email, username, password, code, inviterId);
+    console.log(companyName, nickname, department, email, username, password, code, inviterId);
 
     const userInfo = await MongoUser.findOne({
       username: username
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           companyName: companyName,
           department: department,
           username: username,
-          nickname: nickName,
+          nickname: nickname,
           email: email,
           roleId: roleInfo ? roleInfo?._id : '',
           password: password

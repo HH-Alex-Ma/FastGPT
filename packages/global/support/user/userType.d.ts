@@ -22,7 +22,7 @@ export type AddCollectType = {
 
 export type RegisterUserType = {
   companyName: string;
-  nickName: string;
+  nickname: string;
   department: string;
   email: string;
   username: string;

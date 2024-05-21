@@ -18,7 +18,7 @@ interface Props {
 
 interface RegisterType {
   companyName: string;
-  nickName: string;
+  nickname: string;
   department: string;
   email: string;
   username: string;
@@ -57,7 +57,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
   const onclickRegister = useCallback(
     async ({
       companyName,
-      nickName,
+      nickname,
       department,
       email,
       username,
@@ -69,7 +69,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
         loginSuccess(
           await postRegister({
             companyName,
-            nickName,
+            nickname,
             department,
             email,
             username,
@@ -137,11 +137,11 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
           ></Input>
           <FormErrorMessage>部门不能为空</FormErrorMessage>
         </FormControl>
-        <FormControl mt={6} isInvalid={!!errors.nickName}>
+        <FormControl mt={6} isInvalid={!!errors.nickname}>
           <Input
             bg={'myGray.50'}
             placeholder="请输入姓名"
-            {...register('nickName', {
+            {...register('nickname', {
               required: '姓名不能为空'
             })}
           ></Input>

@@ -8,6 +8,8 @@ export type UserModelSchema = {
   roleId: string;
   manager: number;
   DindDing?: string;
+  companyName?: string;
+  department?: string;
   email?: string;
   phonePrefix?: number;
   phone?: string;
@@ -33,6 +35,9 @@ export type UserType = {
   avatar: string;
   manager: number;
   DindDing?: string;
+  companyName?: string;
+  department?: string;
+  nickname: string;
   timezone: string;
   promotionRate: UserModelSchema['promotionRate'];
   openaiAccount: UserModelSchema['openaiAccount'];

@@ -26,7 +26,7 @@ export const postFastLogin = (params: FastLoginProps) =>
 
 export const postRegister = ({
   companyName,
-  nickName,
+  nickname,
   department,
   email,
   username,
@@ -35,7 +35,7 @@ export const postRegister = ({
   inviterId
 }: {
   companyName: string;
-  nickName: string;
+  nickname: string;
   department: string;
   email: string;
   username: string;
@@ -45,7 +45,7 @@ export const postRegister = ({
 }) =>
   POST<ResLogin>(`/support/user/account/register/emailAndPhone`, {
     companyName,
-    nickName,
+    nickname,
     department,
     email,
     username,
