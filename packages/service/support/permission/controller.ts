@@ -15,7 +15,7 @@ export function createJWT(user: { _id?: string; team?: { teamId?: string; tmbId:
       userId: String(user._id),
       teamId: String(user.team?.teamId),
       tmbId: String(user.team?.tmbId),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2
     },
     key
   );
