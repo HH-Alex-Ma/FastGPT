@@ -4,9 +4,12 @@ import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { createJWT, setCookie } from '@fastgpt/service/support/permission/controller';
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
+import { hashStr } from '@fastgpt/global/common/string/tools';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const AD_CLIENT_URL = process.env.AD_CLIENT_URL ? process.env.AD_CLIENT_URL : '';
+  const API_TOKEN = process.env.API_TOKEN ? process.env.API_TOKEN : '';
+
   try {
     await connectToDatabase();
 
@@ -17,7 +20,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         error: '认证登录失败'
       });
     } else {
-      const result = await fetch(`${AD_CLIENT_URL}/api/ad/oauth?code=${authCode}`);
+      const result = await fetch(`${AD_CLIENT_URL}/api/ad/oauth?code=${authCode}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Token-Key': hashStr(API_TOKEN)
+        }
+      });
       const resultDate = await result.text();
       const user = await MongoUser.findOne({ username: resultDate });
       if (!user) {

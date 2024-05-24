@@ -8,18 +8,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   try {
     //记录
-    const result = await fetch(AD_CLIENT_URL + '/api/ad/authorize', {
+    const result = await fetch(AD_CLIENT_URL + '/api/code', {
       headers: {
         'Content-Type': 'application/json',
         'Token-Key': hashStr(API_TOKEN)
-      }
+      },
+      method: 'POST'
     });
-    const resultDate = await result.text();
+    const resultDate = await result.json();
     console.log(resultDate);
     jsonRes(res, {
       data: {
         code: 200,
-        url: resultDate
+        key: resultDate.uuid,
+        value: resultDate.data
       }
     });
   } catch (err) {

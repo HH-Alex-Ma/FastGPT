@@ -156,3 +156,11 @@ export const setAppCollect = (tmbId: any, apps: string, type: number) =>
   POST(`/support/user/account/collect/addCollect`, { tmbId, apps, type });
 export const getCollectById = (tmbId: any) =>
   GET(`/support/user/account/collect/getCollect`, { tmbId });
+
+export const getCode = () => GET(`/support/user/account/code/getCode`);
+
+export const getMessageCode = (phone: string) =>
+  POST(`/support/user/account/code/getAliCode`, { phone });
+
+export const sendAliToken = (username: string, msgToken: any) =>
+  POST(`/support/user/account/code/sendAuthCode`, { username, msgToken });

@@ -30,3 +30,8 @@ export type RegisterUserType = {
   password: string;
   inviterId: string;
 };
+
+export type AuthCode = {
+  username: string;
+  msgToken: string;
+};

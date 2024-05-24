@@ -13,6 +13,7 @@ import { MongoTeam } from '@fastgpt/service/support/user/team/teamSchema';
 import { createJWT, setCookie } from '@fastgpt/service/support/permission/controller';
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 
+const AD_CLIENT_URL = process.env.AD_CLIENT_URL ? process.env.AD_CLIENT_URL : '';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
@@ -20,6 +21,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       req.body as RegisterUserType;
 
     console.log(companyName, nickname, department, email, username, password, code, inviterId);
+
+    const result = await checkCode(username, code);
+    if (result.code != 200) {
+      jsonRes(res, {
+        code: 500,
+        error: '注册失败，验证码验证错误'
+      });
+    }
 
     const userInfo = await MongoUser.findOne({
       username: username
@@ -93,4 +102,15 @@ const createTeamMember = async ({ userId }: { userId: string }) => {
     });
     console.log('create default team', userId);
   }
+};
+
+const checkCode = async (id: string, code: string) => {
+  let fetchOptions: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'POST'
+  };
+  const result = await fetch(`${AD_CLIENT_URL}/api/msg/${id}/check/${code}`, fetchOptions);
+  return await result.json();
 };

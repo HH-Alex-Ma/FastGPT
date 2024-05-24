@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { sendAuthCode } from '@/web/support/user/api';
+import { sendAuthCode, sendAliToken, getMessageCode } from '@/web/support/user/api';
 import { UserAuthTypeEnum } from '@fastgpt/global/support/user/auth/constants';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { getErrText } from '@fastgpt/global/common/error/utils';
@@ -30,11 +30,12 @@ export const useSendCode = () => {
       if (codeCountDown > 0) return;
       setCodeSending(true);
       try {
-        await sendAuthCode({
-          username,
-          type,
-          googleToken: await getClientToken(feConfigs.googleClientVerKey)
-        });
+        // await sendAuthCode({
+        //   username,
+        //   type,
+        //   googleToken: await getClientToken(feConfigs.googleClientVerKey)
+        // });
+        await sendAliToken(username, await getMessageCode(username));
         setCodeCountDown(60);
         timer = setInterval(() => {
           setCodeCountDown((val) => {
