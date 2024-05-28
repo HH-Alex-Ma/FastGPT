@@ -41,6 +41,24 @@ export type AppDetailType = AppSchema & {
   canWrite: boolean;
 };
 
+export type AppListDetailType = {
+  _id: string;
+  name: string;
+  avatar: string;
+  intro: string;
+  isOwner: boolean;
+  permission: `${PermissionTypeEnum}`;
+  isShow: string; 
+  appType: string;
+
+  userId: string;
+  teamId: string;
+  tmbId: string;
+  type: `${AppTypeEnum}`;
+  updateTime: number;
+  modules: ModuleItemType[];
+}
+
 export type AppSimpleEditFormType = {
   // templateId: string;
   aiSettings: {
