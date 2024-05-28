@@ -42,7 +42,8 @@ const defaultEditData: any = {
   username: '',
   nickname: '',
   roleId: '',
-  manager: 0
+  manager: 0,
+  validity: dayjs().add(5, 'day').format('YYYY-MM-DDTHH:mm').toString()
 };
 const UserList = () => {
   const { t } = useTranslation();
@@ -132,66 +133,75 @@ const UserList = () => {
               <Th>角色</Th>
               <Th>状态</Th>
               <Th>是否管理员</Th>
+              <Th>是否已过期</Th>
               <Th>{t('common.Create Time')}</Th>
+              <Th>过期时间</Th>
               <Th />
             </Tr>
           </Thead>
           <Tbody fontSize={'sm'}>
-            {userData().map(({ _id, username, nickname, status, roleId, manager, createTime }) => (
-              <Tr key={_id}>
-                <Td>{username}</Td>
-                <Td>{nickname}</Td>
-                <Td>
-                  {roles.filter((item: any) => item._id == roleId).map((item: any) => item.name)}
-                </Td>
-                <Td>{t(`${(userStatusMap[status] as any).label}`)}</Td>
-                <Td>{manager == 1 ? '是' : '否'}</Td>
-                <Td whiteSpace={'pre-wrap'}>{dayjs(createTime).format('YYYY/MM/DD\nHH:mm:ss')}</Td>
-                <Td>
-                  <MyMenu
-                    offset={[-50, 5]}
-                    Button={
-                      <IconButton
-                        icon={<MyIcon name={'more'} w={'14px'} />}
-                        name={'more'}
-                        variant={'whitePrimary'}
-                        size={'sm'}
-                        aria-label={''}
-                      />
-                    }
-                    menuList={[
-                      {
-                        label: t('common.Edit'),
-                        icon: 'edit',
-                        onClick: () =>
-                          setEditData({
-                            _id,
-                            username,
-                            nickname,
-                            roleId,
-                            manager
-                          })
-                      },
-                      {
-                        label: status == UserStatusEnum.active ? '注销' : '激活',
-                        icon: 'edit',
-                        onClick: () => onclickChange({ id: _id, status: status })
-                      },
-                      {
-                        label: t('common.Delete'),
-                        icon: 'delete',
-                        type: 'danger',
-                        onClick: () =>
-                          setRemoveId({
-                            _id,
-                            desc: `确认删除该用户(${nickname})信息？删除后将立即生效，删除请确认！`
-                          })
+            {userData().map(
+              ({ _id, username, nickname, status, roleId, manager, createTime, validity }) => (
+                <Tr key={_id}>
+                  <Td>{username}</Td>
+                  <Td>{nickname}</Td>
+                  <Td>
+                    {roles.filter((item: any) => item._id == roleId).map((item: any) => item.name)}
+                  </Td>
+                  <Td>{t(`${(userStatusMap[status] as any).label}`)}</Td>
+                  <Td>{manager == 1 ? '是' : '否'}</Td>
+                  <Td>{dayjs(validity).isAfter(new Date()) ? '生效中' : '已过期'}</Td>
+                  <Td whiteSpace={'pre-wrap'}>
+                    {dayjs(createTime).format('YYYY/MM/DD\nHH:mm:ss')}
+                  </Td>
+                  <Td whiteSpace={'pre-wrap'}>{dayjs(validity).format('YYYY/MM/DD\nHH:mm:ss')}</Td>
+                  <Td>
+                    <MyMenu
+                      offset={[-50, 5]}
+                      Button={
+                        <IconButton
+                          icon={<MyIcon name={'more'} w={'14px'} />}
+                          name={'more'}
+                          variant={'whitePrimary'}
+                          size={'sm'}
+                          aria-label={''}
+                        />
                       }
-                    ]}
-                  />
-                </Td>
-              </Tr>
-            ))}
+                      menuList={[
+                        {
+                          label: t('common.Edit'),
+                          icon: 'edit',
+                          onClick: () =>
+                            setEditData({
+                              _id,
+                              username,
+                              nickname,
+                              roleId,
+                              manager,
+                              validity: dayjs(validity).format('YYYY-MM-DDTHH:mm').toString()
+                            })
+                        },
+                        {
+                          label: status == UserStatusEnum.active ? '注销' : '激活',
+                          icon: 'edit',
+                          onClick: () => onclickChange({ id: _id, status: status })
+                        },
+                        {
+                          label: t('common.Delete'),
+                          icon: 'delete',
+                          type: 'danger',
+                          onClick: () =>
+                            setRemoveId({
+                              _id,
+                              desc: `确认删除该用户(${nickname})信息？删除后将立即生效，删除请确认！`
+                            })
+                        }
+                      ]}
+                    />
+                  </Td>
+                </Tr>
+              )
+            )}
           </Tbody>
         </Table>
         <Loading loading={isGetting || isChangeing || isGettingRole} fixed={false} />
@@ -373,6 +383,15 @@ function EditModal({
             <option value={0}>否</option>
             <option value={1}>是</option>
           </Select>
+        </Flex>
+        <Flex alignItems={'center'} mt={4}>
+          <Box flex={'0 0 90px'}>{'有效期'}:</Box>
+          <Input
+            type="datetime-local"
+            {...register('validity', {
+              required: 'validity is empty'
+            })}
+          ></Input>
         </Flex>
       </ModalBody>
 

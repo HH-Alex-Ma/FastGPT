@@ -107,27 +107,40 @@ export const addUserInfo = ({
   username,
   nickname,
   roleId,
-  manager
+  manager,
+  validity
 }: {
   username: string;
   nickname: string;
   roleId: string;
   manager: number;
-}) => POST('/support/user/account/group/addUser', { username, nickname, roleId, manager });
+  validity: string;
+}) =>
+  POST('/support/user/account/group/addUser', { username, nickname, roleId, manager, validity });
 
 export const updateUserInfo = ({
   id,
   username,
   nickname,
   roleId,
-  manager
+  manager,
+  validity
 }: {
   id: string;
   username: string;
   nickname: string;
   roleId: string;
   manager: number;
-}) => PUT('/support/user/account/group/updateUser', { id, username, nickname, roleId, manager });
+  validity: string;
+}) =>
+  PUT('/support/user/account/group/updateUser', {
+    id,
+    username,
+    nickname,
+    roleId,
+    manager,
+    validity
+  });
 
 export const delUserByID = (id: string) => DELETE(`/support/user/account/group/deleteUser`, { id });
 export const changeUserStatusById = (id: string, status: string) =>

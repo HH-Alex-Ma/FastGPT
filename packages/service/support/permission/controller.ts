@@ -8,13 +8,18 @@ import { authOpenApiKey } from '../openapi/auth';
 import { FileTokenQuery } from '@fastgpt/global/common/file/type';
 
 /* create token */
-export function createJWT(user: { _id?: string; team?: { teamId?: string; tmbId: string } }) {
+export function createJWT(user: {
+  _id?: string;
+  team?: { teamId?: string; tmbId: string };
+  validity?: string;
+}) {
   const key = process.env.TOKEN_KEY as string;
   const token = jwt.sign(
     {
       userId: String(user._id),
       teamId: String(user.team?.teamId),
       tmbId: String(user.team?.tmbId),
+      validity: String(user.validity),
       exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2
     },
     key
@@ -28,19 +33,27 @@ export function authJWT(token: string) {
     userId: string;
     teamId: string;
     tmbId: string;
+    validity: Date;
   }>((resolve, reject) => {
     const key = process.env.TOKEN_KEY as string;
-
     jwt.verify(token, key, function (err, decoded: any) {
       if (err || !decoded?.userId) {
         reject(ERROR_ENUM.unAuthorization);
         return;
       }
-
+      // await connectToDatabase();
+      // const userInfo = await MongoUser.findOne({
+      //   _id: decoded.userId
+      // });
+      // if (dayjs(decoded.validity).isBefore(new Date())) {
+      //   reject(ERROR_ENUM.accountExpired);
+      //   return;
+      // }
       resolve({
         userId: decoded.userId,
         teamId: decoded.teamId || '',
-        tmbId: decoded.tmbId
+        tmbId: decoded.tmbId,
+        validity: decoded.validity
       });
     });
   });

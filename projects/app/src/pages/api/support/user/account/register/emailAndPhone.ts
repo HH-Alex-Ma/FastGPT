@@ -49,7 +49,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             nickname: nickname,
             email: email,
             roleId: roleInfo ? roleInfo?._id : '',
-            password: password
+            password: password,
+            validity: getValidityDate()
           }
         ]);
         userId = _id;
@@ -117,4 +118,10 @@ const checkCode = async (id: string, code: string) => {
   };
   const result = await fetch(`${AD_CLIENT_URL}/api/msg/${id}/check/${code}`, fetchOptions);
   return await result.json();
+};
+
+const getValidityDate = () => {
+  let now = new Date();
+  now.setDate(now.getDate() + 5); // 增加5天
+  return now;
 };

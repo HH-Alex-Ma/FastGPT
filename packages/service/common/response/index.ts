@@ -29,6 +29,9 @@ export const jsonRes = <T = any>(
     if (errResponseKey === ERROR_ENUM.unAuthorization) {
       clearCookie(res);
     }
+    if (errResponseKey === ERROR_ENUM.accountExpired) {
+      clearCookie(res);
+    }
 
     return res.json(ERROR_RESPONSE[errResponseKey]);
   }

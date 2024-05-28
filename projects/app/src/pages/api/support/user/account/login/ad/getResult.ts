@@ -5,6 +5,7 @@ import { createJWT, setCookie } from '@fastgpt/service/support/permission/contro
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
 import { hashStr } from '@fastgpt/global/common/string/tools';
+import dayjs from 'dayjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const AD_CLIENT_URL = process.env.AD_CLIENT_URL ? process.env.AD_CLIENT_URL : '';
@@ -34,23 +35,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           error: '用户不存在'
         });
       } else {
-        const userDetail = await getUserDetail({
-          tmbId: user?.lastLoginTmbId,
-          userId: user._id
-        });
-        MongoUser.findByIdAndUpdate(user._id, {
-          lastLoginTmbId: userDetail.team.tmbId
-        });
+        if (dayjs(user.validity).isBefore(new Date())) {
+          jsonRes(res, {
+            code: 400,
+            error: '账户已过期，请联系管理员'
+          });
+        } else {
+          const userDetail = await getUserDetail({
+            tmbId: user?.lastLoginTmbId,
+            userId: user._id
+          });
+          MongoUser.findByIdAndUpdate(user._id, {
+            lastLoginTmbId: userDetail.team.tmbId
+          });
 
-        const token = createJWT(userDetail);
-        setCookie(res, token);
+          const token = createJWT(userDetail);
+          setCookie(res, token);
 
-        jsonRes(res, {
-          data: {
-            user: userDetail,
-            token
-          }
-        });
+          jsonRes(res, {
+            data: {
+              user: userDetail,
+              token
+            }
+          });
+        }
       }
     }
   } catch (err) {

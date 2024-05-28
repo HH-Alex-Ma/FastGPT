@@ -4,6 +4,8 @@ import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { createJWT, setCookie } from '@fastgpt/service/support/permission/controller';
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
+import { UserStatusEnum } from '@fastgpt/global/support/user/constant';
+import dayjs from 'dayjs';
 
 const DING_APP_KEY = process.env.DING_APP_KEY ? process.env.DING_APP_KEY : '';
 const DING_APP_SECRET = process.env.DING_APP_SECRET ? process.env.DING_APP_SECRET : '';
@@ -69,23 +71,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             error: '用户不存在'
           });
         } else {
-          const userDetail = await getUserDetail({
-            tmbId: user?.lastLoginTmbId,
-            userId: user._id
-          });
-          MongoUser.findByIdAndUpdate(user._id, {
-            lastLoginTmbId: userDetail.team.tmbId
-          });
+          if (dayjs(user.validity).isBefore(new Date())) {
+            jsonRes(res, {
+              code: 400,
+              error: '账户已过期，请联系管理员'
+            });
+          } else {
+            const userDetail = await getUserDetail({
+              tmbId: user?.lastLoginTmbId,
+              userId: user._id
+            });
+            MongoUser.findByIdAndUpdate(user._id, {
+              lastLoginTmbId: userDetail.team.tmbId
+            });
 
-          const token = createJWT(userDetail);
-          setCookie(res, token);
+            const token = createJWT(userDetail);
+            setCookie(res, token);
 
-          jsonRes(res, {
-            data: {
-              user: userDetail,
-              token
-            }
-          });
+            jsonRes(res, {
+              data: {
+                user: userDetail,
+                token
+              }
+            });
+          }
         }
       } catch (err: any) {
         // err 中含有 code 和 message 属性，可帮助开发定位问题

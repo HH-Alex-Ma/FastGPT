@@ -170,7 +170,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
           立即注册
         </Link>
       </Box>
-      {/* <Box
+      <Box
         mt={1}
         color={'black.700'}
         textAlign={'left'}
@@ -201,7 +201,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
             }
           }}
         />
-      </Box> */}
+      </Box>
     </FormLayout>
   );
 };

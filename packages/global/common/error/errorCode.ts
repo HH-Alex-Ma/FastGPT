@@ -34,6 +34,7 @@ export const proxyError: Record<string, boolean> = {
 
 export enum ERROR_ENUM {
   unAuthorization = 'unAuthorization',
+  accountExpired = 'accountExpired',
   insufficientQuota = 'insufficientQuota',
   unAuthModel = 'unAuthModel',
   unAuthApiKey = 'unAuthApiKey',
@@ -63,6 +64,12 @@ export const ERROR_RESPONSE: Record<
     code: 403,
     statusText: ERROR_ENUM.unAuthorization,
     message: '凭证错误',
+    data: null
+  },
+  [ERROR_ENUM.accountExpired]: {
+    code: 511,
+    statusText: ERROR_ENUM.accountExpired,
+    message: '账户已过期，请联系管理员',
     data: null
   },
   [ERROR_ENUM.insufficientQuota]: {

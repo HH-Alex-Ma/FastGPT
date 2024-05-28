@@ -4,6 +4,7 @@ export type AddUserType = {
   nickname: string;
   roleId: string;
   manager: number;
+  validity: Date;
 };
 
 export type AddRoleType = {

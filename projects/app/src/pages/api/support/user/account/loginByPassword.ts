@@ -6,6 +6,7 @@ import { connectToDatabase } from '@/service/mongo';
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import type { PostLoginProps } from '@fastgpt/global/support/user/api.d';
 import { UserStatusEnum } from '@fastgpt/global/support/user/constant';
+import dayjs from 'dayjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -38,6 +39,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!user) {
       throw new Error('密码错误');
+    }
+
+    if (user.username != 'root' && dayjs(user.validity).isBefore(new Date())) {
+      await MongoUser.updateOne(
+        {
+          _id: user._id
+        },
+        {
+          status: UserStatusEnum.forbidden
+        }
+      );
+      throw new Error('账户已过期，请联系管理员');
     }
 
     const userDetail = await getUserDetail({

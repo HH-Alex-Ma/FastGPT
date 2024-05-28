@@ -18,22 +18,34 @@ const Oauth = (props: any) => {
   const { isLoading: isGetting } = useQuery(['getADLoginResult', authCode], () => {
     getADLoginResult(authCode)
       .then((res: any) => {
-        // init store
-        setLastChatId('');
-        setLastChatAppId('');
+        if (res.user && res.token) {
+          // init store
+          setLastChatId('');
+          setLastChatAppId('');
 
-        setUserInfo(res.user);
-        setToken(res.token);
-        setTimeout(() => {
+          setUserInfo(res.user);
+          setToken(res.token);
+          setTimeout(() => {
+            toast({
+              title: '登录成功',
+              status: 'success'
+            });
+            router.push('/home');
+          }, 300);
+        } else {
+          setUserInfo(null);
+          setToken('');
           toast({
-            title: '登录成功',
-            status: 'success'
+            title: res.message || '登录异常',
+            status: 'error'
           });
-          router.push('/home');
-        }, 300);
+          router.push('/login');
+        }
       })
       .catch((res: any) => {
         if (res.code == 400) {
+          setUserInfo(null);
+          setToken('');
           toast({
             title: res.message || '登录异常',
             status: 'error'

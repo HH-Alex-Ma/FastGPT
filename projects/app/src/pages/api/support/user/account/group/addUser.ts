@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (!tmb) {
       throw new Error('can not find it');
     }
-    const { username, nickname, roleId, manager } = req.body as AddUserType;
+    const { username, nickname, roleId, manager, validity } = req.body as AddUserType;
 
     if (!username || !nickname) {
       throw new Error('缺少参数');
@@ -42,7 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           nickname: nickname,
           roleId: roleId && roleId != '' ? roleId : roleInfo ? roleInfo?._id : '',
           manager: manager,
-          password: hashStr(psw)
+          password: hashStr(psw),
+          validity: validity
         }
       ]);
       userId = _id;

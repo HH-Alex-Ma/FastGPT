@@ -10,6 +10,7 @@ export type UserModelSchema = {
   DindDing?: string;
   companyName?: string;
   department?: string;
+  validity?: string;
   email?: string;
   phonePrefix?: number;
   phone?: string;
@@ -37,6 +38,7 @@ export type UserType = {
   DindDing?: string;
   companyName?: string;
   department?: string;
+  validity?: string;
   nickname: string;
   timezone: string;
   promotionRate: UserModelSchema['promotionRate'];

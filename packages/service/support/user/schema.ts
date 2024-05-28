@@ -58,6 +58,10 @@ const UserSchema = new Schema({
     type: Date,
     default: () => new Date()
   },
+  validity: {
+    type: Date,
+    default: () => new Date()
+  },
   avatar: {
     type: String,
     default: '/icon/human.svg'
