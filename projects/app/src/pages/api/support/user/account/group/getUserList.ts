@@ -15,8 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
     //记录
     const data = await MongoUser.find();
+    dataMasking(data);
     jsonRes(res, {
-      data
+      data: dataMasking(data)
     });
   } catch (err) {
     jsonRes(res, {
@@ -25,3 +26,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
   }
 }
+
+const dataMasking = (data: any[]) => {
+  data.forEach((item, index) => {
+    item.username =
+      item.username.length == 11
+        ? item.username.slice(0, 3) + '****' + item.username.slice(-4)
+        : item.username.slice(0, 1) + '***' + item.username.slice(-1);
+    // item.nickname = item.nickname.slice(0, 1) + '*' + item.nickname.slice(-1);
+  });
+  return data;
+};
