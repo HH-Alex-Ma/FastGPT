@@ -3,7 +3,7 @@
     "lafEnv": "https://laf.dev"
   },
   "systemEnv": {
-    "openapiPrefix": "blai",
+    "openapiPrefix": "huamei",
     "vectorMaxProcess": 15,
     "qaMaxProcess": 15,
     "pgHNSWEfSearch": 100
