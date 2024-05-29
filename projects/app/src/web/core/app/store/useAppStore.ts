@@ -1,14 +1,18 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { getMyApps, getModelById, putAppById, replaceAppById } from '@/web/core/app/api';
+import { getMyApps, getModelById, putAppById, replaceAppById, getAppsDetails, getCreatorName } from '@/web/core/app/api';
 import { defaultApp } from '@/constants/app';
 import type { AppUpdateParams } from '@fastgpt/global/core/app/api.d';
-import { AppDetailType, AppListItemType } from '@fastgpt/global/core/app/type.d';
+import { AppDetailType, AppListDetailType, AppListItemType } from '@fastgpt/global/core/app/type.d';
 
 type State = {
   myApps: AppListItemType[];
   loadMyApps: (init?: boolean) => Promise<AppListItemType[]>;
+  detailedApps: AppListDetailType[];
+  appCreator: string;
+  findAppCreator: (tmbId: string) => Promise<string>;
+  loadAppsDetails: (init?: boolean) => Promise<AppListDetailType[]>;
   appDetail: AppDetailType;
   loadAppDetail: (id: string, init?: boolean) => Promise<AppDetailType>;
   updateAppDetail(appId: string, data: AppUpdateParams): Promise<void>;
@@ -26,6 +30,25 @@ export const useAppStore = create<State>()(
           const res = await getMyApps();
           set((state) => {
             state.myApps = res;
+          });
+          return res;
+        },
+        detailedApps: [],
+        async loadAppsDetails(init = true) {
+          if (get().detailedApps.length > 0 && !init) return [];
+          const res = await getAppsDetails();
+          set((state) => {
+            state.detailedApps = res;
+          });
+          return res;
+        },
+
+        appCreator: '',
+        async findAppCreator(tmbId: string) {
+          if (!tmbId) return 'User not found';
+          const res = await getCreatorName(tmbId);
+          set((state) => {
+            state.appCreator = res;
           });
           return res;
         },

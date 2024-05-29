@@ -1,14 +1,25 @@
 import { GET, POST, DELETE, PUT } from '@/web/common/api/request';
-import type { AppDetailType, AppListItemType } from '@fastgpt/global/core/app/type.d';
+import type { AppDetailType, AppListDetailType, AppListItemType } from '@fastgpt/global/core/app/type.d';
 import { RequestPaging } from '@/types/index';
 import { addDays } from 'date-fns';
 import type { GetAppChatLogsParams } from '@/global/core/api/appReq.d';
 import type { CreateAppParams, AppUpdateParams } from '@fastgpt/global/core/app/api.d';
+import { UserType } from '@fastgpt/global/support/user/type';
 
 /**
  * 获取模型列表
  */
 export const getMyApps = () => GET<AppListItemType[]>('/core/app/list');
+
+/**
+ * 获取模型详细信息
+ */
+export const getAppsDetails = () => GET<AppListDetailType[]>('/core/app/listDetails');
+
+/**
+ * 根据 app 获取创建人用户名(昵称)
+ */
+export const getCreatorName = (tmbId: string) => GET<string>(`/core/app/getUser?tmbId=${tmbId}`);
 
 /**
  * 创建一个模型
