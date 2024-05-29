@@ -40,11 +40,15 @@ const MyApps = () => {
   } = useDisclosure();
 
   const [searchText, setSearchText] = useState('');
+  /* 根据搜索栏过滤显示 */
   const filteredApps = detailedApps.filter((app) => app.isShow === ModelType.MINE && (app.name.toLowerCase().includes(searchText.toLowerCase())
                                                                                   || app.intro.toLowerCase().includes(searchText.toLowerCase())
                                                                                   || app.modules[2].inputs[1].value.toLowerCase().includes(searchText.toLowerCase())
                                                                                   || app.userId.toLowerCase().includes(searchText.toLowerCase())
-                                                                                  || app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) ))
+                                                                                  || app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) 
+                                                                                  || (app.appType === 'Person' && "个人".includes(searchText.toLowerCase()))
+                                                                                  || (app.appType === 'Company' && "企业".includes(searchText.toLowerCase()))
+                                                                                    ))
 
   /* 显示模式 */
   const [displayMode, setDisplayMode] = useState('grid');
@@ -52,7 +56,7 @@ const MyApps = () => {
     setDisplayMode(currMode => currMode === 'grid' ? 'table' : 'grid');
   };
   /* 页数和搜索内容 */
-  const itemsPerPage = 8;
+  const itemsPerPage = 11;
   const [initPage, setInitPage] = useState(true);
   const [inputObj, setInputObj] = useState({
     pageNum: 0,
@@ -237,7 +241,7 @@ const MyApps = () => {
                 </Tr>
               </Thead>
               <Tbody>
-              {filteredApps.slice(((tempObj.pageNum - 1) * 8), tempObj.pageNum * 8).map( app => (
+              {filteredApps.slice(((tempObj.pageNum - 1) * itemsPerPage), tempObj.pageNum * itemsPerPage).map( app => (
                   <Tr key={app._id}>
                     {/* 名称 */}
                     <Td>
@@ -349,7 +353,7 @@ const MyApps = () => {
                   &nbsp;{t('modelCenter.pageSuf')}
                 </Flex>
                 <IconButton
-                  isDisabled={(filteredApps.length / 8) <= tempObj.pageNum}
+                  isDisabled={(filteredApps.length / itemsPerPage) <= tempObj.pageNum}
                   icon={<ArrowForwardIcon />}
                   aria-label={'left'}
                   size={'sm'}
