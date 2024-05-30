@@ -27,38 +27,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           'Token-Key': hashStr(API_TOKEN)
         }
       });
-      const resultDate = await result.text();
-      const user = await MongoUser.findOne({ username: resultDate });
-      if (!user) {
-        jsonRes(res, {
-          code: 400,
-          error: '用户不存在'
-        });
-      } else {
-        if (dayjs(user.validity).isBefore(new Date())) {
+      const resultDate = await result.json();
+      if (resultDate.code == 200) {
+        const user = await MongoUser.findOne({ username: resultDate.data });
+        if (!user) {
           jsonRes(res, {
             code: 400,
-            error: '账户已过期，请联系管理员'
+            error: '用户不存在'
           });
         } else {
-          const userDetail = await getUserDetail({
-            tmbId: user?.lastLoginTmbId,
-            userId: user._id
-          });
-          MongoUser.findByIdAndUpdate(user._id, {
-            lastLoginTmbId: userDetail.team.tmbId
-          });
+          if (dayjs(user.validity).isBefore(new Date())) {
+            jsonRes(res, {
+              code: 400,
+              error: '账户已过期，请联系管理员'
+            });
+          } else {
+            const userDetail = await getUserDetail({
+              tmbId: user?.lastLoginTmbId,
+              userId: user._id
+            });
+            MongoUser.findByIdAndUpdate(user._id, {
+              lastLoginTmbId: userDetail.team.tmbId
+            });
 
-          const token = createJWT(userDetail);
-          setCookie(res, token);
+            const token = createJWT(userDetail);
+            setCookie(res, token);
 
-          jsonRes(res, {
-            data: {
-              user: userDetail,
-              token
-            }
-          });
+            jsonRes(res, {
+              data: {
+                user: userDetail,
+                token
+              }
+            });
+          }
         }
+      } else {
+        jsonRes(res, {
+          code: 400,
+          error: resultDate.code == 20001 ? resultDate.message : '请求错误，请联系管理员'
+        });
       }
     }
   } catch (err) {

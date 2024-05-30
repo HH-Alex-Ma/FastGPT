@@ -197,7 +197,12 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
           onClick={async () => {
             const res = await getADLoginQR();
             if ((res as any)?.code == 200) {
-              router.push((res as any).url);
+              router.push((res as any).data);
+            } else {
+              toast({
+                title: (res as any).data || '登录异常',
+                status: 'error'
+              });
             }
           }}
         />

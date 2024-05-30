@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 
@@ -14,14 +14,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         'Token-Key': hashStr(API_TOKEN)
       }
     });
-    const resultDate = await result.text();
+    const resultDate = await result.json();
     console.log(resultDate);
-    jsonRes(res, {
-      data: {
-        code: 200,
-        url: resultDate
-      }
-    });
+    if (resultDate.code == 200) {
+      jsonRes(res, {
+        data: {
+          code: 200,
+          data: resultDate.data
+        }
+      });
+    } else {
+      jsonRes(res, {
+        data: {
+          code: 500,
+          data: resultDate.code == 20001 ? resultDate.message : '请求错误，请联系管理员'
+        }
+      });
+    }
   } catch (err) {
     jsonRes(res, {
       code: 500,
