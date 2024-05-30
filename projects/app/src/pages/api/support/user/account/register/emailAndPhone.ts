@@ -14,6 +14,7 @@ import { createJWT, setCookie } from '@fastgpt/service/support/permission/contro
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import { createTransport } from 'nodemailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 const AD_CLIENT_URL = process.env.AD_CLIENT_URL ? process.env.AD_CLIENT_URL : '';
 const API_TOKEN = process.env.API_TOKEN ? process.env.API_TOKEN : '';
@@ -137,14 +138,15 @@ const sendEmail = (
   username: string
 ) => {
   // 创建邮件发送器
-  const transporter = createTransport({
+  const smtpConfig: SMTPTransport.Options = {
     host: process.env.EMAIL_SERVER,
-    port: process.env.EMAIL_SERVER_PORT,
+    port: Number(process.env.EMAIL_SERVER_PORT),
     auth: {
       user: process.env.EMAIL_AUTH_USER,
       pass: process.env.EMAIL_AUTH_PWD
     }
-  });
+  };
+  const transporter = createTransport(smtpConfig);
 
   // 邮件信息
   const mailOptions = {
