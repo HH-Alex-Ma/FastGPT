@@ -126,7 +126,7 @@ const checkCode = async (id: string, code: string) => {
 
 const getValidityDate = () => {
   let now = new Date();
-  now.setDate(now.getDate() + 5); // 增加5天
+  now.setDate(now.getDate() + Number(process.env.QUALIFYING_PERIOD)); // 增加天数
   return now;
 };
 
