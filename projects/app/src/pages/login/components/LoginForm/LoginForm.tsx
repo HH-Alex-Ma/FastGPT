@@ -169,7 +169,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
         <Link onClick={() => setPageType(LoginPageTypeEnum.register)} color={'blue.500'}>
           立即注册
         </Link>
-      </Box> */}
+      </Box>
       <Box
         mt={1}
         color={'black.700'}
@@ -177,7 +177,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
         style={{ display: 'flex', alignItems: 'center' }}
       >
         其他登录方式：
-        {/* <MyIcon
+        <MyIcon
           mr={2}
           name={'DingDing' as IconNameType}
           w={'30px'}
@@ -188,7 +188,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
               router.push((res as any).url);
             }
           }}
-        /> */}
+        />
         <MyIcon
           mr={2}
           name={'Azure' as IconNameType}
@@ -206,7 +206,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
             }
           }}
         />
-      </Box>
+      </Box> */}
     </FormLayout>
   );
 };
