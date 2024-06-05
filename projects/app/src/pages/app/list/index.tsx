@@ -1,5 +1,26 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Box, Grid, Flex, IconButton, Button, Menu, MenuButton, MenuList, MenuItem, useDisclosure, Input, Table, Thead, Tbody, Tr, Th, Td, Tag, TagLabel, TableContainer } from '@chakra-ui/react';
+import {
+  Box,
+  Grid,
+  Flex,
+  IconButton,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useDisclosure,
+  Input,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Tag,
+  TagLabel,
+  TableContainer
+} from '@chakra-ui/react';
 import { DragHandleIcon, HamburgerIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
@@ -27,7 +48,7 @@ const MyApps = () => {
   const router = useRouter();
   const { userInfo } = useUserStore();
   /* 用LoadAppsDetails代替loadMyApps */
-  const { myApps, loadMyApps, detailedApps, loadAppsDetails, findAppCreator} = useAppStore();
+  const { myApps, loadMyApps, detailedApps, loadAppsDetails, findAppCreator } = useAppStore();
   const [teamsTags, setTeamTags] = useState([]);
   const { openConfirm, ConfirmModal } = useConfirm({
     title: '删除提示',
@@ -41,19 +62,27 @@ const MyApps = () => {
 
   const [searchText, setSearchText] = useState('');
   /* 根据搜索栏过滤显示 */
-  const filteredApps = detailedApps.filter((app) => app.isShow === ModelType.MINE && (app.name.toLowerCase().includes(searchText.toLowerCase())
-                                                                                  || app.intro.toLowerCase().includes(searchText.toLowerCase())
-                                                                                  || app.modules[2].inputs[1].value.toLowerCase().includes(searchText.toLowerCase())
-                                                                                  || app.userId.toLowerCase().includes(searchText.toLowerCase())
-                                                                                  || app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) 
-                                                                                  || (app.appType === 'Person' && "个人".includes(searchText.toLowerCase()))
-                                                                                  || (app.appType === 'Company' && "企业".includes(searchText.toLowerCase()))
-                                                                                    ))
+  const filteredApps = detailedApps.filter((app) => {
+    const value = app.modules[2].inputs[1].value;
+    const valueStr =
+      typeof value === 'string' ? value.toLowerCase() : value.toString().toLowerCase();
+
+    return (
+      app.isShow === ModelType.MINE &&
+      (app.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        app.intro.toLowerCase().includes(searchText.toLowerCase()) ||
+        valueStr.includes(searchText.toLowerCase()) ||
+        app.userId.toLowerCase().includes(searchText.toLowerCase()) ||
+        app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+        (app.appType === 'Person' && '个人'.includes(searchText.toLowerCase())) ||
+        (app.appType === 'Company' && '企业'.includes(searchText.toLowerCase())))
+    );
+  });
 
   /* 显示模式 */
   const [displayMode, setDisplayMode] = useState('grid');
   const toggleDisplayMode = () => {
-    setDisplayMode(currMode => currMode === 'grid' ? 'table' : 'grid');
+    setDisplayMode((currMode) => (currMode === 'grid' ? 'table' : 'grid'));
   };
   /* 页数和搜索内容 */
   const itemsPerPage = 11;
@@ -95,12 +124,17 @@ const MyApps = () => {
   return (
     <PageContainer isLoading={isFetching} insertProps={{ px: [5, '48px'] }}>
       <Flex pt={[4, '30px']} alignItems={'center'} justifyContent={'space-between'}>
-        <Flex gap='3'>
+        <Flex gap="3">
           <Box letterSpacing={1} fontSize={['20px', '24px']} color={'myGray.900'}>
             {t('app.My Apps')}
           </Box>
           <MyTooltip label={'切换显示'}>
-            <IconButton aria-label='切换显示' variant='outline' onClick={toggleDisplayMode} icon={displayMode === 'grid' ? <HamburgerIcon /> : <DragHandleIcon />}/>
+            <IconButton
+              aria-label="切换显示"
+              variant="outline"
+              onClick={toggleDisplayMode}
+              icon={displayMode === 'grid' ? <HamburgerIcon /> : <DragHandleIcon />}
+            />
           </MyTooltip>
         </Flex>
         {/*搜索栏*/}
@@ -110,10 +144,10 @@ const MyApps = () => {
               placeholder="搜索"
               value={searchText}
               bg={'#fff'}
-              onChange={(e) => {setSearchText(e.currentTarget.value);
+              onChange={(e) => {
+                setSearchText(e.currentTarget.value);
                 setTempObj({ ...tempObj, pageNum: 1 });
-                }
-              }
+              }}
             />
           </Box>
           <Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}>
@@ -129,101 +163,101 @@ const MyApps = () => {
           py={[4, 6]}
           gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
           gridGap={5}
-          >
+        >
           {filteredApps.map((app) => (
-              <MyTooltip
-                key={app._id}
-                label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
+            <MyTooltip
+              key={app._id}
+              label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
+            >
+              <Box
+                lineHeight={1.5}
+                h={'100%'}
+                py={3}
+                px={5}
+                cursor={'pointer'}
+                borderWidth={'1.5px'}
+                borderColor={'borderColor.low'}
+                bg={'white'}
+                borderRadius={'md'}
+                userSelect={'none'}
+                position={'relative'}
+                display={'flex'}
+                flexDirection={'column'}
+                _hover={{
+                  borderColor: 'primary.300',
+                  boxShadow: '1.5',
+                  '& .delete': {
+                    display: 'flex'
+                  },
+                  '& .chat': {
+                    display: 'flex'
+                  }
+                }}
+                onClick={() => {
+                  if (userInfo?.team.canWrite) {
+                    router.push(`/app/detail?appId=${app._id}`);
+                  } else {
+                    router.push(`/chat?appId=${app._id}`);
+                  }
+                }}
               >
+                <Flex alignItems={'center'} h={'38px'}>
+                  <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
+                  <Box ml={3}>{app.name}</Box>
+                  {app.isOwner && userInfo?.team.canWrite && (
+                    <IconButton
+                      className="delete"
+                      position={'absolute'}
+                      top={4}
+                      right={4}
+                      size={'xsSquare'}
+                      variant={'whiteDanger'}
+                      icon={<MyIcon name={'delete'} w={'14px'} />}
+                      aria-label={'delete'}
+                      display={['', 'none']}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openConfirm(() => onclickDelApp(app._id))();
+                      }}
+                    />
+                  )}
+                </Flex>
                 <Box
-                  lineHeight={1.5}
-                  h={'100%'}
-                  py={3}
-                  px={5}
-                  cursor={'pointer'}
-                  borderWidth={'1.5px'}
-                  borderColor={'borderColor.low'}
-                  bg={'white'}
-                  borderRadius={'md'}
-                  userSelect={'none'}
-                  position={'relative'}
-                  display={'flex'}
-                  flexDirection={'column'}
-                  _hover={{
-                    borderColor: 'primary.300',
-                    boxShadow: '1.5',
-                    '& .delete': {
-                      display: 'flex'
-                    },
-                    '& .chat': {
-                      display: 'flex'
-                    }
-                  }}
-                  onClick={() => {
-                    if (userInfo?.team.canWrite) {
-                      router.push(`/app/detail?appId=${app._id}`);
-                    } else {
-                      router.push(`/chat?appId=${app._id}`);
-                    }
-                  }}
+                  flex={1}
+                  className={'textEllipsis3'}
+                  py={2}
+                  wordBreak={'break-all'}
+                  fontSize={'sm'}
+                  color={'myGray.600'}
                 >
-                  <Flex alignItems={'center'} h={'38px'}>
-                    <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
-                    <Box ml={3}>{app.name}</Box>
-                    {app.isOwner && userInfo?.team.canWrite && (
-                      <IconButton
-                        className="delete"
-                        position={'absolute'}
-                        top={4}
-                        right={4}
-                        size={'xsSquare'}
-                        variant={'whiteDanger'}
-                        icon={<MyIcon name={'delete'} w={'14px'} />}
-                        aria-label={'delete'}
-                        display={['', 'none']}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openConfirm(() => onclickDelApp(app._id))();
-                        }}
-                      />
-                    )}
-                  </Flex>
-                  <Box
-                    flex={1}
-                    className={'textEllipsis3'}
-                    py={2}
-                    wordBreak={'break-all'}
-                    fontSize={'sm'}
-                    color={'myGray.600'}
-                  >
-                    {app.intro || '这个应用还没写介绍~'}
-                  </Box>
-                  <Flex h={'34px'} alignItems={'flex-end'}>
-                    <Box flex={1}>
-                      {/* <PermissionIconText permission={app.permission} color={'myGray.600'} /> */}
-                    </Box>
-                    {userInfo?.team.canWrite && (
-                      <IconButton
-                        className="chat"
-                        size={'xsSquare'}
-                        variant={'whitePrimary'}
-                        icon={
-                          <MyTooltip label={'去聊天'}>
-                            <MyIcon name={'core/chat/chatLight'} w={'14px'} />
-                          </MyTooltip>
-                        }
-                        aria-label={'chat'}
-                        display={['', 'none']}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/chat?appId=${app._id}`);
-                        }}
-                      />
-                    )}
-                  </Flex>
+                  {app.intro || '这个应用还没写介绍~'}
                 </Box>
-              </MyTooltip>
-            ))}
+                <Flex h={'34px'} alignItems={'flex-end'}>
+                  <Box flex={1}>
+                    {/* <PermissionIconText permission={app.permission} color={'myGray.600'} /> */}
+                  </Box>
+                  {userInfo?.team.canWrite && (
+                    <IconButton
+                      className="chat"
+                      size={'xsSquare'}
+                      variant={'whitePrimary'}
+                      icon={
+                        <MyTooltip label={'去聊天'}>
+                          <MyIcon name={'core/chat/chatLight'} w={'14px'} />
+                        </MyTooltip>
+                      }
+                      aria-label={'chat'}
+                      display={['', 'none']}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/chat?appId=${app._id}`);
+                      }}
+                    />
+                  )}
+                </Flex>
+              </Box>
+            </MyTooltip>
+          ))}
         </Grid>
       ) : (
         /* Table Display */
@@ -241,37 +275,53 @@ const MyApps = () => {
                 </Tr>
               </Thead>
               <Tbody>
-              {filteredApps.slice(((tempObj.pageNum - 1) * itemsPerPage), tempObj.pageNum * itemsPerPage).map( app => (
-                  <Tr key={app._id}>
-                    {/* 名称 */}
-                    <Td>
-                      <Flex flexDirection={'row'} alignItems='center' gap = '8px'>
-                      <Avatar src = {app.avatar} w='20px' h='20px'/>
-                      {app.name}
-                      </Flex>
-                    </Td>
-                    {/* 描述 */}
-                    <Td>
-                      <MyTooltip label={app.intro? app.intro : ''}>
-                       {app.intro === ''? "这个应用还没写介绍~": (app.intro.slice(0, 15) + ' . . .')}
-                      </MyTooltip>
-                    </Td>
-                    {/* 模型（通过modules内固定index索引查得） */}
-                    <Td>
-                      <Tag size="sm" key="md" variant="subtle" color="#69758269">
-                        <TagLabel color="#697582">{app.modules[2].inputs[1].value}</TagLabel>
-                      </Tag>
-                    </Td>
-                    {/* 创建人 */}
-                    <Td>{app.userId}</Td>
-                    {/* 企业/个人 */}
-                    <Td>
-                      <Tag size="sm" key="md" variant="subtle" colorScheme= {app.appType ==="Person" ? 'blue': 'green'}>
-                        <TagLabel color ="#697582">{app.appType === 'Person'? '个人应用': '企业应用'}</TagLabel>
-                      </Tag></Td>
-                    {/* 更新时间 */}
-                    <Td>{app.updateTime.toString().slice(0, 10) + ' ' + app.updateTime.toString().slice(11, 16)}</Td>
-                    <Td style={{ padding: 'px 10px' }}>
+                {filteredApps
+                  .slice((tempObj.pageNum - 1) * itemsPerPage, tempObj.pageNum * itemsPerPage)
+                  .map((app) => (
+                    <Tr key={app._id}>
+                      {/* 名称 */}
+                      <Td>
+                        <Flex flexDirection={'row'} alignItems="center" gap="8px">
+                          <Avatar src={app.avatar} w="20px" h="20px" />
+                          {app.name}
+                        </Flex>
+                      </Td>
+                      {/* 描述 */}
+                      <Td>
+                        <MyTooltip label={app.intro ? app.intro : ''}>
+                          {app.intro === ''
+                            ? '这个应用还没写介绍~'
+                            : app.intro.slice(0, 15) + ' . . .'}
+                        </MyTooltip>
+                      </Td>
+                      {/* 模型（通过modules内固定index索引查得） */}
+                      <Td>
+                        <Tag size="sm" key="md" variant="subtle" color="#69758269">
+                          <TagLabel color="#697582">{app.modules[2].inputs[1].value}</TagLabel>
+                        </Tag>
+                      </Td>
+                      {/* 创建人 */}
+                      <Td>{app.userId}</Td>
+                      {/* 企业/个人 */}
+                      <Td>
+                        <Tag
+                          size="sm"
+                          key="md"
+                          variant="subtle"
+                          colorScheme={app.appType === 'Person' ? 'blue' : 'green'}
+                        >
+                          <TagLabel color="#697582">
+                            {app.appType === 'Person' ? '个人应用' : '企业应用'}
+                          </TagLabel>
+                        </Tag>
+                      </Td>
+                      {/* 更新时间 */}
+                      <Td>
+                        {app.updateTime.toString().slice(0, 10) +
+                          ' ' +
+                          app.updateTime.toString().slice(11, 16)}
+                      </Td>
+                      <Td style={{ padding: 'px 10px' }}>
                         <Menu autoSelect={false} isLazy>
                           <MenuButton
                             _hover={{ bg: 'myWhite.600  ' }}
@@ -294,18 +344,21 @@ const MyApps = () => {
                               <MyIcon name={'edit'} w={['14px', '16px']} />
                               <Box ml={[1, 2]}>{t('common.Edit')}</Box>
                             </MenuItem>
-                            <MenuItem onClick={(e) => {
-                              e.stopPropagation();
-                              openConfirm(() => onclickDelApp(app._id))();
-                            }} py={[2, 3]}>
+                            <MenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openConfirm(() => onclickDelApp(app._id))();
+                              }}
+                              py={[2, 3]}
+                            >
                               <MyIcon name={'delete'} w={['14px', '16px']} />
                               <Box ml={[1, 2]}>{t('common.Delete')}</Box>
                             </MenuItem>
                           </MenuList>
                         </Menu>
                       </Td>
-                  </Tr>
-                ))}
+                    </Tr>
+                  ))}
               </Tbody>
             </Table>
           </TableContainer>
@@ -353,7 +406,7 @@ const MyApps = () => {
                   &nbsp;{t('modelCenter.pageSuf')}
                 </Flex>
                 <IconButton
-                  isDisabled={(filteredApps.length / itemsPerPage) <= tempObj.pageNum}
+                  isDisabled={filteredApps.length / itemsPerPage <= tempObj.pageNum}
                   icon={<ArrowForwardIcon />}
                   aria-label={'left'}
                   size={'sm'}
