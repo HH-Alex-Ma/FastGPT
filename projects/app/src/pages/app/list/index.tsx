@@ -62,22 +62,41 @@ const MyApps = () => {
 
   const [searchText, setSearchText] = useState('');
   /* 根据搜索栏过滤显示 */
-  const filteredApps = detailedApps.filter((app) => {
-    const value = app.modules[2].inputs[1].value;
-    const valueStr =
-      typeof value === 'string' ? value.toLowerCase() : value.toString().toLowerCase();
+  const filteredApps = detailedApps
+    .map((app) => {
+      let modelValue = '';
+      for (let module of app.modules) {
+        if (module.moduleId === 'chatModule') {
+          for (let input of module.inputs) {
+            if (input.key === 'model') {
+              modelValue = input.value;
+              break;
+            }
+          }
+          break;
+        }
+      }
 
-    return (
-      app.isShow === ModelType.MINE &&
-      (app.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        app.intro.toLowerCase().includes(searchText.toLowerCase()) ||
-        valueStr.includes(searchText.toLowerCase()) ||
-        app.userId.toLowerCase().includes(searchText.toLowerCase()) ||
-        app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) ||
-        (app.appType === 'Person' && '个人'.includes(searchText.toLowerCase())) ||
-        (app.appType === 'Company' && '企业'.includes(searchText.toLowerCase())))
-    );
-  });
+      const valueStr = modelValue
+        ? typeof modelValue === 'string'
+          ? modelValue.toLowerCase()
+          : (modelValue as string).toString().toLowerCase()
+        : '';
+      return {
+        ...app,
+        modelValue,
+        isFiltered:
+          app.isShow === ModelType.MINE &&
+          (app.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            app.intro.toLowerCase().includes(searchText.toLowerCase()) ||
+            valueStr.includes(searchText.toLowerCase()) ||
+            app.userId.toLowerCase().includes(searchText.toLowerCase()) ||
+            app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+            (app.appType === 'Person' && '个人'.includes(searchText.toLowerCase())) ||
+            (app.appType === 'Company' && '企业'.includes(searchText.toLowerCase())))
+      };
+    })
+    .filter((app) => app.isFiltered);
 
   /* 显示模式 */
   const [displayMode, setDisplayMode] = useState('grid');
@@ -297,7 +316,7 @@ const MyApps = () => {
                       {/* 模型（通过modules内固定index索引查得） */}
                       <Td>
                         <Tag size="sm" key="md" variant="subtle" color="#69758269">
-                          <TagLabel color="#697582">{app.modules[2].inputs[1].value}</TagLabel>
+                          <TagLabel color="#697582">{app.modelValue}</TagLabel>
                         </Tag>
                       </Td>
                       {/* 创建人 */}
