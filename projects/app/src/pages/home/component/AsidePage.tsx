@@ -51,6 +51,7 @@ const AsidePage = ({
   return (
     <Flex
       flexDirection={'column'}
+      left={170}
       h={'100%'}
       py={[0, '0px']}
       pr={[0, '0px']}
@@ -58,10 +59,10 @@ const AsidePage = ({
       borderRight={'1px'}
       borderColor={'#e1e1e1'}
     >
-      <Box mx={1} px={3} h={'60px'} pt={'12.5px'}>
+      <Box mx={1} px={3} h={'42px'} pt={'12.5px'}>
         <Flex alignItems={'center'} borderRadius={'md'}>
           <MyAvatar w={'40px'} h={'40px'} mr={'5px'} borderRadius={'20px'} src={LOGO_ICON} />
-          <Text fontSize="18px" fontWeight={'700'} pl={'5px'}>
+          <Text fontSize="16px" fontWeight={'700'} pl={'5px'} whiteSpace="nowrap">
             Run GenAI企业应用助手
           </Text>
         </Flex>
