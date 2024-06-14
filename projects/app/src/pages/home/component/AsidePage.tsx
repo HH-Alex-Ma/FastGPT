@@ -62,7 +62,7 @@ const AsidePage = ({
         <Flex alignItems={'center'} borderRadius={'md'}>
           <MyAvatar w={'40px'} h={'40px'} mr={'5px'} borderRadius={'20px'} src={LOGO_ICON} />
           <Text fontSize="18px" fontWeight={'700'} pl={'5px'}>
-            GenAI企业应用助手
+            Run GenAI企业应用助手
           </Text>
         </Flex>
       </Box>

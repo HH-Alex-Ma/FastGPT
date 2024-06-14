@@ -153,7 +153,7 @@ const sendEmail = (
     from: process.env.EMAIL_AUTH_USER, // 发件人
     to: process.env.EMAIL_TO_USER?.split(','), // 收件人
     cc: process.env.EMAIL_TO_CC?.split(','),
-    subject: `来自： ${companyName}${nickname}的GenAI试用注册`, // 邮件标题
+    subject: `来自： ${companyName}${nickname}的Run GenAI试用注册`, // 邮件标题
     html: `<style>
     Table { font-family: Arial, Helvetica, sans-serif; background-color: #EEEEEE;
     border-collapse: collapse; width: 100%; } Table td, Table th { border:
