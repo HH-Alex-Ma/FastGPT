@@ -13,6 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const {
       name = 'APP',
       avatar,
+      intro,
+      isShow,
+      appType,
       type = AppTypeEnum.advanced,
       modules
     } = req.body as CreateAppParams;
@@ -31,6 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const response = await MongoApp.create({
       avatar,
       name,
+      intro,
+      isShow,
+      appType,
       teamId,
       tmbId,
       modules,

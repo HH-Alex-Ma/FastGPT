@@ -81,7 +81,7 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeIcon: 'core/service/serviceFill',
         link: '/service',
         activeLink: ['/service']
-      }
+      },
       // {
       //   label: t('navbar.Account'),
       //   icon: 'support/user/userLight',
@@ -89,6 +89,13 @@ const Navbar = ({ unread }: { unread: number }) => {
       //   link: '/account',
       //   activeLink: ['/account']
       // }
+      {
+        label: '系统字典',
+        icon: 'common/sys/dict',
+        activeIcon: 'common/sys/dict',
+        link: '/type',
+        activeLink: ['/type']
+      }
     ],
     [lastChatAppId, lastChatId, t]
   );

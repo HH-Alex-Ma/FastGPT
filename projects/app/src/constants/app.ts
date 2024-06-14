@@ -17,7 +17,7 @@ export const defaultApp: AppDetailType = {
   isOwner: false,
   canWrite: false,
   teamTags: [''],
-  isShow: ModelType.MINE,
+  isShow: '',
   appType: AppSortType.PERSON
 };
 

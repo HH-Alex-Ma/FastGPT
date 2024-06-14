@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon, Input } from '@chakra-ui/react';
-import { AddIcon, StarIcon } from '@chakra-ui/icons';
+import { StarIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
@@ -12,8 +12,11 @@ import MyTooltip from '@/components/MyTooltip';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { setAppCollect } from '@/web/support/user/api';
 import { AppSortType } from '@fastgpt/global/support/permission/constant';
-import CreateModal from './CreateModal';
 import { useRouter } from 'next/router';
+import MySelect from '@fastgpt/web/components/common/MySelect';
+import { useQuery } from '@tanstack/react-query';
+import { getTypes } from '@/web/support/user/api';
+import CreateModal from '@/pages/app/list/component/CreateModal';
 
 const MyAppListPc = ({
   ownerApps,
@@ -82,8 +85,15 @@ const MyAppListPc = ({
     },
     [toast]
   );
-  const [activeAppType, setActiveAppType] = useState(1);
-  const appTypes = [
+  const [activeAppType, setActiveAppType] = useState(0);
+  const [mySelectType, setMySelectType] = useState(1);
+  const {
+    data: appTypes = [],
+    isLoading: isGetting,
+    refetch
+  } = useQuery(['getTypes'], () => getTypes());
+
+  const mySelectTypes = [
     {
       id: 1,
       name: '全部'
@@ -94,52 +104,77 @@ const MyAppListPc = ({
     },
     {
       id: 3,
-      name: '由我创建'
-    },
-    {
-      id: 4,
-      name: '我收藏的'
+      name: '个人应用'
     }
+    // {
+    //   id: 4,
+    //   name: '我收藏的'
+    // }
   ];
   const myApps = () => {
-    if (activeAppType == 1) {
-      return ownerApps.filter((item: any) =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    } else if (activeAppType == 2) {
-      return ownerApps.filter(
-        (item: any) =>
-          item.appType == AppSortType.COMPANY &&
-          item.name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    } else if (activeAppType == 3) {
-      return ownerApps.filter(
-        (item: any) =>
-          item.appType == AppSortType.PERSON &&
-          item.name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    } else {
-      return ownerApps.filter(
-        (item: any) =>
-          collects &&
-          collects.includes(item._id) &&
-          item.name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
+    return ownerApps.filter(
+      (item: any) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase()) &&
+        (activeAppType != 0 ? item.isShow == activeAppType : 1 == 1) &&
+        (mySelectType == 1
+          ? 1 == 1
+          : mySelectType == 2
+            ? item.appType == AppSortType.COMPANY
+            : mySelectType == 3
+              ? item.appType == AppSortType.PERSON
+              : collects && collects.includes(item._id))
+    );
   };
 
   return (
     <>
-      <Flex px={[5, '48px']} py={['10px']} alignItems={'center'} justifyContent={'space-between'}>
-        <Flex bgColor={'#fff'} borderRadius={'md'} boxShadow="md" alignItems={'center'} p={'5px'}>
+      <Flex
+        px={[5, '48px']}
+        py={['10px']}
+        bgColor={'#F0F2F5'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+      >
+        <Flex alignItems={'center'}>
+          <Text
+            bgColor={'#fff'}
+            borderRadius={'md'}
+            boxShadow="md"
+            key={0}
+            fontSize="14px"
+            minW={'100px'}
+            textAlign={'center'}
+            m={['5px']}
+            p={'5px'}
+            {...(0 === activeAppType
+              ? {
+                  fontWeight: '600',
+                  color: '#447EF2'
+                }
+              : {
+                  _hover: {
+                    fontWeight: '600',
+                    color: '#447EF2'
+                  },
+                  onClick: () => {
+                    setActiveAppType(0);
+                  }
+                })}
+          >
+            {`全部`}
+          </Text>
           {appTypes.map((item: any) => (
             <Text
-              key={item.id}
-              fontSize="18px"
+              bgColor={'#fff'}
+              borderRadius={'md'}
+              boxShadow="md"
+              key={item._id}
+              fontSize="14px"
               minW={'100px'}
               textAlign={'center'}
               m={['5px']}
-              {...(item.id === activeAppType
+              p={'5px'}
+              {...(item._id === activeAppType
                 ? {
                     fontWeight: '600',
                     color: '#447EF2'
@@ -150,7 +185,7 @@ const MyAppListPc = ({
                       color: '#447EF2'
                     },
                     onClick: () => {
-                      setActiveAppType(item.id);
+                      setActiveAppType(item._id);
                     }
                   })}
             >
@@ -158,20 +193,36 @@ const MyAppListPc = ({
             </Text>
           ))}
         </Flex>
-        <Box>
-          <Input
-            placeholder="搜索"
-            value={searchText}
-            bg={'#fff'}
-            onChange={(e) => setSearchText(e.currentTarget.value)}
-          />
-        </Box>
+        <Flex px={'10px'}>
+          <Box px={'10px'}>
+            <Input
+              placeholder="搜索"
+              value={searchText}
+              bg={'#fff'}
+              onChange={(e) => setSearchText(e.currentTarget.value)}
+            />
+          </Box>
+          <Box width={'100px'}>
+            <MySelect
+              height={'40px'}
+              value={mySelectType as any}
+              list={mySelectTypes.map((item) => ({
+                label: item.name,
+                value: item.id as any
+              }))}
+              onchange={(val: any) => {
+                setMySelectType(val);
+              }}
+            />
+          </Box>
+        </Flex>
       </Flex>
       <PageContainer
         insertProps={{
           px: [5, '48px'],
           borderRadius: [0, '0px'],
           borderWidth: [0],
+          boxShadow: '0',
           bg: '#F0F2F5',
           overflow: 'scroll',
           paddingBottom: '67px'

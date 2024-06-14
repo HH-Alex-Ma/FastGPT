@@ -23,9 +23,13 @@ import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionRadio from '@/components/support/permission/Radio';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
-import { ModelType, AppSortType } from '@fastgpt/global/support/permission/constant';
+import { AppSortType } from '@fastgpt/global/support/permission/constant';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import MyRadio from '@/components/common/MyRadio';
+import MySelect from '@fastgpt/web/components/common/MySelect';
+import { useQuery } from '@tanstack/react-query';
+import { getTypes } from '@/web/support/user/api';
+import { useLoading } from '@fastgpt/web/hooks/useLoading';
 
 const InfoModal = ({
   defaultApp,
@@ -38,6 +42,7 @@ const InfoModal = ({
 }) => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { Loading } = useLoading();
   const { updateAppDetail } = useAppStore();
   const { userInfo } = useUserStore();
 
@@ -124,6 +129,12 @@ const InfoModal = ({
     [setValue, t, toast]
   );
 
+  const {
+    data: dataTypes = [],
+    isLoading: isGetting,
+    refetch
+  } = useQuery(['getTypes'], () => getTypes());
+
   return (
     <MyModal
       isOpen={true}
@@ -181,7 +192,7 @@ const InfoModal = ({
         )}
         {userInfo?.manager == 1 && (
           <>
-            <Box mt={4}>
+            {/* <Box mt={4}>
               <Box mb={1}>应用范围</Box>
               <MyRadio
                 gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
@@ -211,9 +222,9 @@ const InfoModal = ({
                   setRefresh(!refresh);
                 }}
               />
-            </Box>
+            </Box> */}
             <Box mt={4}>
-              <Box mb={1}>应用分类</Box>
+              <Box mb={1}>应用归属</Box>
               <MyRadio
                 gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
                 list={[
@@ -237,6 +248,20 @@ const InfoModal = ({
                 }}
               />
             </Box>
+            <Box mt={4}>
+              <Box mb={1}>应用分类</Box>
+              <MySelect
+                value={getValues('isShow')}
+                list={dataTypes.map((item: any) => ({
+                  label: item.name,
+                  value: item._id
+                }))}
+                onchange={(val: any) => {
+                  setValue('isShow', val);
+                  setRefresh(!refresh);
+                }}
+              />
+            </Box>
           </>
         )}
       </ModalBody>
@@ -251,6 +276,7 @@ const InfoModal = ({
       </ModalFooter>
 
       <File onSelect={onSelectFile} />
+      <Loading loading={isGetting} fixed={false} />
     </MyModal>
   );
 };

@@ -12,7 +12,7 @@ import MyTooltip from '@/components/MyTooltip';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { setAppCollect } from '@/web/support/user/api';
 import { AppSortType } from '@fastgpt/global/support/permission/constant';
-import CreateModal from './CreateModal';
+import CreateModal from '@/pages/app/list/component/CreateModal';
 
 const MyAppList = ({
   ownerApps,

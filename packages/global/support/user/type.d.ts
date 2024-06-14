@@ -62,3 +62,10 @@ export type AppCollectSchema = {
   apps: string[];
   createTime: number;
 };
+
+export type TypeCollectSchema = {
+  _id: string;
+  name: string;
+  desc: string;
+  createTime: number;
+};

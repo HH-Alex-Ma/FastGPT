@@ -117,7 +117,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
         <FormControl isInvalid={!!errors.companyName}>
           <Input
             bg={'myGray.50'}
-            placeholder="请输入企业名称"
+            placeholder="请输入企业名称（必填）"
             {...register('companyName', {
               required: '请输入企业名称'
             })}
@@ -127,7 +127,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
         <FormControl mt={6} isInvalid={!!errors.department}>
           <Input
             bg={'myGray.50'}
-            placeholder="请输入所在部门"
+            placeholder="请输入所在部门（必填）"
             {...register('department', {
               required: '部门不能为空'
             })}
@@ -137,7 +137,7 @@ const RegisterForm = ({ setPageType, loginSuccess }: Props) => {
         <FormControl mt={6} isInvalid={!!errors.nickname}>
           <Input
             bg={'myGray.50'}
-            placeholder="请输入姓名"
+            placeholder="请输入姓名（必填）"
             {...register('nickname', {
               required: '姓名不能为空'
             })}

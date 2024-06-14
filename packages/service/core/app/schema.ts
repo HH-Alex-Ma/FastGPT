@@ -68,7 +68,8 @@ const AppSchema = new Schema({
   },
   isShow: {
     type: String,
-    default: ModelType.MINE
+    // default: ModelType.MINE
+    default: ''
   },
   appType: {
     type: String,

@@ -4,6 +4,9 @@ import { AppSchema } from './type';
 
 export type CreateAppParams = {
   name?: string;
+  intro?: string;
+  isShow?: string;
+  appType?: string;
   avatar?: string;
   type?: `${AppTypeEnum}`;
   modules: AppSchema['modules'];

@@ -162,6 +162,13 @@ export const updateRole = ({
 }) => PUT('/support/user/account/role/updateRole', { id, name, desc, apps });
 export const delRoleById = (id: string) => DELETE(`/support/user/account/role/deleteRole`, { id });
 
+export const getTypes = () => GET('/support/type/get');
+export const addType = ({ name, desc }: { name: string; desc: string }) =>
+  POST('/support/type/add', { name, desc });
+export const updateType = ({ id, name, desc }: { id: string; name: string; desc: string }) =>
+  PUT('/support/type/update', { id, name, desc });
+export const delTypeById = (id: string) => DELETE(`/support/type/delete`, { id });
+
 export const getOwnerApps = (id: any, tmbId: any) =>
   GET(`/support/user/account/ownerApps/getApps`, { id, tmbId });
 

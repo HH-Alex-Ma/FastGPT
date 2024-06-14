@@ -14,6 +14,12 @@ export type AddRoleType = {
   apps: string[];
 };
 
+export type AddTypesType = {
+  id?: string;
+  name: string;
+  desc: string;
+};
+
 export type AddCollectType = {
   id?: string;
   tmbId: string;

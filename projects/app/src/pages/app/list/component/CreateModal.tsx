@@ -9,7 +9,7 @@ import {
   Grid,
   useTheme,
   Card,
-  Text,
+  Textarea,
   HStack,
   Tag
 } from '@chakra-ui/react';
@@ -29,16 +29,26 @@ import MyTooltip from '@/components/MyTooltip';
 import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
+import MySelect from '@fastgpt/web/components/common/MySelect';
+import { useQuery } from '@tanstack/react-query';
+import { getTypes } from '@/web/support/user/api';
+import { useLoading } from '@fastgpt/web/hooks/useLoading';
+import MyRadio from '@/components/common/MyRadio';
+import { AppSortType } from '@fastgpt/global/support/permission/constant';
 
 type FormType = {
   avatar: string;
   name: string;
+  intro: string;
+  isShow: string;
+  appType: string;
   templateId: string;
 };
 
 const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
   const { t } = useTranslation();
   const [refresh, setRefresh] = useState(false);
+  const { Loading } = useLoading();
   const { toast } = useToast();
   const router = useRouter();
   const theme = useTheme();
@@ -47,6 +57,9 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
     defaultValues: {
       avatar: '/icon/logo.svg',
       name: '',
+      intro: '',
+      isShow: '',
+      appType: AppSortType.PERSON,
       templateId: appTemplates[0].id
     }
   });
@@ -88,18 +101,31 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       return postCreateApp({
         avatar: data.avatar,
         name: data.name,
+        intro: data.intro,
+        isShow: data.isShow,
+        appType: data.appType,
         type: template.type,
         modules: template.modules || []
       });
     },
     onSuccess(id: string) {
-      router.push(`/app/detail?appId=${id}`);
+      router.push(
+        router.pathname.startsWith('/app/list')
+          ? `/app/detail?appId=${id}`
+          : `/home/detail?appId=${id}`
+      );
       onSuccess();
       onClose();
     },
     successToast: t('common.Create Success'),
     errorToast: t('common.Create Failed')
   });
+
+  const {
+    data: dataTypes = [],
+    isLoading: isGetting,
+    refetch
+  } = useQuery(['getTypes'], () => getTypes());
 
   return (
     <MyModal
@@ -135,7 +161,60 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
             })}
           />
         </Flex>
-        {!feConfigs?.hide_app_flow && (
+        <Box mt={3} mb={2} color={'myGray.800'} fontWeight={'bold'}>
+          {t('core.app.App intro')}
+        </Box>
+        <Textarea
+          rows={4}
+          maxLength={500}
+          placeholder={t('core.app.Make a brief introduction of your app')}
+          bg={'myWhite.600'}
+          {...register('intro')}
+        />
+        {router.pathname.startsWith('/app/list') && (
+          <>
+            <Box mt={3} mb={2} color={'myGray.800'} fontWeight={'bold'}>
+              应用归属
+            </Box>
+            <MyRadio
+              gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
+              list={[
+                {
+                  icon: 'core/explore/exploreLight',
+                  title: '个人',
+                  desc: '',
+                  value: AppSortType.PERSON
+                },
+                {
+                  icon: 'core/app/aiLight',
+                  title: '公司',
+                  desc: '',
+                  value: AppSortType.COMPANY
+                }
+              ]}
+              value={getValues('appType')}
+              onChange={(e) => {
+                setValue('appType', e);
+                setRefresh(!refresh);
+              }}
+            />
+          </>
+        )}
+        <Box mt={3} mb={2} color={'myGray.800'} fontWeight={'bold'}>
+          应用分类
+        </Box>
+        <MySelect
+          value={getValues('isShow')}
+          list={dataTypes.map((item: any) => ({
+            label: item.name,
+            value: item._id
+          }))}
+          onchange={(val: any) => {
+            setValue('isShow', val);
+            setRefresh(!refresh);
+          }}
+        />
+        {!feConfigs?.hide_app_flow && router.pathname.startsWith('/app/list') && (
           <>
             <Box mt={[4, 7]} mb={[0, 3]} color={'myGray.800'} fontWeight={'bold'}>
               {t('core.app.Select app from template')}
@@ -193,6 +272,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       </ModalFooter>
 
       <File onSelect={onSelectFile} />
+      <Loading loading={isGetting} fixed={false} />
     </MyModal>
   );
 };

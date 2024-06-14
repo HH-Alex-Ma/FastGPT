@@ -13,7 +13,7 @@ import { getOwnerApps, getCollectById } from '@/web/support/user/api';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { AppListItemType } from '@fastgpt/global/core/app/type.d';
-import CreateModal from './component/CreateModal';
+import CreateModal from '@/pages/app/list/component/CreateModal';
 
 const Home = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
@@ -67,9 +67,14 @@ const Home = ({ children }: { children: JSX.Element }) => {
           <Box position={'fixed'} h={'100%'} top={0} left={0} w={'260px'}>
             <AsidePage
               ownerApps={appList}
+              collects={collects}
               data={activeAppId}
               onCreate={onOpenCreateModal}
               onEdit={(id) => routerJump(id)}
+              onRefresh={() => {
+                reloadCollect.current = !reloadCollect.current;
+                loadMyApps(true);
+              }}
             />
           </Box>
           <Box h={'100%'} left={'260px'} position={'fixed'}>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 export const iconPaths = {
+  'common/sys/dict': () => import('./icons/common/sys-dict.svg'),
   AppList: () => import('./icons/common/app-list.svg'),
   DingDing: () => import('./icons/common/dingding.svg'),
   Azure: () => import('./icons/common/weiruanazure.svg'),
