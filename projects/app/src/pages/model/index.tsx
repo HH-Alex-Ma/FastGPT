@@ -25,21 +25,21 @@ enum TabEnum {
 const Model = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
   const { t } = useTranslation();
   const tabList = [
-    // {
-    //   icon: 'modelBase',
-    //   label: t('modelCenter.modelBase'),
-    //   id: TabEnum.models
-    // },
-    // {
-    //   icon: 'channel',
-    //   label: t('modelCenter.channel.channelManager'),
-    //   id: TabEnum.channels
-    // },
-    // {
-    //   icon: 'support/outlink/apikeyLight',
-    //   label: t('modelCenter.token.tokenManager'),
-    //   id: TabEnum.tokens
-    // },
+    {
+      icon: 'modelBase',
+      label: t('modelCenter.modelBase'),
+      id: TabEnum.models
+    },
+    {
+      icon: 'channel',
+      label: t('modelCenter.channel.channelManager'),
+      id: TabEnum.channels
+    },
+    {
+      icon: 'support/outlink/apikeyLight',
+      label: t('modelCenter.token.tokenManager'),
+      id: TabEnum.tokens
+    },
     {
       icon: 'core/app/logsLight',
       label: t('modelCenter.log.modelLogs'),
