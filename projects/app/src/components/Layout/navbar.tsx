@@ -26,20 +26,20 @@ const Navbar = ({ unread }: { unread: number }) => {
   const { lastChatAppId, lastChatId } = useChatStore();
   const navbarList = useMemo(
     () => [
-      // {
-      //   label: t('navbar.Explore'),
-      //   icon: 'core/explore/exploreLight',
-      //   activeIcon: 'core/explore/exploreFill',
-      //   link: '/explore',
-      //   activeLink: ['/explore', '/explore/detail']
-      // },
-      // {
-      //   label: t('navbar.Chat'),
-      //   icon: 'core/chat/chatLight',
-      //   activeIcon: 'core/chat/chatFill',
-      //   link: `/chat?appId=${lastChatAppId}&chatId=${lastChatId}`,
-      //   activeLink: ['/chat']
-      // },
+      {
+        label: t('navbar.Explore'),
+        icon: 'core/explore/exploreLight',
+        activeIcon: 'core/explore/exploreFill',
+        link: '/explore',
+        activeLink: ['/explore', '/explore/detail']
+      },
+      {
+        label: t('navbar.Chat'),
+        icon: 'core/chat/chatLight',
+        activeIcon: 'core/chat/chatFill',
+        link: `/chat?appId=${lastChatAppId}&chatId=${lastChatId}`,
+        activeLink: ['/chat']
+      },
       {
         label: t('navbar.Apps'),
         icon: 'core/app/aiLight',
