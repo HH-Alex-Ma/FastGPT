@@ -190,117 +190,118 @@ const TokenList = () => {
             </Tr>
           </Thead>
           <Tbody fontSize={'sm'}>
-            {tokenLists.map(
-              ({
-                id,
-                key,
-                name,
-                status,
-                used_quota,
-                remain_quota,
-                created_time,
-                expired_time,
-                unlimited_quota
-              }) => (
-                <Tr key={id}>
-                  <Td>{name}</Td>
-                  <Td>
-                    <MyTooltip
-                      label={(() => {
-                        switch (status) {
-                          case 1:
-                            return '已启用';
-                          case 2:
-                            return '已禁用';
-                          case 3:
-                            return '已过期';
-                          case 4:
-                            return '已耗尽';
-                          default:
-                            return '未知';
-                        }
-                      })()}
-                      placement="top"
-                    >
-                      <Switch
-                        sx={{
-                          'span.chakra-switch__track:not([data-checked])': {
-                            backgroundColor: '#9DA1AD'
+            {tokenLists.length > 0 &&
+              tokenLists.map(
+                ({
+                  id,
+                  key,
+                  name,
+                  status,
+                  used_quota,
+                  remain_quota,
+                  created_time,
+                  expired_time,
+                  unlimited_quota
+                }) => (
+                  <Tr key={id}>
+                    <Td>{name}</Td>
+                    <Td>
+                      <MyTooltip
+                        label={(() => {
+                          switch (status) {
+                            case 1:
+                              return '已启用';
+                            case 2:
+                              return '已禁用';
+                            case 3:
+                              return '已过期';
+                            case 4:
+                              return '已耗尽';
+                            default:
+                              return '未知';
                           }
-                        }}
-                        value={id}
-                        isChecked={status == 1}
-                        isDisabled={status !== 1 && status !== 2}
-                        size={'lg'}
-                        onChange={(e) => {
-                          const checked = e.target.checked;
-                          const value = e.target.value;
-                          updateStatus({ id: parseInt(value), status: checked ? 1 : 2 });
-                        }}
-                      />
-                    </MyTooltip>
-                  </Td>
-                  <Td>${(used_quota / 500000).toFixed(4)}</Td>
-                  <Td>
-                    {unlimited_quota ? '' : '$'}
-                    {unlimited_quota ? '无限制' : (remain_quota / 500000).toFixed(4)}
-                  </Td>
-                  <Td>
-                    {dayjs(created_time * 1000)
-                      .format('YYYY-MM-DD HH:mm:ss')
-                      .toString()}
-                  </Td>
-                  <Td>
-                    {expired_time === -1
-                      ? '永不过期'
-                      : dayjs(expired_time * 1000)
+                        })()}
+                        placement="top"
+                      >
+                        <Switch
+                          sx={{
+                            'span.chakra-switch__track:not([data-checked])': {
+                              backgroundColor: '#9DA1AD'
+                            }
+                          }}
+                          value={id}
+                          isChecked={status == 1}
+                          isDisabled={status !== 1 && status !== 2}
+                          size={'lg'}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            const value = e.target.value;
+                            updateStatus({ id: parseInt(value), status: checked ? 1 : 2 });
+                          }}
+                        />
+                      </MyTooltip>
+                    </Td>
+                    <Td>${(used_quota / 500000).toFixed(4)}</Td>
+                    <Td>
+                      {unlimited_quota ? '' : '$'}
+                      {unlimited_quota ? '无限制' : (remain_quota / 500000).toFixed(4)}
+                    </Td>
+                    <Td>
+                      {dayjs(created_time * 1000)
                         .format('YYYY-MM-DD HH:mm:ss')
                         .toString()}
-                  </Td>
-                  <Td>
-                    <Menu autoSelect={false} isLazy>
-                      <MenuButton
-                        _hover={{ bg: 'myWhite.600  ' }}
-                        cursor={'pointer'}
-                        borderRadius={'md'}
-                      >
-                        <MyIcon name={'more'} w={'14px'} p={2} />
-                      </MenuButton>
-                      <MenuList color={'myGray.700'} minW={`120px !important`} zIndex={10}>
-                        <MenuItem
-                          onClick={() =>
-                            setEditData({
-                              id,
-                              name,
-                              expired_time,
-                              remain_quota,
-                              unlimited_quota
-                            })
-                          }
-                          py={[2, 3]}
+                    </Td>
+                    <Td>
+                      {expired_time === -1
+                        ? '永不过期'
+                        : dayjs(expired_time * 1000)
+                            .format('YYYY-MM-DD HH:mm:ss')
+                            .toString()}
+                    </Td>
+                    <Td>
+                      <Menu autoSelect={false} isLazy>
+                        <MenuButton
+                          _hover={{ bg: 'myWhite.600  ' }}
+                          cursor={'pointer'}
+                          borderRadius={'md'}
                         >
-                          <MyIcon name={'edit'} w={['14px', '16px']} />
-                          <Box ml={[1, 2]}>{t('common.Edit')}</Box>
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            copyData(`sk-${key}`, '令牌已复制');
-                          }}
-                          py={[2, 3]}
-                        >
-                          <MyIcon name={'copy'} w={['14px', '16px']} />
-                          <Box ml={[1, 2]}>{t('common.Copy')}</Box>
-                        </MenuItem>
-                        <MenuItem onClick={() => onclickRemove(id)} py={[2, 3]}>
-                          <MyIcon name={'delete'} w={['14px', '16px']} />
-                          <Box ml={[1, 2]}>{t('common.Delete')}</Box>
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </Td>
-                </Tr>
-              )
-            )}
+                          <MyIcon name={'more'} w={'14px'} p={2} />
+                        </MenuButton>
+                        <MenuList color={'myGray.700'} minW={`120px !important`} zIndex={10}>
+                          <MenuItem
+                            onClick={() =>
+                              setEditData({
+                                id,
+                                name,
+                                expired_time,
+                                remain_quota,
+                                unlimited_quota
+                              })
+                            }
+                            py={[2, 3]}
+                          >
+                            <MyIcon name={'edit'} w={['14px', '16px']} />
+                            <Box ml={[1, 2]}>{t('common.Edit')}</Box>
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              copyData(`sk-${key}`, '令牌已复制');
+                            }}
+                            py={[2, 3]}
+                          >
+                            <MyIcon name={'copy'} w={['14px', '16px']} />
+                            <Box ml={[1, 2]}>{t('common.Copy')}</Box>
+                          </MenuItem>
+                          <MenuItem onClick={() => onclickRemove(id)} py={[2, 3]}>
+                            <MyIcon name={'delete'} w={['14px', '16px']} />
+                            <Box ml={[1, 2]}>{t('common.Delete')}</Box>
+                          </MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </Td>
+                  </Tr>
+                )
+              )}
           </Tbody>
         </Table>
         <Loading loading={isGetting || isDeleting} fixed={false} />

@@ -251,205 +251,211 @@ const ChannelManger = () => {
             </Tr>
           </Thead>
           <Tbody fontSize={'sm'}>
-            {channels.map(
-              ({
-                id,
-                name,
-                group,
-                type,
-                status,
-                response_time,
-                balance,
-                priority,
-                test_time,
-                balance_updated_time,
-                key,
-                models,
-                model_mapping,
-                base_url,
-                groups,
-                other
-              }) => (
-                <Tr key={id}>
-                  <Td>{id}</Td>
-                  <Td>{name}</Td>
-                  <Td>
-                    {group.split(',').map((item: string, index: number) => {
-                      return (
-                        <Tag size="md" key={index} variant="subtle" color="#69758269">
-                          <TagLabel color="#697582">{item}</TagLabel>
-                        </Tag>
-                      );
-                    })}
-                  </Td>
-                  <Td>
-                    <Tag size="md" key="md" variant="subtle" color="#69758269">
-                      <TagLabel color={renderType(type)?.color}> {renderType(type)?.text}</TagLabel>
-                    </Tag>
-                  </Td>
-                  <Td style={{ padding: '12px 21px' }}>
-                    <MyTooltip
-                      label={
-                        status == 1
-                          ? '已启用'
-                          : status == 2
-                            ? '本渠道被手动禁用'
-                            : status == 3
-                              ? '本渠道被程序自动禁用'
-                              : '未知状态'
-                      }
-                      placement="top"
-                    >
-                      <Switch
-                        sx={{
-                          'span.chakra-switch__track:not([data-checked])': {
-                            backgroundColor: '#9DA1AD'
-                          }
-                        }}
-                        value={id}
-                        isChecked={status == 1}
-                        size={'lg'}
-                        onChange={(e) => {
-                          const checked = e.target.checked;
-                          const value = e.target.value;
-                          updateStatus({ id: parseInt(value), status: checked ? 1 : 2 });
-                        }}
-                      />
-                    </MyTooltip>
-                  </Td>
-                  <Td style={{ padding: '11px 21px' }}>
-                    <MyTooltip
-                      placement="top"
-                      label={(() => {
-                        let test = dayjs(test_time * 1000)
-                          .format('YYYY-MM-DD HH:mm:ss')
-                          .toString();
+            {channels.length > 0 &&
+              channels.map(
+                ({
+                  id,
+                  name,
+                  group,
+                  type,
+                  status,
+                  response_time,
+                  balance,
+                  priority,
+                  test_time,
+                  balance_updated_time,
+                  key,
+                  models,
+                  model_mapping,
+                  base_url,
+                  groups,
+                  other
+                }) => (
+                  <Tr key={id}>
+                    <Td>{id}</Td>
+                    <Td>{name}</Td>
+                    <Td>
+                      {group.split(',').map((item: string, index: number) => {
                         return (
-                          <>
-                            <div>点击测试</div>
-                            <div>上次测速时间：{test}</div>
-                          </>
+                          <Tag size="md" key={index} variant="subtle" color="#69758269">
+                            <TagLabel color="#697582">{item}</TagLabel>
+                          </Tag>
                         );
-                      })()}
-                    >
-                      <Tag
-                        size="md"
-                        key="md"
-                        variant="subtle"
-                        color={response_time > 0 ? '#00e67600' : '#69758600'}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          textResponseTime(id);
-                        }}
-                      >
-                        <TagLabel
-                          color={response_time > 0 ? '#00c853' : '#697586'}
-                          style={{ fontWeight: 600 }}
-                        >
-                          {response_time > 0 ? (response_time / 1000).toFixed(2) + '秒' : '未测试'}
+                      })}
+                    </Td>
+                    <Td>
+                      <Tag size="md" key="md" variant="subtle" color="#69758269">
+                        <TagLabel color={renderType(type)?.color}>
+                          {' '}
+                          {renderType(type)?.text}
                         </TagLabel>
                       </Tag>
-                    </MyTooltip>
-                  </Td>
-                  <Td style={{ padding: '11px 21px' }}>
-                    <MyTooltip
-                      placement="top"
-                      label={(() => {
-                        let test = dayjs(balance_updated_time * 1000)
-                          .format('YYYY-MM-DD HH:mm:ss')
-                          .toString();
-                        return (
-                          <>
-                            <div>点击查询</div>
-                            <div>上次查询时间：{test}</div>
-                          </>
-                        );
-                      })()}
-                    >
-                      <Tag
-                        size="md"
-                        key="md"
-                        variant="subtle"
-                        color={'#697586'}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          getRenderBalance(id);
-                        }}
+                    </Td>
+                    <Td style={{ padding: '12px 21px' }}>
+                      <MyTooltip
+                        label={
+                          status == 1
+                            ? '已启用'
+                            : status == 2
+                              ? '本渠道被手动禁用'
+                              : status == 3
+                                ? '本渠道被程序自动禁用'
+                                : '未知状态'
+                        }
+                        placement="top"
                       >
-                        <TagLabel color={'#697586'} style={{ fontWeight: 600 }}>
-                          {renderBalance(type, balance)}
-                        </TagLabel>
-                      </Tag>
-                    </MyTooltip>
-                  </Td>
-                  <Td style={{ padding: '9px 10px' }}>
-                    <InputGroup style={{ width: '150px', height: '30px' }} maxWidth={150}>
-                      <NumberInput defaultValue={priority} min={0} precision={0}>
-                        <NumberInputField
-                          id={id}
-                          style={{ height: '30px' }}
-                          onChange={(event) => {
-                            setPriorityValue(Math.round(parseFloat(event.target.value)));
+                        <Switch
+                          sx={{
+                            'span.chakra-switch__track:not([data-checked])': {
+                              backgroundColor: '#9DA1AD'
+                            }
                           }}
-                          onFocus={() => {
-                            setPriorityValue(-1);
+                          value={id}
+                          isChecked={status == 1}
+                          size={'lg'}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            const value = e.target.value;
+                            updateStatus({ id: parseInt(value), status: checked ? 1 : 2 });
                           }}
                         />
-                      </NumberInput>
-                      <InputRightAddon
-                        style={{ width: '40px', height: '30px', cursor: 'pointer' }}
-                        onClick={() => {
-                          // console.log(id, priorityValue);
-                          if (priorityValue >= 0) {
-                            updatePriority({ id: id, priority: priorityValue });
-                          }
-                          setPriorityValue(-1);
-                        }}
+                      </MyTooltip>
+                    </Td>
+                    <Td style={{ padding: '11px 21px' }}>
+                      <MyTooltip
+                        placement="top"
+                        label={(() => {
+                          let test = dayjs(test_time * 1000)
+                            .format('YYYY-MM-DD HH:mm:ss')
+                            .toString();
+                          return (
+                            <>
+                              <div>点击测试</div>
+                              <div>上次测速时间：{test}</div>
+                            </>
+                          );
+                        })()}
                       >
-                        <CheckIcon color={'gray'} />
-                      </InputRightAddon>
-                    </InputGroup>
-                  </Td>
-                  <Td style={{ padding: 'px 10px' }}>
-                    <Menu autoSelect={false} isLazy>
-                      <MenuButton
-                        _hover={{ bg: 'myWhite.600  ' }}
-                        cursor={'pointer'}
-                        borderRadius={'md'}
-                      >
-                        <MyIcon name={'more'} w={'14px'} p={2} />
-                      </MenuButton>
-                      <MenuList color={'myGray.700'} minW={`120px !important`} zIndex={10}>
-                        <MenuItem
-                          onClick={() =>
-                            setEditData({
-                              id,
-                              name,
-                              key,
-                              models,
-                              model_mapping,
-                              type,
-                              base_url,
-                              group,
-                              groups,
-                              other
-                            })
-                          }
-                          py={[2, 3]}
+                        <Tag
+                          size="md"
+                          key="md"
+                          variant="subtle"
+                          color={response_time > 0 ? '#00e67600' : '#69758600'}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            textResponseTime(id);
+                          }}
                         >
-                          <MyIcon name={'edit'} w={['14px', '16px']} />
-                          <Box ml={[1, 2]}>{t('common.Edit')}</Box>
-                        </MenuItem>
-                        <MenuItem onClick={() => onclickRemove(id)} py={[2, 3]}>
-                          <MyIcon name={'delete'} w={['14px', '16px']} />
-                          <Box ml={[1, 2]}>{t('common.Delete')}</Box>
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </Td>
-                </Tr>
-              )
-            )}
+                          <TagLabel
+                            color={response_time > 0 ? '#00c853' : '#697586'}
+                            style={{ fontWeight: 600 }}
+                          >
+                            {response_time > 0
+                              ? (response_time / 1000).toFixed(2) + '秒'
+                              : '未测试'}
+                          </TagLabel>
+                        </Tag>
+                      </MyTooltip>
+                    </Td>
+                    <Td style={{ padding: '11px 21px' }}>
+                      <MyTooltip
+                        placement="top"
+                        label={(() => {
+                          let test = dayjs(balance_updated_time * 1000)
+                            .format('YYYY-MM-DD HH:mm:ss')
+                            .toString();
+                          return (
+                            <>
+                              <div>点击查询</div>
+                              <div>上次查询时间：{test}</div>
+                            </>
+                          );
+                        })()}
+                      >
+                        <Tag
+                          size="md"
+                          key="md"
+                          variant="subtle"
+                          color={'#697586'}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            getRenderBalance(id);
+                          }}
+                        >
+                          <TagLabel color={'#697586'} style={{ fontWeight: 600 }}>
+                            {renderBalance(type, balance)}
+                          </TagLabel>
+                        </Tag>
+                      </MyTooltip>
+                    </Td>
+                    <Td style={{ padding: '9px 10px' }}>
+                      <InputGroup style={{ width: '150px', height: '30px' }} maxWidth={150}>
+                        <NumberInput defaultValue={priority} min={0} precision={0}>
+                          <NumberInputField
+                            id={id}
+                            style={{ height: '30px' }}
+                            onChange={(event) => {
+                              setPriorityValue(Math.round(parseFloat(event.target.value)));
+                            }}
+                            onFocus={() => {
+                              setPriorityValue(-1);
+                            }}
+                          />
+                        </NumberInput>
+                        <InputRightAddon
+                          style={{ width: '40px', height: '30px', cursor: 'pointer' }}
+                          onClick={() => {
+                            // console.log(id, priorityValue);
+                            if (priorityValue >= 0) {
+                              updatePriority({ id: id, priority: priorityValue });
+                            }
+                            setPriorityValue(-1);
+                          }}
+                        >
+                          <CheckIcon color={'gray'} />
+                        </InputRightAddon>
+                      </InputGroup>
+                    </Td>
+                    <Td style={{ padding: 'px 10px' }}>
+                      <Menu autoSelect={false} isLazy>
+                        <MenuButton
+                          _hover={{ bg: 'myWhite.600  ' }}
+                          cursor={'pointer'}
+                          borderRadius={'md'}
+                        >
+                          <MyIcon name={'more'} w={'14px'} p={2} />
+                        </MenuButton>
+                        <MenuList color={'myGray.700'} minW={`120px !important`} zIndex={10}>
+                          <MenuItem
+                            onClick={() =>
+                              setEditData({
+                                id,
+                                name,
+                                key,
+                                models,
+                                model_mapping,
+                                type,
+                                base_url,
+                                group,
+                                groups,
+                                other
+                              })
+                            }
+                            py={[2, 3]}
+                          >
+                            <MyIcon name={'edit'} w={['14px', '16px']} />
+                            <Box ml={[1, 2]}>{t('common.Edit')}</Box>
+                          </MenuItem>
+                          <MenuItem onClick={() => onclickRemove(id)} py={[2, 3]}>
+                            <MyIcon name={'delete'} w={['14px', '16px']} />
+                            <Box ml={[1, 2]}>{t('common.Delete')}</Box>
+                          </MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </Td>
+                  </Tr>
+                )
+              )}
           </Tbody>
         </Table>
         <Loading

@@ -86,14 +86,14 @@ const MyApps = () => {
         ...app,
         modelValue,
         isFiltered:
-          // app.isShow === ModelType.MINE &&
-          app.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          app.intro.toLowerCase().includes(searchText.toLowerCase()) ||
-          valueStr.includes(searchText.toLowerCase()) ||
-          app.userId.toLowerCase().includes(searchText.toLowerCase()) ||
-          app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) ||
-          (app.appType === 'Person' && '个人'.includes(searchText.toLowerCase())) ||
-          (app.appType === 'Company' && '企业'.includes(searchText.toLowerCase()))
+          app.isShow === ModelType.MINE &&
+          (app.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            app.intro.toLowerCase().includes(searchText.toLowerCase()) ||
+            valueStr.includes(searchText.toLowerCase()) ||
+            app.userId.toLowerCase().includes(searchText.toLowerCase()) ||
+            app.updateTime.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+            (app.appType === 'Person' && '个人'.includes(searchText.toLowerCase())) ||
+            (app.appType === 'Company' && '企业'.includes(searchText.toLowerCase())))
       };
     })
     .filter((app) => app.isFiltered);

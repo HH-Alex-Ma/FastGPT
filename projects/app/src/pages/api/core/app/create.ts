@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       name = 'APP',
       avatar,
       intro,
-      isShow,
+      appShowType,
       appType,
       type = AppTypeEnum.advanced,
       modules
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       avatar,
       name,
       intro,
-      isShow,
+      appShowType,
       appType,
       teamId,
       tmbId,

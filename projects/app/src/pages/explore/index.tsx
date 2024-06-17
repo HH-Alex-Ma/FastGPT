@@ -91,7 +91,7 @@ const MyApps = () => {
         gridGap={5}
       >
         {myApps
-          // .filter((app) => app.isShow === ModelType.EXPLORE)
+          .filter((app) => app.isShow === ModelType.EXPLORE)
           .map((app) => (
             <MyTooltip
               key={app._id}

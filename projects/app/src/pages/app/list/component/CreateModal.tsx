@@ -40,7 +40,7 @@ type FormType = {
   avatar: string;
   name: string;
   intro: string;
-  isShow: string;
+  appShowType: string;
   appType: string;
   templateId: string;
 };
@@ -58,7 +58,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       avatar: '/icon/logo.svg',
       name: '',
       intro: '',
-      isShow: '',
+      appShowType: '',
       appType: AppSortType.PERSON,
       templateId: appTemplates[0].id
     }
@@ -102,7 +102,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
         avatar: data.avatar,
         name: data.name,
         intro: data.intro,
-        isShow: data.isShow,
+        appShowType: data.appShowType,
         appType: data.appType,
         type: template.type,
         modules: template.modules || []
@@ -204,13 +204,13 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
           应用分类
         </Box>
         <MySelect
-          value={getValues('isShow')}
+          value={getValues('appShowType')}
           list={dataTypes.map((item: any) => ({
             label: item.name,
             value: item._id
           }))}
           onchange={(val: any) => {
-            setValue('isShow', val);
+            setValue('appShowType', val);
             setRefresh(!refresh);
           }}
         />

@@ -43,8 +43,7 @@ const SliderApps = ({
             borderRadius={'md'}
             _hover={{ bg: 'myGray.200' }}
             onClick={() =>
-              // ModelType.EXPLORE === currentType ? router.push('/explore') : router.push('/app/list')
-              router.push('/app/list')
+              ModelType.EXPLORE === currentType ? router.push('/explore') : router.push('/app/list')
             }
           >
             <IconButton

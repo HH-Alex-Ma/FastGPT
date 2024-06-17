@@ -23,7 +23,7 @@ import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionRadio from '@/components/support/permission/Radio';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
-import { AppSortType } from '@fastgpt/global/support/permission/constant';
+import { AppSortType, ModelType } from '@fastgpt/global/support/permission/constant';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import MyRadio from '@/components/common/MyRadio';
 import MySelect from '@fastgpt/web/components/common/MySelect';
@@ -69,6 +69,7 @@ const InfoModal = ({
         avatar: data.avatar,
         intro: data.intro,
         permission: data.permission,
+        appShowType: data.appShowType,
         isShow: data.isShow,
         appType: data.appType
       });
@@ -192,37 +193,6 @@ const InfoModal = ({
         )}
         {userInfo?.manager == 1 && (
           <>
-            {/* <Box mt={4}>
-              <Box mb={1}>应用范围</Box>
-              <MyRadio
-                gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
-                list={[
-                  {
-                    icon: 'core/app/aiLight',
-                    title: '我的应用',
-                    desc: '',
-                    value: ModelType.MINE
-                  }
-                  // {
-                  //   icon: 'core/explore/exploreLight',
-                  //   title: '探索',
-                  //   desc: '',
-                  //   value: ModelType.EXPLORE
-                  // },
-                  // {
-                  //   icon: 'model',
-                  //   title: '模型库',
-                  //   desc: '',
-                  //   value: ModelType.MODEL_BASE
-                  // }
-                ]}
-                value={getValues('isShow')}
-                onChange={(e) => {
-                  setValue('isShow', e);
-                  setRefresh(!refresh);
-                }}
-              />
-            </Box> */}
             <Box mt={4}>
               <Box mb={1}>应用归属</Box>
               <MyRadio
@@ -249,15 +219,46 @@ const InfoModal = ({
               />
             </Box>
             <Box mt={4}>
+              <Box mb={1}>应用范围</Box>
+              <MyRadio
+                gridTemplateColumns={['repeat(1,1fr)', 'repeat(2,1fr)', 'repeat(3,1fr)']}
+                list={[
+                  {
+                    icon: 'core/app/aiLight',
+                    title: '我的应用',
+                    desc: '',
+                    value: ModelType.MINE
+                  },
+                  {
+                    icon: 'core/explore/exploreLight',
+                    title: '探索',
+                    desc: '',
+                    value: ModelType.EXPLORE
+                  },
+                  {
+                    icon: 'model',
+                    title: '模型库',
+                    desc: '',
+                    value: ModelType.MODEL_BASE
+                  }
+                ]}
+                value={getValues('isShow')}
+                onChange={(e) => {
+                  setValue('isShow', e);
+                  setRefresh(!refresh);
+                }}
+              />
+            </Box>
+            <Box mt={4}>
               <Box mb={1}>应用分类</Box>
               <MySelect
-                value={getValues('isShow')}
+                value={getValues('appShowType')}
                 list={dataTypes.map((item: any) => ({
                   label: item.name,
                   value: item._id
                 }))}
                 onchange={(val: any) => {
-                  setValue('isShow', val);
+                  setValue('appShowType', val);
                   setRefresh(!refresh);
                 }}
               />

@@ -5,7 +5,7 @@ import { AppSchema } from './type';
 export type CreateAppParams = {
   name?: string;
   intro?: string;
-  isShow?: string;
+  appShowType?: string;
   appType?: string;
   avatar?: string;
   type?: `${AppTypeEnum}`;
@@ -22,5 +22,6 @@ export interface AppUpdateParams {
   teamTags?: AppSchema['teamTags'];
   permission?: AppSchema['permission'];
   isShow?: AppSchema['isShow'];
+  appShowType?: AppSchema['appShowType'];
   appType?: AppSchema['appType'];
 }

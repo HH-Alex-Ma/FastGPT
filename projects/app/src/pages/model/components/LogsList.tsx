@@ -189,61 +189,62 @@ const LogsList = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {logs.map(
-              ({
-                id,
-                channel,
-                completion_tokens,
-                content,
-                model_name,
-                prompt_tokens,
-                quota,
-                token_name,
-                username,
-                created_at
-              }) => (
-                <Tr key={id}>
-                  <Td>
-                    {dayjs(created_at * 1000)
-                      .format('YYYY-MM-DD HH:mm:ss')
-                      .toString()}
-                  </Td>
-                  <Td>{channel}</Td>
-                  <Td>
-                    <Tag
-                      size="md"
-                      key="md"
-                      variant="outline"
-                      color="#697586"
-                      style={{ fontWeight: 600 }}
-                    >
-                      <TagLabel>{username}</TagLabel>
-                    </Tag>
-                  </Td>
-                  <Td>
-                    <Tag size="md" key="md" color="gray" style={{ fontWeight: 600 }}>
-                      <TagLabel>{token_name}</TagLabel>
-                    </Tag>
-                  </Td>
-                  <Td>
-                    <Tag
-                      size="md"
-                      key="md"
-                      variant="outline"
-                      colorScheme="blue"
-                      style={{ fontWeight: 600 }}
-                    >
-                      <TagLabel>{model_name}</TagLabel>
-                    </Tag>
-                  </Td>
-                  <Td>{prompt_tokens}</Td>
-                  <Td>{completion_tokens}</Td>
-                  <Td>${quota / 500000}</Td>
-                  <Td>￥{(quota * 7) / 500000}</Td>
-                  <Td>{content}</Td>
-                </Tr>
-              )
-            )}
+            {logs.length > 0 &&
+              logs.map(
+                ({
+                  id,
+                  channel,
+                  completion_tokens,
+                  content,
+                  model_name,
+                  prompt_tokens,
+                  quota,
+                  token_name,
+                  username,
+                  created_at
+                }) => (
+                  <Tr key={id}>
+                    <Td>
+                      {dayjs(created_at * 1000)
+                        .format('YYYY-MM-DD HH:mm:ss')
+                        .toString()}
+                    </Td>
+                    <Td>{channel}</Td>
+                    <Td>
+                      <Tag
+                        size="md"
+                        key="md"
+                        variant="outline"
+                        color="#697586"
+                        style={{ fontWeight: 600 }}
+                      >
+                        <TagLabel>{username}</TagLabel>
+                      </Tag>
+                    </Td>
+                    <Td>
+                      <Tag size="md" key="md" color="gray" style={{ fontWeight: 600 }}>
+                        <TagLabel>{token_name}</TagLabel>
+                      </Tag>
+                    </Td>
+                    <Td>
+                      <Tag
+                        size="md"
+                        key="md"
+                        variant="outline"
+                        colorScheme="blue"
+                        style={{ fontWeight: 600 }}
+                      >
+                        <TagLabel>{model_name}</TagLabel>
+                      </Tag>
+                    </Td>
+                    <Td>{prompt_tokens}</Td>
+                    <Td>{completion_tokens}</Td>
+                    <Td>${quota / 500000}</Td>
+                    <Td>￥{(quota * 7) / 500000}</Td>
+                    <Td>{content}</Td>
+                  </Tr>
+                )
+              )}
           </Tbody>
         </Table>
         <Loading loading={isGetting || isRefresh} fixed={false} />

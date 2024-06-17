@@ -115,7 +115,7 @@ const MyAppListPc = ({
     return ownerApps.filter(
       (item: any) =>
         item.name.toLowerCase().includes(searchText.toLowerCase()) &&
-        (activeAppType != 0 ? item.isShow == activeAppType : 1 == 1) &&
+        (activeAppType != 0 ? item.appShowType == activeAppType : 1 == 1) &&
         (mySelectType == 1
           ? 1 == 1
           : mySelectType == 2

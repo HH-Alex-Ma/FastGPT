@@ -139,7 +139,7 @@ const ModelList = () => {
         gridGap={5}
       >
         {myApps
-          // .filter((app) => app.isShow === ModelType.MODEL_BASE)
+          .filter((app) => app.isShow === ModelType.MODEL_BASE)
           .map((app) => (
             <MyTooltip key={app._id}>
               <Box

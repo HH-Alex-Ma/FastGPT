@@ -22,6 +22,7 @@ export interface AppSchema {
   inited?: boolean;
   teamTags: string[];
   isShow: string;
+  appShowType: string;
   appType: string;
 }
 
@@ -33,6 +34,7 @@ export type AppListItemType = {
   isOwner: boolean;
   permission: `${PermissionTypeEnum}`;
   isShow: string;
+  appShowType: string;
   appType: string;
 };
 
@@ -48,7 +50,8 @@ export type AppListDetailType = {
   intro: string;
   isOwner: boolean;
   permission: `${PermissionTypeEnum}`;
-  isShow: string; 
+  isShow: string;
+  appShowType: string;
   appType: string;
 
   userId: string;
@@ -57,7 +60,7 @@ export type AppListDetailType = {
   type: `${AppTypeEnum}`;
   updateTime: number;
   modules: ModuleItemType[];
-}
+};
 
 export type AppSimpleEditFormType = {
   // templateId: string;
