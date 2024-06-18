@@ -164,12 +164,12 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
           </>
         )}
       </Box>
-      {/* <Box color={'black.700'} textAlign={'left'} style={{ display: 'flex', alignItems: 'center' }}>
+      <Box color={'black.700'} textAlign={'left'} style={{ display: 'flex', alignItems: 'center' }}>
         没有账户？
         <Link onClick={() => setPageType(LoginPageTypeEnum.register)} color={'blue.500'}>
           立即注册
         </Link>
-      </Box> */}
+      </Box>
       {/* <Box
         mt={1}
         color={'black.700'}
