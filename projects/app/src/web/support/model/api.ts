@@ -34,14 +34,12 @@ export const getChannels = (data: any) => {
 /**
  * update a channel status
  */
-export const putChannelStatus = (data: any) =>
-  PUT<string>('/one/api/channel', data);
+export const putChannelStatus = (data: any) => PUT<string>('/one/api/channel', data);
 
 /**
  * update a channel Priority
  */
-export const putChannelPriority = (data: any) =>
-  PUT<string>('/one/api/channel', data);
+export const putChannelPriority = (data: any) => PUT<string>('/one/api/channel', data);
 
 /**
  * test response time

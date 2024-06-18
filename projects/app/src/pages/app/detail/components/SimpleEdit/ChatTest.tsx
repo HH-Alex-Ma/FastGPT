@@ -57,18 +57,18 @@ const ChatTest = ({ appId }: { appId: string }) => {
         res.app.chatModels?.length == 1 && res.app.chatModels.includes('dall-e-3')
           ? await ImageFetch(data)
           : await streamFetch({
-            url: '/api/core/chat/chatTest',
-            data: {
-              history,
-              prompt: chatList[chatList.length - 2].value,
-              modules,
-              variables,
-              appId,
-              appName: `调试-${appDetail.name}`
-            },
-            onMessage: generatingMessage,
-            abortSignal: controller
-          });
+              url: '/api/core/chat/chatTest',
+              data: {
+                history,
+                prompt: chatList[chatList.length - 2].value,
+                modules,
+                variables,
+                appId,
+                appName: `调试-${appDetail.name}`
+              },
+              onMessage: generatingMessage,
+              abortSignal: controller
+            });
 
       return { responseText, responseData };
     },
@@ -123,7 +123,7 @@ const ChatTest = ({ appId }: { appId: string }) => {
           userGuideModule={getGuideModule(modules)}
           showFileSelector={checkChatSupportSelectFileByModules(modules)}
           onStartChat={startChat}
-          onDelMessage={() => { }}
+          onDelMessage={() => {}}
         />
       </Box>
       {appDetail.type !== AppTypeEnum.simple && (

@@ -1,5 +1,5 @@
-import { Card, CardBody, CardHeader, Divider, Text, useTheme } from "@chakra-ui/react";
-import { forwardRef, ReactNode } from "react";
+import { Card, CardBody, CardHeader, Divider, Text, useTheme } from '@chakra-ui/react';
+import { forwardRef, ReactNode } from 'react';
 
 export interface MainCardProps {
   border?: boolean;
@@ -49,7 +49,11 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
         }}
       >
         {/* card header and action */}
-        {title && <CardHeader>{darkTitle ? <Text fontSize={["md", "lg"]}>{title}</Text> : title}</CardHeader>}
+        {title && (
+          <CardHeader>
+            {darkTitle ? <Text fontSize={['md', 'lg']}>{title}</Text> : title}
+          </CardHeader>
+        )}
 
         {/* content & header divider */}
         {title && <Divider />}
