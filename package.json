@@ -28,5 +28,11 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.6.0"
+  },
+  "dependencies": {
+    "markmap-lib": "^0.17.0",
+    "markmap-render": "^0.17.0",
+    "markmap-toolbar": "^0.17.0",
+    "markmap-view": "^0.17.0"
   }
 }

@@ -9,7 +9,12 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Image
+  Image,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel
 } from '@chakra-ui/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import ChatController, { type ChatControllerProps } from './ChatController';
@@ -120,11 +125,33 @@ ${JSON.stringify(questionGuides)}`;
             }
 
             return (
-              <Markdown
-                key={key}
-                source={source}
-                showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
-              />
+              <>
+                <Tabs>
+                  <TabList>
+                    <Tab>会话</Tab>
+                    <Tab>大纲</Tab>
+                    <Tab>思维导图</Tab>
+                  </TabList>
+
+                  <TabPanels>
+                    <TabPanel>
+                      <p>
+                        <Markdown
+                          key={key}
+                          source={source}
+                          showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+                        />
+                      </p>
+                    </TabPanel>
+                    <TabPanel>
+                      <p>这里是大纲</p>
+                    </TabPanel>
+                    <TabPanel>
+                      <p>这里是思维导图</p>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+              </>
             );
           }
           if (value.type === ChatItemValueTypeEnum.tool && value.tools) {
