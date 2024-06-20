@@ -75,7 +75,8 @@ const MyApps = () => {
         gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
         gridGap={5}
       >
-        {myApps.filter((app) => app.isShow === ModelType.MINE)
+        {myApps
+          .filter((app) => app.isShow === ModelType.MINE)
           .map((app) => (
             <MyTooltip
               key={app._id}

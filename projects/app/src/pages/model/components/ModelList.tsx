@@ -60,7 +60,7 @@ const ModelList = () => {
       let data: any = {
         data: {
           messages: prompts,
-          variables,
+          variables
         },
         onMessage: generatingMessage,
         abortSignal: controller
@@ -83,17 +83,17 @@ const ModelList = () => {
         res.app.chatModels?.length == 1 && res.app.chatModels.includes('dall-e-3')
           ? await ImageFetch(data)
           : await streamFetch({
-            url: '/api/core/chat/chatTest',
-            data: {
-              history,
-              prompt: chatList[chatList.length - 2].value,
-              modules,
-              variables,
-              appName: `调试-${appDetail.name}`
-            },
-            onMessage: generatingMessage,
-            abortSignal: controller
-          });
+              url: '/api/core/chat/chatTest',
+              data: {
+                history,
+                prompt: chatList[chatList.length - 2].value,
+                modules,
+                variables,
+                appName: `调试-${appDetail.name}`
+              },
+              onMessage: generatingMessage,
+              abortSignal: controller
+            });
 
       return { responseText, responseData };
     },
@@ -167,11 +167,11 @@ const ModelList = () => {
                     router.push(`/chat?appId=${app._id}`);
                   }
                 }}
-              // onClick={() => {
-              //   getAppDetail(app._id);
-              //   setAppCard(app);
-              //   onOpenSlider();
-              // }}
+                // onClick={() => {
+                //   getAppDetail(app._id);
+                //   setAppCard(app);
+                //   onOpenSlider();
+                // }}
               >
                 <Flex alignItems={'center'} h={'38px'}>
                   <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
@@ -257,7 +257,7 @@ const ModelList = () => {
               userGuideModule={getGuideModule(modules)}
               showFileSelector={checkChatSupportSelectFileByModules(modules)}
               onStartChat={startChat}
-              onDelMessage={() => { }}
+              onDelMessage={() => {}}
             />
           </DrawerBody>
         </DrawerContent>

@@ -61,7 +61,8 @@ const SliderApps = ({
       </Box>
 
       <Box flex={'1 0 0'} h={0} px={5} overflow={'overlay'}>
-        {apps.filter((item) => item.isShow === currentType)
+        {apps
+          .filter((item) => item.isShow === currentType)
           .map((item) => (
             <Flex
               key={item._id}
@@ -73,23 +74,23 @@ const SliderApps = ({
               alignItems={'center'}
               {...(item._id === activeAppId
                 ? {
-                  bg: 'white',
-                  boxShadow: 'md'
-                }
-                : {
-                  _hover: {
-                    bg: 'myGray.200'
-                  },
-                  onClick: () => {
-                    router.replace({
-                      query: {
-                        ...router.query,
-                        chatId: '',
-                        appId: item._id
-                      }
-                    });
+                    bg: 'white',
+                    boxShadow: 'md'
                   }
-                })}
+                : {
+                    _hover: {
+                      bg: 'myGray.200'
+                    },
+                    onClick: () => {
+                      router.replace({
+                        query: {
+                          ...router.query,
+                          chatId: '',
+                          appId: item._id
+                        }
+                      });
+                    }
+                  })}
             >
               <Avatar src={item.avatar} w={'24px'} />
               <Box ml={2} className={'textEllipsis'}>

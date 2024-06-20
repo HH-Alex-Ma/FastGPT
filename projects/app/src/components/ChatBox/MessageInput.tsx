@@ -65,7 +65,7 @@ const MessageInput = ({
   });
   const { mutate: uploadFile } = useRequest({
     mutationFn: async ({ file, fileIndex }: { file: UserInputFileItemType; fileIndex: number }) => {
-      console.log("file", file)
+      console.log('file', file);
       if (file.type === ChatFileTypeEnum.image && file.rawFile) {
         try {
           const url = await compressImgFileAndUpload({
@@ -105,10 +105,10 @@ const MessageInput = ({
           });
           const response = await readPdfFile({
             buffer: Buffer.from(arrayBuffer),
-            teamId: "",
-            encoding: "utf8"
+            teamId: '',
+            encoding: 'utf8'
           });
-          console.log("response readPdfFile", response);
+          console.log('response readPdfFile', response);
           updateFile(fileIndex, {
             ...file,
             url: `${location.origin}${response}`
@@ -160,7 +160,7 @@ const MessageInput = ({
         )
       );
       appendFile(loadFiles);
-      console.log("loadFiles", loadFiles)
+      console.log('loadFiles', loadFiles);
 
       loadFiles.forEach((file, i) =>
         uploadFile({
@@ -245,13 +245,13 @@ const MessageInput = ({
         overflow={'hidden'}
         {...(isPc
           ? {
-            border: '1px solid',
-            borderColor: 'rgba(0,0,0,0.12)'
-          }
+              border: '1px solid',
+              borderColor: 'rgba(0,0,0,0.12)'
+            }
           : {
-            borderTop: '1px solid',
-            borderTopColor: 'rgba(0,0,0,0.15)'
-          })}
+              borderTop: '1px solid',
+              borderTopColor: 'rgba(0,0,0,0.15)'
+            })}
       >
         {/* translate loading */}
         <Flex
