@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   Card,
+  Divider,
   Flex,
   useTheme,
   Accordion,
@@ -14,9 +15,10 @@ import {
   TabList,
   TabPanels,
   Tab,
-  TabPanel
+  TabPanel,
+  Tag
 } from '@chakra-ui/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ChatController, { type ChatControllerProps } from './ChatController';
 import ChatAvatar from './ChatAvatar';
 import { MessageCardStyle } from '../constants';
@@ -31,6 +33,8 @@ import {
 } from '@fastgpt/global/core/chat/constants';
 import FilesBlock from './FilesBox';
 import { useChatProviderStore } from '../Provider';
+import MarkMapViewer from 'src/components/ChatBox/components/markmap';
+import { AIChatItemType, ChatHistoryItemResType } from '@fastgpt/global/core/chat/type';
 
 const colorMap = {
   [ChatStatusEnum.loading]: {
@@ -124,34 +128,109 @@ const ChatItem = ({
 ${JSON.stringify(questionGuides)}`;
             }
 
-            return (
-              <>
-                <Tabs>
-                  <TabList>
-                    <Tab>会话</Tab>
-                    <Tab>大纲</Tab>
-                    <Tab>思维导图</Tab>
-                  </TabList>
+            {
+              /* 把回答按模板切分为文字，大纲，思维导图三部分 
+            const parseResponse = (content: string) : string[] => {
+              const parts1 = content.split('**大纲**:');
+              const text = parts1[0].replace('**文本回答**:', '').trim();
+              const parts2 = parts1[1].split('**Markdown思维导图**:');
+              
+              const outline = parts2[0].replace('', '').trim();
+              const mindMap = parts2[1].trim().replace(/^```|```$/g, '')
+              return [text, outline, mindMap]
+            }
 
-                  <TabPanels>
-                    <TabPanel>
-                      <p>
-                        <Markdown
-                          key={key}
-                          source={source}
-                          showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
-                        />
-                      </p>
-                    </TabPanel>
-                    <TabPanel>
-                      <p>这里是大纲</p>
-                    </TabPanel>
-                    <TabPanel>
-                      <p>这里是思维导图</p>
-                    </TabPanel>
-                  </TabPanels>
-                </Tabs>
-              </>
+            
+            const [textAnswer, outlineMD , mindMapMD] = parseResponse(source);
+            */
+            }
+
+            let extraData: ChatHistoryItemResType | undefined;
+            let extraResponse: string | undefined;
+            if ((chat as AIChatItemType).responseData !== undefined) {
+              //提取外部搜索的回答
+              extraData = (chat as AIChatItemType).responseData?.find(
+                (obj) => obj.moduleName === '外部结果分析' && obj.moduleType === 'chatNode'
+              );
+            }
+            if (extraData) {
+              extraResponse = extraData.historyPreview?.at(-1)?.value;
+            }
+
+            return (
+              <Flex flexDirection="row" height="auto">
+                <Flex flexDirection="column" maxWidth="50%">
+                  <Flex justifyContent="center">
+                    <Tag colorScheme="cyan">内部查询结果</Tag>
+                  </Flex>
+                  <Tabs>
+                    <TabList>
+                      <Tab>会话</Tab>
+                      <Tab>大纲</Tab>
+                      <Tab>思维导图</Tab>
+                    </TabList>
+                    <TabPanels>
+                      <TabPanel>
+                        <p>
+                          <Markdown
+                            key={key}
+                            source={source}
+                            showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+                          />
+                        </p>
+                      </TabPanel>
+                      <TabPanel>
+                        <p>这是大纲</p>
+                      </TabPanel>
+                      <TabPanel>
+                        <Flex>
+                          <MarkMapViewer />
+                        </Flex>
+                      </TabPanel>
+                    </TabPanels>
+                  </Tabs>
+                </Flex>
+                {type === 'AI' && (
+                  <Flex height="auto">
+                    <Divider orientation="vertical" alignSelf="stretch" />
+                  </Flex>
+                )}
+                {type === 'AI' && (
+                  <Flex flexDirection="column" maxWidth="50%">
+                    <Flex justifyContent="center">
+                      <Tag colorScheme="green">外部查询结果</Tag>
+                    </Flex>
+                    <Tabs>
+                      <TabList>
+                        <Tab>会话</Tab>
+                        <Tab>大纲</Tab>
+                        <Tab>思维导图</Tab>
+                      </TabList>
+                      <TabPanels>
+                        <TabPanel>
+                          <p>
+                            <Markdown
+                              key={key}
+                              source={extraResponse}
+                              showAnimation={
+                                isLastChild && isChatting && i === chat.value.length - 1
+                              }
+                            />
+                          </p>
+                        </TabPanel>
+                        <TabPanel>
+                          <p>这是大纲</p>
+                        </TabPanel>
+                        <TabPanel>
+                          <Flex>
+                            <MarkMapViewer />
+                          </Flex>
+                        </TabPanel>
+                      </TabPanels>
+                    </Tabs>
+                  </Flex>
+                )}
+              </Flex>
             );
           }
           if (value.type === ChatItemValueTypeEnum.tool && value.tools) {

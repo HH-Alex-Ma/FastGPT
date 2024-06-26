@@ -66,11 +66,15 @@ const ResponseTags = ({
 
     const chatData = flatResponse.find(isLLMNode);
 
-    const quoteList = flatResponse
-      .filter((item) => item.moduleType === FlowNodeTypeEnum.datasetSearchNode)
-      .map((item) => item.quoteList)
-      .flat()
-      .filter(Boolean) as SearchDataResponseItemType[];
+    const quoteList = (
+      flatResponse
+        .filter((item) => item.moduleType === FlowNodeTypeEnum.datasetSearchNode)
+        .map((item) => item.quoteList)
+        .flat()
+        .filter(Boolean) as SearchDataResponseItemType[]
+    )
+      //只选取内部知识库引用内容
+      .filter((item) => item.datasetId === '6673c1c94c1a375bf275f9ed');
 
     const sourceList = quoteList.reduce(
       (acc: Record<string, SearchDataResponseItemType[]>, cur) => {

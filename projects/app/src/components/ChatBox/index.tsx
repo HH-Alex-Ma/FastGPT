@@ -947,16 +947,22 @@ const ChatBox = (
                         onReadUserDislike: onReadUserDislike(item)
                       })}
                     >
-                      {/* 引用 */}
-                      <ResponseTags
-                        flowResponses={item.responseData}
-                        showDetail={!shareId && !teamId}
-                      />
-                      {/* 外部引用 */}
-                      <ExternalReponse
-                        flowResponses={item.responseData}
-                        showDetail={!shareId && !teamId}
-                      />
+                      <Flex flexDirection="row" width="100%">
+                        {/* 引用 */}
+                        <Flex flexDirection="column" width="50%">
+                          <ResponseTags
+                            flowResponses={item.responseData}
+                            showDetail={!shareId && !teamId}
+                          />
+                        </Flex>
+                        {/* 外部引用 */}
+                        <Flex flexDirection="column" width="50%">
+                          <ExternalReponse
+                            flowResponses={item.responseData}
+                            showDetail={!shareId && !teamId}
+                          />
+                        </Flex>
+                      </Flex>
                       {/* 外部消息 */}
                       {!statusBoxData && (
                         <ExternalChatItem
