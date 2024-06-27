@@ -163,7 +163,7 @@ ${JSON.stringify(questionGuides)}`;
                   <Flex justifyContent="center">
                     <Tag colorScheme="cyan">内部查询结果</Tag>
                   </Flex>
-                  <Tabs>
+                  <Tabs isLazy>
                     <TabList>
                       <Tab>会话</Tab>
                       <Tab>大纲</Tab>
@@ -200,7 +200,7 @@ ${JSON.stringify(questionGuides)}`;
                     <Flex justifyContent="center">
                       <Tag colorScheme="green">外部查询结果</Tag>
                     </Flex>
-                    <Tabs>
+                    <Tabs isLazy>
                       <TabList>
                         <Tab>会话</Tab>
                         <Tab>大纲</Tab>
