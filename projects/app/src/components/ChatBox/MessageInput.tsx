@@ -16,7 +16,7 @@ import { ChatBoxInputFormType, ChatBoxInputType, UserInputFileItemType } from '.
 import { textareaMinH } from './constants';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { useChatProviderStore } from './Provider';
-import { readPdfFile } from '@fastgpt/service/common/file/read/pdf';
+import { readPdfFile } from '@fastgpt/service/common/file/read/microsoft';
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
 const MessageInput = ({
@@ -56,13 +56,13 @@ const MessageInput = ({
   const { t } = useTranslation();
 
   const havInput = !!inputValue || fileList.length > 0;
-
   /* file selector and upload */
   const { File, onOpen: onOpenSelectFile } = useSelectFile({
     fileType: '*',
     multiple: true,
     maxCount: 10
   });
+  // 用于处理文件上传的逻辑
   const { mutate: uploadFile } = useRequest({
     mutationFn: async ({ file, fileIndex }: { file: UserInputFileItemType; fileIndex: number }) => {
       console.log('file', file);
@@ -71,9 +71,9 @@ const MessageInput = ({
           const url = await compressImgFileAndUpload({
             type: MongoImageTypeEnum.chatImage,
             file: file.rawFile,
-            maxW: 4329,
-            maxH: 4329,
-            maxSize: 1024 * 1024 * 5,
+            maxW: 4320,
+            maxH: 4320,
+            maxSize: 1024 * 1024 * 16,
             // 7 day expired.
             expiredTime: addDays(new Date(), 7),
             shareId,
@@ -90,38 +90,53 @@ const MessageInput = ({
           console.log(error);
           return Promise.reject(error);
         }
-      } else if (file.type === ChatFileTypeEnum.file && file.rawFile) {
-        try {
-          const reader = new FileReader();
-          reader.readAsArrayBuffer(file.rawFile);
-          const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
-            reader.onload = () => {
-              resolve(reader.result as ArrayBuffer);
-            };
-            reader.onerror = (err) => {
-              console.log(err);
-              reject('Load PDF error');
-            };
-          });
-          const response = await readPdfFile({
-            buffer: Buffer.from(arrayBuffer),
-            teamId: '',
-            encoding: 'utf8'
-          });
-          console.log('response readPdfFile', response);
-          updateFile(fileIndex, {
-            ...file,
-            url: `${location.origin}${response}`
-          });
-        } catch (error) {
-          removeFile(fileIndex);
-          console.log(error);
-          return Promise.reject(error);
-        }
       }
+      //   else if (file.type === ChatFileTypeEnum.file && file.rawFile) {
+      //     try {
+      //       const reader = new FileReader();
+      //       reader.readAsArrayBuffer(file.rawFile);
+
+      //       const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+      //         reader.onload = () => {
+      //           resolve(reader.result as ArrayBuffer);
+      //         };
+      //         reader.onerror = (err) => {
+      //           console.log(err);
+      //           reject('Load PDF error');
+      //         };
+      //       });
+
+      //       const response = await readPdfFile({
+      //         buffer: Buffer.from(arrayBuffer),
+      //         teamId: "",
+      //         encoding: "utf8"
+      //       });
+
+      //       // 获取输入框中的内容
+      //       const textareaValue = TextareaDom.current?.value || '';
+
+      //       // 在这里调用onSendMessage来发送PDF文件的rawText
+      //       onSendMessage({
+      //         text: `${textareaValue.trim()} ${response.rawText}`,
+      //         files: [], // 假设PDF文本作为消息发送，不包含文件
+      //         autoTTSResponse
+      //       });
+
+      //       // 更新文件列表中的PDF文件项，如果需要保留文件项
+      //       updateFile(fileIndex, {
+      //         ...file,
+      //         url: `${location.origin}${response}` // 假设response包含了文件的URL
+      //       });
+      //     } catch (error) {
+      //       removeFile(fileIndex);
+      //       console.log(error);
+      //       return Promise.reject(error);
+      //     }
+      //   }
     },
     errorToast: t('common.Upload File Failed')
   });
+  // 用于处理用户选择的文件
   const onSelectFile = useCallback(
     async (files: File[]) => {
       if (!files || files.length === 0) {
@@ -131,9 +146,9 @@ const MessageInput = ({
         files.map(
           (file) =>
             new Promise<UserInputFileItemType>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
               if (file.type.includes('image')) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
                 reader.onload = () => {
                   const item = {
                     id: nanoid(),
@@ -160,7 +175,6 @@ const MessageInput = ({
         )
       );
       appendFile(loadFiles);
-      console.log('loadFiles', loadFiles);
 
       loadFiles.forEach((file, i) =>
         uploadFile({
@@ -176,9 +190,48 @@ const MessageInput = ({
   const handleSend = useCallback(async () => {
     const textareaValue = TextareaDom.current?.value || '';
 
+    // 处理每个文件，根据类型执行不同逻辑
+    for (const file of fileList) {
+      if (file.type === ChatFileTypeEnum.file && file.rawFile) {
+        // 处理PDF文件逻辑
+        try {
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(file.rawFile);
+
+          const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+            reader.onload = () => {
+              resolve(reader.result as ArrayBuffer);
+            };
+            reader.onerror = (err) => {
+              console.log(err);
+              reject('Load PDF error');
+            };
+          });
+
+          const response = await readPdfFile({
+            buffer: Buffer.from(arrayBuffer),
+            teamId: '',
+            encoding: 'utf8'
+          });
+
+          console.log('response', response);
+
+          // 将PDF文本附加到输入框内容中
+          onSendMessage({
+            text: `${textareaValue.trim()} ${response.rawText}`,
+            files: [], // 假设PDF文本作为消息发送，不包含文件
+            autoTTSResponse
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    // 发送最终的消息，如果有必要
     onSendMessage({
       text: textareaValue.trim(),
-      files: fileList
+      files: fileList.filter((file) => file.type !== ChatFileTypeEnum.file) // 排除PDF文件，如果已经处理
     });
     replaceFile([]);
   }, [TextareaDom, fileList, onSendMessage, replaceFile]);
