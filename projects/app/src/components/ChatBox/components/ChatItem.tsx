@@ -145,16 +145,27 @@ ${JSON.stringify(questionGuides)}`;
             */
             }
 
-            let extraData: ChatHistoryItemResType | undefined;
             let extraResponse: string | undefined;
+            let mindMapMD: string | undefined;
+            let outMindMapMD: string | undefined;
+            let inMindMapMD: string | undefined;
             if ((chat as AIChatItemType).responseData !== undefined) {
               //提取外部搜索的回答
-              extraData = (chat as AIChatItemType).responseData?.find(
-                (obj) => obj.moduleName === '外部结果分析' && obj.moduleType === 'chatNode'
-              );
-            }
-            if (extraData) {
-              extraResponse = extraData.historyPreview?.at(-1)?.value;
+              extraResponse = (chat as AIChatItemType).responseData
+                ?.find((obj) => obj.moduleName === '外部结果分析' && obj.moduleType === 'chatNode')
+                ?.historyPreview?.at(-1)?.value;
+
+              mindMapMD = (chat as AIChatItemType).responseData
+                ?.find((obj) => obj.moduleName === '生成导图' && obj.moduleType === 'chatNode')
+                ?.historyPreview?.at(-1)?.value;
+
+              inMindMapMD = (chat as AIChatItemType).responseData
+                ?.find((obj) => obj.moduleName === '生成内部导图' && obj.moduleType === 'chatNode')
+                ?.historyPreview?.at(-1)?.value;
+
+              outMindMapMD = (chat as AIChatItemType).responseData
+                ?.find((obj) => obj.moduleName === '生成外部导图' && obj.moduleType === 'chatNode')
+                ?.historyPreview?.at(-1)?.value;
             }
 
             return (
@@ -184,7 +195,7 @@ ${JSON.stringify(questionGuides)}`;
                       </TabPanel>
                       <TabPanel>
                         <Flex>
-                          <MarkMapViewer />
+                          <MarkMapViewer markdown={mindMapMD} />
                         </Flex>
                       </TabPanel>
                     </TabPanels>

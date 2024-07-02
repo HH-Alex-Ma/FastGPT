@@ -63,7 +63,10 @@ export enum FlowNodeTypeEnum {
   queryExtension = 'cfr',
   tools = 'tools',
   stopTool = 'stopTool',
-  lafModule = 'lafModule'
+  lafModule = 'lafModule',
+
+  //new
+  webScraper = 'webScraper'
 
   // abandon
 }

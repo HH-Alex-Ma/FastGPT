@@ -50,7 +50,8 @@ const nodeTypes: Record<`${FlowNodeTypeEnum}`, any> = {
   [FlowNodeTypeEnum.stopTool]: (data: NodeProps<FlowModuleItemType>) => (
     <NodeSimple {...data} minW={'100px'} maxW={'300px'} />
   ),
-  [FlowNodeTypeEnum.lafModule]: dynamic(() => import('./components/nodes/NodeLaf'))
+  [FlowNodeTypeEnum.lafModule]: dynamic(() => import('./components/nodes/NodeLaf')),
+  [FlowNodeTypeEnum.webScraper]: NodeSimple
 };
 const edgeTypes = {
   [EDGE_TYPE]: ButtonEdge

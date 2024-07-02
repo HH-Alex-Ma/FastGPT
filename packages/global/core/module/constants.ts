@@ -90,7 +90,10 @@ export enum ModuleInputKeyEnum {
 
   // plugin
   pluginId = 'pluginId',
-  pluginStart = 'pluginStart'
+  pluginStart = 'pluginStart',
+
+  // web scraper
+  url = 'url'
 }
 
 export enum ModuleOutputKeyEnum {
