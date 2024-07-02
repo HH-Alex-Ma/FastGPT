@@ -52,7 +52,7 @@ export const readPdfFile = async ({
       })
       .join('');
   };
-
+  // 文件读取的入口buffer
   const loadingTask = pdfjs.getDocument(buffer.buffer);
   const doc = await loadingTask.promise;
 
