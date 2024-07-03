@@ -15,8 +15,8 @@ const FilesBlock = ({ files }: { files: UserInputFileItemType[] }) => {
           );
         } else {
           return (
-            <Tag size="lg" colorScheme="red" borderRadius="full">
-              <MyIcon name={'core/chat/fileSelect'} color={'myGray.600'} />
+            <Tag size="lg" colorScheme="facebook" borderRadius="full">
+              <MyIcon boxSize="20px" name={'text'} color={'myGray.600'} />
               <TagLabel>{name}</TagLabel>
             </Tag>
           );

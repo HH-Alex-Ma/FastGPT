@@ -48,6 +48,7 @@ export type UserChatItemValueItemType = {
     type: `${ChatFileTypeEnum}`;
     name?: string;
     url: string;
+    rawText?: string;
   };
 };
 export type UserChatItemType = {
