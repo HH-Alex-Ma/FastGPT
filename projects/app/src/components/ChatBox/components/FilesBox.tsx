@@ -5,7 +5,7 @@ import { UserInputFileItemType } from '@/components/ChatBox/type';
 
 const FilesBlock = ({ files }: { files: UserInputFileItemType[] }) => {
   return (
-    <Grid gridTemplateColumns={['1fr', '1fr 1fr']} gap={4}>
+    <Grid gridTemplateColumns={files.length === 1 ? '1fr' : ['1fr', '1fr 1fr']} gap={4}>
       {files.map(({ id, type, name, url }, i) => {
         if (type === 'image') {
           return (
@@ -13,9 +13,9 @@ const FilesBlock = ({ files }: { files: UserInputFileItemType[] }) => {
               <MdImage src={url} />
             </Box>
           );
-        } else {
+        } else if (type === 'file') {
           return (
-            <Tag size="lg" colorScheme="facebook" borderRadius="full">
+            <Tag size="lg" colorScheme="facebook" borderRadius="full" marginBottom={'8px'}>
               <MyIcon boxSize="20px" name={'text'} color={'myGray.600'} />
               <TagLabel>{name}</TagLabel>
             </Tag>
