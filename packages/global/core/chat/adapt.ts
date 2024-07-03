@@ -171,7 +171,7 @@ export const GPTMessages2Chats = (
                   file: {
                     type: ChatFileTypeEnum.file,
                     name: item.text.split('。')[0].substring(9),
-                    url: item.text
+                    url: item.text.split('。')[1].substring(6)
                   }
                 });
               } else {
