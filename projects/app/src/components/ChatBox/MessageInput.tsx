@@ -1,6 +1,6 @@
 import { useSpeech } from '@/web/common/hooks/useSpeech';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
-import { Box, Flex, Image, Spinner, Textarea } from '@chakra-ui/react';
+import { Box, Flex, Image, Spinner, Textarea, Tag, TagLabel } from '@chakra-ui/react';
 import React, { useRef, useEffect, useCallback, useTransition } from 'react';
 import { useTranslation } from 'next-i18next';
 import MyTooltip from '../MyTooltip';
@@ -372,7 +372,7 @@ const MessageInput = ({
                 className="close-icon"
                 display={['', 'none']}
               />
-              {(item.type === ChatFileTypeEnum.image || item.type === ChatFileTypeEnum.file) && (
+              {item.type === ChatFileTypeEnum.image && (
                 <Image
                   alt={'img'}
                   src={item.icon}
@@ -381,6 +381,12 @@ const MessageInput = ({
                   borderRadius={'md'}
                   objectFit={'contain'}
                 />
+              )}
+              {item.type === ChatFileTypeEnum.file && (
+                <Tag size="lg" colorScheme="red" borderRadius="full">
+                  <MyIcon name={'core/chat/fileSelect'} color={'myGray.600'} />
+                  <TagLabel>{item.name}</TagLabel>
+                </Tag>
               )}
             </Box>
           ))}

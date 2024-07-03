@@ -1,4 +1,5 @@
-import { Box, Flex, Grid } from '@chakra-ui/react';
+import { Box, Flex, Grid, Tag, TagLabel } from '@chakra-ui/react';
+import MyIcon from '@fastgpt/web/components/common/Icon';
 import MdImage from '@/components/Markdown/img/Image';
 import { UserInputFileItemType } from '@/components/ChatBox/type';
 
@@ -11,6 +12,13 @@ const FilesBlock = ({ files }: { files: UserInputFileItemType[] }) => {
             <Box key={i} rounded={'md'} flex={'1 0 0'} minW={'120px'}>
               <MdImage src={url} />
             </Box>
+          );
+        } else {
+          return (
+            <Tag size="lg" colorScheme="red" borderRadius="full">
+              <MyIcon name={'core/chat/fileSelect'} color={'myGray.600'} />
+              <TagLabel>{name}</TagLabel>
+            </Tag>
           );
         }
         return null;
