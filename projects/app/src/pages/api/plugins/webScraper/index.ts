@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const sanitizedUrl = url.replace(/["';`]/g, ''); // Remove potentially dangerous characters
 
   const pythonProcess = spawn('python', [
-    'packages/services/support/webScrapers/dummy.py',
+    'packages/service/support/webScrapers/dummy.py',
     sanitizedUrl
   ]);
 
