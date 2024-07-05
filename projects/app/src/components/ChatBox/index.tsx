@@ -1002,7 +1002,7 @@ const ChatBox = (
           onStop={() => chatController.current?.abort('stop')}
           TextareaDom={TextareaDom}
           resetInputVal={resetInputVal}
-          showFileSelector={showFileSelector}
+          showFileSelector={true}
           chatForm={chatForm}
           appId={appId}
         />
