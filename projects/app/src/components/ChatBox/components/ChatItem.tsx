@@ -35,7 +35,6 @@ import FilesBlock from './FilesBox';
 import { useChatProviderStore } from '../Provider';
 import MarkMapViewer from 'src/components/ChatBox/components/markmap';
 import { AIChatItemType, ChatHistoryItemResType } from '@fastgpt/global/core/chat/type';
-
 const colorMap = {
   [ChatStatusEnum.loading]: {
     bg: 'myGray.100',
@@ -150,7 +149,7 @@ ${JSON.stringify(questionGuides)}`;
             if ((chat as AIChatItemType).responseData !== undefined) {
               //提取外部搜索的回答
               extraData = (chat as AIChatItemType).responseData?.find(
-                (obj) => obj.moduleName === '外部结果分析' && obj.moduleType === 'chatNode'
+                (obj) => obj.moduleName === '生成文案' && obj.moduleType === 'chatNode'
               );
             }
             if (extraData) {
@@ -161,13 +160,13 @@ ${JSON.stringify(questionGuides)}`;
               <Flex flexDirection="row" height="auto">
                 <Flex flexDirection="column" maxWidth="50%">
                   <Flex justifyContent="center">
-                    <Tag colorScheme="cyan">内部查询结果</Tag>
+                    <Tag colorScheme="cyan">产品推广方案</Tag>
                   </Flex>
                   <Tabs isLazy>
                     <TabList>
                       <Tab>会话</Tab>
-                      <Tab>大纲</Tab>
-                      <Tab>思维导图</Tab>
+                      {/* <Tab>大纲</Tab>
+                      <Tab>思维导图</Tab> */}
                     </TabList>
                     <TabPanels>
                       <TabPanel>
@@ -179,14 +178,14 @@ ${JSON.stringify(questionGuides)}`;
                           />
                         </p>
                       </TabPanel>
-                      <TabPanel>
+                      {/* <TabPanel>
                         <p>这是大纲</p>
                       </TabPanel>
                       <TabPanel>
                         <Flex>
                           <MarkMapViewer />
                         </Flex>
-                      </TabPanel>
+                      </TabPanel> */}
                     </TabPanels>
                   </Tabs>
                 </Flex>
@@ -198,13 +197,13 @@ ${JSON.stringify(questionGuides)}`;
                 {type === 'AI' && (
                   <Flex flexDirection="column" maxWidth="50%">
                     <Flex justifyContent="center">
-                      <Tag colorScheme="green">外部查询结果</Tag>
+                      <Tag colorScheme="green">产品软广文案</Tag>
                     </Flex>
                     <Tabs isLazy>
                       <TabList>
                         <Tab>会话</Tab>
-                        <Tab>大纲</Tab>
-                        <Tab>思维导图</Tab>
+                        {/*<Tab>大纲</Tab>
+                        <Tab>思维导图</Tab>*/}
                       </TabList>
                       <TabPanels>
                         <TabPanel>
@@ -218,14 +217,14 @@ ${JSON.stringify(questionGuides)}`;
                             />
                           </p>
                         </TabPanel>
-                        <TabPanel>
+                        {/*<TabPanel>
                           <p>这是大纲</p>
                         </TabPanel>
                         <TabPanel>
                           <Flex>
                             <MarkMapViewer />
                           </Flex>
-                        </TabPanel>
+                        </TabPanel> */}
                       </TabPanels>
                     </Tabs>
                   </Flex>
