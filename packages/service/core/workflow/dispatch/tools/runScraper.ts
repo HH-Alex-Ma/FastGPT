@@ -14,17 +14,20 @@ type ScrapeResponseProps = DispatchNodeResultType<{
 export const dispatchScraper = async (props: ScrapeRequestProps): Promise<ScrapeResponseProps> => {
   try {
     const url = props.params.url;
-    const response = await axios.post('/api/plugins/webScraper/index', { url });
+    console.log('Scraping URL:', url);
+    const response = await axios.post('http://localhost:3000/api/plugins/webScraper', { url });
     console.log('Scraped Data:', response.data.data);
+    const result = response.data.data ? response.data.data.textOutput : '未能提取到内容';
+
     return {
       [DispatchNodeResponseKeyEnum.nodeResponse]: {
-        textOutput: response.data.data
+        textOutput: result
       }, // The node response detail
       //[DispatchNodeResponseKeyEnum.nodeDispatchUsages]?: ChatNodeUsageType[]; //
       //[DispatchNodeResponseKeyEnum.childrenResponses]?: DispatchNodeResultType[];
       //[DispatchNodeResponseKeyEnum.toolResponses]?: ToolRunResponseItemType;
       //[DispatchNodeResponseKeyEnum.assistantResponses]?: ChatItemValueItemType[];
-      [ModuleOutputKeyEnum.answerText]: response.data.data
+      [ModuleOutputKeyEnum.answerText]: result
     };
     //response.data.data;
   } catch (error) {
