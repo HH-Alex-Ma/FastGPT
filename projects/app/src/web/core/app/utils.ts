@@ -36,6 +36,12 @@ export async function postForm2Modules(data: AppSimpleEditFormType) {
             value: formData.userGuide.questionGuide
           },
           {
+            key: ModuleInputKeyEnum.externalData,
+            type: FlowNodeInputTypeEnum.hidden,
+            label: 'core.app.External Quote',
+            value: formData.userGuide.externalData
+          },
+          {
             key: ModuleInputKeyEnum.tts,
             type: FlowNodeInputTypeEnum.hidden,
             label: '',

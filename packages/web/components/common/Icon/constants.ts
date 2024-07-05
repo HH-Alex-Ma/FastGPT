@@ -86,6 +86,7 @@ export const iconPaths = {
   'core/app/variable/select': () => import('./icons/core/app/variable/select.svg'),
   'core/app/variable/textarea': () => import('./icons/core/app/variable/textarea.svg'),
   'core/chat/QGFill': () => import('./icons/core/chat/QGFill.svg'),
+  'core/chat/EQFill': () => import('./icons/core/chat/EQFill.svg'),
   'core/chat/cancelSpeak': () => import('./icons/core/chat/cancelSpeak.svg'),
   'core/chat/chatFill': () => import('./icons/core/chat/chatFill.svg'),
   'core/chat/chatLight': () => import('./icons/core/chat/chatLight.svg'),

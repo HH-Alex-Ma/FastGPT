@@ -14,6 +14,18 @@ importers:
       '@azure/core-auth':
         specifier: ^1.7.2
         version: 1.7.2
+      markmap-lib:
+        specifier: ^0.17.0
+        version: 0.17.0(markmap-common@0.17.0)
+      markmap-render:
+        specifier: ^0.17.0
+        version: 0.17.0(markmap-common@0.17.0)
+      markmap-toolbar:
+        specifier: ^0.17.0
+        version: 0.17.0(markmap-common@0.17.0)
+      markmap-view:
+        specifier: ^0.17.0
+        version: 0.17.0(markmap-common@0.17.0)
     devDependencies:
       '@chakra-ui/cli':
         specifier: ^2.4.1
@@ -485,7 +497,7 @@ importers:
         specifier: ^4.14.191
         version: 4.17.0
       '@types/node':
-        specifier: ^20.8.5
+        specifier: ^20.12.5
         version: 20.12.5
       '@types/nodemailer':
         specifier: ^6.4.15
@@ -10284,6 +10296,10 @@ snapshots:
     dependencies:
       d3-dsv: 3.0.1
 
+  d3-flextree@2.1.2:
+    dependencies:
+      d3-hierarchy: 1.1.9
+
   d3-force@3.0.0:
     dependencies:
       d3-dispatch: 3.0.1
@@ -11968,7 +11984,74 @@ snapshots:
 
   markdown-escapes@1.0.4: {}
 
+  markdown-it-ins@4.0.0: {}
+
+  markdown-it-mark@4.0.0: {}
+
+  markdown-it-sub@2.0.0: {}
+
+  markdown-it-sup@2.0.0: {}
+
+  markdown-it@14.1.0:
+    dependencies:
+      argparse: 2.0.1
+      entities: 4.5.0
+      linkify-it: 5.0.0
+      mdurl: 2.0.0
+      punycode.js: 2.3.1
+      uc.micro: 2.1.0
+
   markdown-table@3.0.3: {}
+
+  markmap-common@0.17.0:
+    dependencies:
+      '@babel/runtime': 7.24.7
+      '@gera2ld/jsx-dom': 2.2.2
+      npm2url: 0.2.4
+
+  markmap-html-parser@0.17.0(markmap-common@0.17.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      cheerio: 1.0.0-rc.12
+      markmap-common: 0.17.0
+
+  markmap-lib@0.17.0(markmap-common@0.17.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      '@iktakahiro/markdown-it-katex': 4.0.1
+      highlight.js: 11.9.0
+      js-yaml: 4.1.0
+      katex: 0.16.10
+      markdown-it: 14.1.0
+      markdown-it-ins: 4.0.0
+      markdown-it-mark: 4.0.0
+      markdown-it-sub: 2.0.0
+      markdown-it-sup: 2.0.0
+      markmap-common: 0.17.0
+      markmap-html-parser: 0.17.0(markmap-common@0.17.0)
+      markmap-view: 0.17.0(markmap-common@0.17.0)
+      prismjs: 1.29.0
+
+  markmap-render@0.17.0(markmap-common@0.17.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      markmap-common: 0.17.0
+      markmap-view: 0.17.0(markmap-common@0.17.0)
+
+  markmap-toolbar@0.17.0(markmap-common@0.17.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      '@gera2ld/jsx-dom': 2.2.2
+      markmap-common: 0.17.0
+
+  markmap-view@0.17.0(markmap-common@0.17.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      '@gera2ld/jsx-dom': 2.2.2
+      '@types/d3': 7.4.3
+      d3: 7.9.0
+      d3-flextree: 2.1.2
+      markmap-common: 0.17.0
 
   md5@2.3.0:
     dependencies:
@@ -12540,6 +12623,8 @@ snapshots:
   npm-run-path@5.3.0:
     dependencies:
       path-key: 4.0.0
+
+  npm2url@0.2.4: {}
 
   npmlog@5.0.1:
     dependencies:

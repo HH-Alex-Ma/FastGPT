@@ -30,6 +30,7 @@ import { SettingAIDataType } from '@fastgpt/global/core/module/node/type';
 import DeleteIcon, { hoverDeleteStyles } from '@fastgpt/web/components/common/Icon/delete';
 import { TTSTypeEnum } from '@/constants/app';
 import { useUserStore } from '@/web/support/user/useUserStore';
+import EQSwitch from '@/components/core/app/EQSwitch';
 
 const DatasetSelectModal = dynamic(() => import('@/components/core/module/DatasetSelectModal'));
 const DatasetParamsModal = dynamic(() => import('@/components/core/module/DatasetParamsModal'));
@@ -445,7 +446,7 @@ const EditForm = ({
           </Box>
 
           {/* question guide */}
-          <Box {...BoxStyles} borderBottom={'none'}>
+          <Box {...BoxStyles}>
             <QGSwitch
               isChecked={getValues('userGuide.questionGuide')}
               size={'lg'}
@@ -456,6 +457,20 @@ const EditForm = ({
               }}
             />
           </Box>
+          {/* external data */}
+          {showGlobalVariables && (
+            <Box {...BoxStyles} borderBottom={'none'}>
+              <EQSwitch
+                isChecked={getValues('userGuide.externalData')}
+                size={'lg'}
+                onChange={(e) => {
+                  const value = e.target.checked;
+                  setValue('userGuide.externalData', value);
+                  setRefresh((state) => !state);
+                }}
+              />
+            </Box>
+          )}
         </Box>
       </Box>
 

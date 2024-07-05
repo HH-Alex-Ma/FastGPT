@@ -2,7 +2,6 @@ import {
   Box,
   BoxProps,
   Card,
-  Divider,
   Flex,
   useTheme,
   Accordion,
@@ -10,16 +9,10 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Image,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Tag
+  Image
 } from '@chakra-ui/react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import ChatController, { type ChatControllerProps } from './ChatController';
+import React, { useEffect, useMemo, useState } from 'react';
+import ChatController, { ExternalChatItemProps, type ChatControllerProps } from './ChatController';
 import ChatAvatar from './ChatAvatar';
 import { MessageCardStyle } from '../constants';
 import { formatChatValue2InputType } from '../utils';
@@ -33,8 +26,8 @@ import {
 } from '@fastgpt/global/core/chat/constants';
 import FilesBlock from './FilesBox';
 import { useChatProviderStore } from '../Provider';
-import MarkMapViewer from 'src/components/ChatBox/components/markmap';
-import { AIChatItemType, ChatHistoryItemResType } from '@fastgpt/global/core/chat/type';
+import { getExternalData } from '@/pages/api/data/api';
+
 const colorMap = {
   [ChatStatusEnum.loading]: {
     bg: 'myGray.100',
@@ -50,6 +43,83 @@ const colorMap = {
   }
 };
 
+// let mockJson = {
+//   status: 200,
+//   message: '',
+//   data: [
+//     {
+//       invention_title: '一种同轴磁性齿轮的定子铁心的形状优化方法',
+//       assignees: '中国航空工业集团公司金城南京机电液压工程研究中心',
+//       relevancy: '98%'
+//     },
+//     {
+//       invention_title:
+//         'Connection disc structure parameter optimization method and device, equipment and medium',
+//       assignees: '盛瑞传动股份有限公司',
+//       relevancy: '95%'
+//     },
+//     {
+//       invention_title: 'Design method for laminated coupling of reciprocating compressor',
+//       assignees: '西南石油大学',
+//       relevancy: '94%'
+//     },
+//     {
+//       invention_title:
+//         'Method and device for optimizing structure of elastic part, storage medium and electronic equipment',
+//       assignees: '海信(山东)冰箱有限公司',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: '一种复合材料/金属混合齿轮结构设计及制备方法',
+//       assignees: '北京航空航天大学',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: '一种连接盘结构参数优化方法、装置、设备及介质',
+//       assignees: '盛瑞传动股份有限公司',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: 'Electric wheel rotor shell lightweight design method',
+//       assignees: '上海理工大学',
+//       relevancy: '93%'
+//     },
+//     {
+//       invention_title: '一种矿用自卸车轮毂驱动单元概念设计方法',
+//       assignees: '徐州徐工矿业机械有限公司',
+//       relevancy: '92%'
+//     },
+//     {
+//       invention_title:
+//         'Multi-objective optimization design method for gear stress release hole based on interval analysis',
+//       assignees: '广州大学',
+//       relevancy: '92%'
+//     },
+//     {
+//       invention_title:
+//         'Design method of elliptical pull rod holes uniformly distributed in circumferential direction of wheel disc of gas turbine',
+//       assignees: '西安交通大学',
+//       relevancy: '92%'
+//     }
+//   ]
+// };
+
+// let externalData = [];
+
+// for (let item of mockJson.data) {
+//   externalData.push({
+//     invention_title: item.invention_title,
+//     assignees: item.assignees,
+//     relevancy: item.relevancy
+//   });
+// }
+
+interface ExternalDataItem {
+  invention_title: string;
+  assignees: string;
+  relevancy: any;
+}
+
 const ChatItem = ({
   type,
   avatar,
@@ -57,6 +127,7 @@ const ChatItem = ({
   children,
   isLastChild,
   questionGuides = [],
+  text,
   ...chatControllerProps
 }: {
   type: ChatRoleEnum.Human | ChatRoleEnum.AI;
@@ -65,9 +136,10 @@ const ChatItem = ({
     status: `${ChatStatusEnum}`;
     name: string;
   };
+  text: string;
   questionGuides?: string[];
   children?: React.ReactNode;
-} & ChatControllerProps) => {
+} & ExternalChatItemProps) => {
   const styleMap: BoxProps =
     type === ChatRoleEnum.Human
       ? {
@@ -87,11 +159,49 @@ const ChatItem = ({
 
   const { isChatting } = useChatProviderStore();
   const { chat } = chatControllerProps;
-  const [isRendered, setIsRendered] = useState(false);
+  // 智慧芽接口
+  const [externalData, setExternalData] = useState<ExternalDataItem[] | undefined>();
 
   useEffect(() => {
-    setIsRendered(true);
-  }, []);
+    const fetchData = async () => {
+      console.log('getExternalData text', text);
+      const data = await getExternalData(text);
+      setExternalData(data);
+      console.log('data', data);
+    };
+
+    fetchData();
+  }, [text]);
+
+  const ExternalContentCard = useMemo(() => {
+    if (type === 'Human') {
+      const { text, files = [] } = formatChatValue2InputType(chat.value);
+
+      return (
+        <>
+          {files.length > 0 && <FilesBlock files={files} />}
+          <Markdown source={text} />
+        </>
+      );
+    }
+    /* AI */
+    return (
+      <Flex flexDirection={'column'} gap={2}>
+        {externalData &&
+          externalData.map((value, index) => (
+            <div key={index}>
+              <div>
+                <a href={value.invention_title} target="_blank" rel="noopener noreferrer">
+                  专利标题: {value.invention_title}
+                </a>
+              </div>
+              <div>申请人: {value.assignees}</div>
+              <div>相关度: {value.relevancy}</div>
+            </div>
+          ))}
+      </Flex>
+    );
+  }, [chat.dataId, chat.value, isChatting, isLastChild, questionGuides, type, externalData]);
 
   const ContentCard = useMemo(() => {
     if (type === 'Human') {
@@ -127,111 +237,15 @@ const ChatItem = ({
 ${JSON.stringify(questionGuides)}`;
             }
 
-            {
-              /* 把回答按模板切分为文字，大纲，思维导图三部分 
-            const parseResponse = (content: string) : string[] => {
-              const parts1 = content.split('**大纲**:');
-              const text = parts1[0].replace('**文本回答**:', '').trim();
-              const parts2 = parts1[1].split('**Markdown思维导图**:');
-              
-              const outline = parts2[0].replace('', '').trim();
-              const mindMap = parts2[1].trim().replace(/^```|```$/g, '')
-              return [text, outline, mindMap]
-            }
-
-            
-            const [textAnswer, outlineMD , mindMapMD] = parseResponse(source);
-            */
-            }
-
-            let extraData: ChatHistoryItemResType | undefined;
-            let extraResponse: string | undefined;
-            if ((chat as AIChatItemType).responseData !== undefined) {
-              //提取外部搜索的回答
-              extraData = (chat as AIChatItemType).responseData?.find(
-                (obj) => obj.moduleName === '生成文案' && obj.moduleType === 'chatNode'
-              );
-            }
-            if (extraData) {
-              extraResponse = extraData.historyPreview?.at(-1)?.value;
-            }
-
             return (
-              <Flex flexDirection="row" height="auto">
-                <Flex flexDirection="column" maxWidth="50%">
-                  <Flex justifyContent="center">
-                    <Tag colorScheme="cyan">产品推广方案</Tag>
-                  </Flex>
-                  <Tabs isLazy>
-                    <TabList>
-                      <Tab>会话</Tab>
-                      {/* <Tab>大纲</Tab>
-                      <Tab>思维导图</Tab> */}
-                    </TabList>
-                    <TabPanels>
-                      <TabPanel>
-                        <p>
-                          <Markdown
-                            key={key}
-                            source={source}
-                            showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
-                          />
-                        </p>
-                      </TabPanel>
-                      {/* <TabPanel>
-                        <p>这是大纲</p>
-                      </TabPanel>
-                      <TabPanel>
-                        <Flex>
-                          <MarkMapViewer />
-                        </Flex>
-                      </TabPanel> */}
-                    </TabPanels>
-                  </Tabs>
-                </Flex>
-                {type === 'AI' && (
-                  <Flex height="auto">
-                    <Divider orientation="vertical" alignSelf="stretch" />
-                  </Flex>
-                )}
-                {type === 'AI' && (
-                  <Flex flexDirection="column" maxWidth="50%">
-                    <Flex justifyContent="center">
-                      <Tag colorScheme="green">产品软广文案</Tag>
-                    </Flex>
-                    <Tabs isLazy>
-                      <TabList>
-                        <Tab>会话</Tab>
-                        {/*<Tab>大纲</Tab>
-                        <Tab>思维导图</Tab>*/}
-                      </TabList>
-                      <TabPanels>
-                        <TabPanel>
-                          <p>
-                            <Markdown
-                              key={key}
-                              source={extraResponse}
-                              showAnimation={
-                                isLastChild && isChatting && i === chat.value.length - 1
-                              }
-                            />
-                          </p>
-                        </TabPanel>
-                        {/*<TabPanel>
-                          <p>这是大纲</p>
-                        </TabPanel>
-                        <TabPanel>
-                          <Flex>
-                            <MarkMapViewer />
-                          </Flex>
-                        </TabPanel> */}
-                      </TabPanels>
-                    </Tabs>
-                  </Flex>
-                )}
-              </Flex>
+              <Markdown
+                key={key}
+                source={source}
+                showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+              />
             );
           }
+          // tool
           if (value.type === ChatItemValueTypeEnum.tool && value.tools) {
             return (
               <Box key={key}>
@@ -318,13 +332,13 @@ ${toolResponse}`}
   return (
     <>
       {/* control icon */}
-      <Flex w={'100%'} alignItems={'center'} gap={2} justifyContent={styleMap.justifyContent}>
-        {isChatting && type === ChatRoleEnum.AI && isLastChild ? null : (
+      <Flex w={'100%'} alignItems={'center'} gap={1} justifyContent={styleMap.justifyContent}>
+        {/* {isChatting && type === ChatRoleEnum.AI && isLastChild ? null : (
           <Box order={styleMap.order} ml={styleMap.ml}>
             <ChatController {...chatControllerProps} isLastChild={isLastChild} />
           </Box>
-        )}
-        <ChatAvatar src={avatar} type={type} />
+        )} */}
+        {/* <ChatAvatar src={avatar} type={type} /> */}
 
         {!!chatStatusMap && statusBoxData && isLastChild && (
           <Flex alignItems={'center'} px={3} py={'1.5px'} borderRadius="md" bg={chatStatusMap.bg}>
@@ -351,7 +365,7 @@ ${toolResponse}`}
           borderRadius={styleMap.borderRadius}
           textAlign={'left'}
         >
-          {ContentCard}
+          {ExternalContentCard}
           {children}
         </Card>
       </Box>

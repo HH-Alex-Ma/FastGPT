@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import type { FlowNodeTemplateType, ModuleItemType } from '../module/type.d';
 
 import { AppTypeEnum } from './constants';
@@ -97,6 +98,7 @@ export type AppSimpleEditFormType = {
       }[];
     }[];
     questionGuide: boolean;
+    externalData: boolean;
     tts: {
       type: 'none' | 'web' | 'model';
       model?: string | undefined;
