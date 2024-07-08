@@ -16,7 +16,8 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Tag
+  Tag,
+  TagLabel
 } from '@chakra-ui/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ChatController, { type ChatControllerProps } from './ChatController';
@@ -159,8 +160,12 @@ ${JSON.stringify(questionGuides)}`;
             return (
               <Flex flexDirection="row" height="auto">
                 <Flex flexDirection="column" maxWidth="50%">
-                  <Flex justifyContent="center" alignItems="center" w="100%">
-                    <Tag colorScheme="cyan">候选人评估</Tag>
+                  <Flex justifyContent="center" w="100%" paddingRight="14px">
+                    <Tag colorScheme="cyan">
+                      <TagLabel isTruncated w="100%">
+                        候选人评估
+                      </TagLabel>
+                    </Tag>
                   </Flex>
                   <Tabs isLazy>
                     <TabList>
@@ -196,8 +201,12 @@ ${JSON.stringify(questionGuides)}`;
                 )}
                 {type === 'AI' && (
                   <Flex flexDirection="column" maxWidth="50%">
-                    <Flex justifyContent="center" alignItems="center" w="100%">
-                      <Tag colorScheme="green">面试问题设计</Tag>
+                    <Flex justifyContent="center" w="100%" paddingLeft="14px">
+                      <Tag colorScheme="green">
+                        <TagLabel isTruncated w="100%">
+                          面试问题设计
+                        </TagLabel>
+                      </Tag>
                     </Flex>
                     <Tabs isLazy>
                       <TabList>

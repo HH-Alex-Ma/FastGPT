@@ -5,29 +5,33 @@ import { UserInputFileItemType } from '@/components/ChatBox/type';
 
 const FilesBlock = ({ files }: { files: UserInputFileItemType[] }) => {
   return (
-    <Grid
-      gridTemplateColumns={files.length === 1 ? '1fr' : ['1fr', '1fr 1fr']}
-      gap={2}
-      marginBottom={'8px'}
-    >
-      {files.map(({ id, type, name, url }, i) => {
-        if (type === 'image') {
-          return (
-            <Box key={i} rounded={'md'} flex={'1 0 0'} minW={'120px'}>
-              <MdImage src={url} />
-            </Box>
-          );
-        } else if (type === 'file') {
-          return (
-            <Tag size="lg" colorScheme="facebook" borderRadius="full">
-              <MyIcon boxSize="20px" name={'text'} color={'myGray.600'} />
-              <TagLabel>{name}</TagLabel>
-            </Tag>
-          );
-        }
-        return null;
-      })}
-    </Grid>
+    <Flex justifyContent="flex-end">
+      <Grid
+        gridTemplateColumns={files.length === 1 ? '1fr' : ['1fr', '1fr 1fr']}
+        gap={2}
+        marginBottom={'8px'}
+      >
+        {files.map(({ id, type, name, url }, i) => {
+          if (type === 'image') {
+            return (
+              <Box key={i} rounded={'md'} flex={'1 0 0'} minW={'120px'}>
+                <MdImage src={url} />
+              </Box>
+            );
+          } else if (type === 'file') {
+            return (
+              <Box>
+                <Tag size="lg" colorScheme="facebook" borderRadius="full">
+                  <MyIcon boxSize="20px" name={'text'} color={'myGray.600'} />
+                  <TagLabel>{name}</TagLabel>
+                </Tag>
+              </Box>
+            );
+          }
+          return null;
+        })}
+      </Grid>
+    </Flex>
   );
 };
 
