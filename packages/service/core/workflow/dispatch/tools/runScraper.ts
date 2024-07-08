@@ -17,7 +17,8 @@ export const dispatchScraper = async (props: ScrapeRequestProps): Promise<Scrape
     console.log('Scraping URL:', url);
     const response = await axios.post('http://localhost:3000/api/plugins/webScraper', { url });
     console.log('Scraped Data:', response.data.data);
-    const result = response.data.data ? response.data.data.textOutput : '未能提取到内容';
+
+    const result = response.data.data ? response.data.data : '未能提取到内容';
 
     return {
       [DispatchNodeResponseKeyEnum.nodeResponse]: {

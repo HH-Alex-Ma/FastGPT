@@ -20,10 +20,11 @@ def scrape_website(url):
         return f"Failed to retrieve the page. Status code: {response.status_code}"
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python scraper.py <url>")
-        sys.exit(1)
+    # if len(sys.argv) != 2:
+    #     print("Usage: python scraper.py <url>")
+    #     sys.exit(1)
 
-    url = sys.argv[1]
-    result = dummyanswer
-    print(result)
+    # url = sys.argv[1]
+    # result = dummyanswer
+    # print(testanswer)
+    print(dummyanswer)
