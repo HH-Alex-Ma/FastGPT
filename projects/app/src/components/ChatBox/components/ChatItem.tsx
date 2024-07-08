@@ -159,7 +159,7 @@ ${JSON.stringify(questionGuides)}`;
             return (
               <Flex flexDirection="row" height="auto">
                 <Flex flexDirection="column" maxWidth="50%">
-                  <Flex justifyContent="center">
+                  <Flex justifyContent="center" alignItems="center" w="100%">
                     <Tag colorScheme="cyan">候选人评估</Tag>
                   </Flex>
                   <Tabs isLazy>
@@ -196,7 +196,7 @@ ${JSON.stringify(questionGuides)}`;
                 )}
                 {type === 'AI' && (
                   <Flex flexDirection="column" maxWidth="50%">
-                    <Flex justifyContent="center">
+                    <Flex justifyContent="center" alignItems="center" w="100%">
                       <Tag colorScheme="green">面试问题设计</Tag>
                     </Flex>
                     <Tabs isLazy>
