@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     new URL(url);
   } catch (error) {
+    console.error('Invalid URL format:', error);
     return res.status(400).json({ error: 'Invalid URL format' });
   }
 
@@ -32,10 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const sanitizedUrl = url.replace(/["';`]/g, ''); // Remove potentially dangerous characters
   console.log('Sanitized URL:', sanitizedUrl);
 
-  const pythonProcess = spawn('python', [
-    'packages/service/support/webScrapers/dummy.py',
-    sanitizedUrl
-  ]);
+  const pythonProcess = spawn('python', ['data/webScrapers/dummy.py', sanitizedUrl]);
 
   let scrapedData = '';
 
