@@ -55,7 +55,7 @@ const MessageInput = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { t } = useTranslation();
   const havInput = !!inputValue || fileList.length > 0;
-  const hasFileUploading = fileList.some((item) => !item.url);
+  const hasFileUploading = fileList.some((item) => !item.url) && fileList.length > 0;
   const canSendMessage = havInput && !hasFileUploading;
 
   /* file selector and upload */
