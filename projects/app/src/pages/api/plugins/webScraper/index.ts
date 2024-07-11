@@ -27,7 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Sanitize URL to prevent command injection
     const sanitizedUrl = url.replace(/["';`]/g, ''); // Remove potentially dangerous characters
     console.log('Sanitized URL:', sanitizedUrl);
-    console.log(`CWD: ${process.cwd()}`);
 
     const pythonProcess = spawn('python', ['data/webScrapers/CookieNo2.py', sanitizedUrl]);
     console.log('Python Process Started', pythonProcess.pid);
@@ -36,11 +35,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     pythonProcess.stdout.setEncoding('utf8');
 
     pythonProcess.stdout.on('data', (data) => {
-      console.log('Got Data:', data.toString());
       scrapedData = data.toString();
     });
-
-    console.log('Received Data:', scrapedData);
 
     pythonProcess.stderr.on('data', (data) => {
       console.error(`Error: ${data}`);
@@ -50,8 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     pythonProcess.on('close', (code) => {
       if (code === 0) {
         console.log('Python Process Closed:', code);
-        console.log('scrapedDataBeforeSent:', scrapedData);
-
         res.status(200).json({ data: scrapedData });
       } else {
         console.log('Python Process Closed with Error:', code);

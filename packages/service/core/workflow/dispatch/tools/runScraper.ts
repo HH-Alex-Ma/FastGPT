@@ -8,7 +8,7 @@ type ScrapeRequestProps = ModuleDispatchProps<{
   [ModuleInputKeyEnum.url]: string;
 }>;
 type ScrapeResponseProps = DispatchNodeResultType<{
-  [ModuleOutputKeyEnum.answerText]: string;
+  [ModuleOutputKeyEnum.text]: string;
 }>;
 
 export const dispatchScraper = async (props: ScrapeRequestProps): Promise<ScrapeResponseProps> => {
@@ -28,7 +28,7 @@ export const dispatchScraper = async (props: ScrapeRequestProps): Promise<Scrape
       //[DispatchNodeResponseKeyEnum.childrenResponses]?: DispatchNodeResultType[];
       //[DispatchNodeResponseKeyEnum.toolResponses]?: ToolRunResponseItemType;
       //[DispatchNodeResponseKeyEnum.assistantResponses]?: ChatItemValueItemType[];
-      [ModuleOutputKeyEnum.answerText]: result
+      [ModuleOutputKeyEnum.text]: result
     };
     //response.data.data;
   } catch (error) {

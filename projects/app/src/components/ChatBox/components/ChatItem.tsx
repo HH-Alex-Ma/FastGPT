@@ -58,6 +58,7 @@ const ChatItem = ({
   children,
   isLastChild,
   questionGuides = [],
+  //showTwoCol = false,
   ...chatControllerProps
 }: {
   type: ChatRoleEnum.Human | ChatRoleEnum.AI;
@@ -68,6 +69,7 @@ const ChatItem = ({
   };
   questionGuides?: string[];
   children?: React.ReactNode;
+  //showTwoCol?: boolean;
 } & ChatControllerProps) => {
   const styleMap: BoxProps =
     type === ChatRoleEnum.Human

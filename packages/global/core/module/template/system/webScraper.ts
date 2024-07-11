@@ -33,7 +33,7 @@ export const WebScraperModule: FlowNodeTemplateType = {
   ],
   outputs: [
     {
-      key: ModuleOutputKeyEnum.answerText,
+      key: ModuleOutputKeyEnum.text,
       label: '文字内容',
       description: '以text形式输出页面内的文字内容',
       valueType: ModuleIOValueTypeEnum.string,

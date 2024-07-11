@@ -1,5 +1,5 @@
 import argparse
-import sys
+import sys, io
 import requests
 
 
@@ -26,5 +26,5 @@ if __name__ == '__main__':
 
     # url = sys.argv[1]
     # result = dummyanswer
-    # print(testanswer)
-    print(dummyanswer)
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    print(testanswer)
