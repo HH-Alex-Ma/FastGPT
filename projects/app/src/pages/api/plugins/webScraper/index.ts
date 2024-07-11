@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const sanitizedUrl = url.replace(/["';`]/g, ''); // Remove potentially dangerous characters
     console.log('Sanitized URL:', sanitizedUrl);
 
-    const pythonProcess = spawn('python', ['data/webScrapers/CookieNo2.py', sanitizedUrl]);
+    const pythonProcess = spawn('python', ['data/webScrapers/DrissionScraper.py', sanitizedUrl]);
     console.log('Python Process Started', pythonProcess.pid);
 
     let scrapedData = '结果占位符';
