@@ -55,7 +55,7 @@ const MessageInput = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { t } = useTranslation();
   const havInput = !!inputValue || fileList.length > 0;
-  const hasFileUploading = fileList.some((item) => !item.url) && fileList.length > 0;
+  const hasFileUploading = fileList.some((item) => !item.url);
   const canSendMessage = havInput && !hasFileUploading;
 
   /* file selector and upload */
@@ -242,7 +242,7 @@ const MessageInput = ({
       files: fileList
     });
     replaceFile([]);
-  }, [TextareaDom, fileList, onSendMessage, replaceFile]);
+  }, [TextareaDom, fileList, onSendMessage, replaceFile, canSendMessage]);
 
   /* whisper init */
   const {
