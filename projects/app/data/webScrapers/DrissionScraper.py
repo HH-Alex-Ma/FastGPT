@@ -6,9 +6,10 @@ def scraper_website(url):
     # co.headless(True)
     page = WebPage(mode='d', chromium_options=co)
     page.get(url)
+    page.wait(3)
     # 滚动到页面底部，加载所有内容
     # page.scroll.to_bottom()
-    page.change_mode()
+    # page.change_mode()
     body = page.ele('@tag()=body')
     text_content = body.text
     page.quit()
