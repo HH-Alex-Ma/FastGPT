@@ -155,12 +155,24 @@ export const GPTMessages2Chats = (
         item.role === ChatCompletionRequestMessageRoleEnum.User
       ) {
         if (typeof item.content === 'string') {
-          value.push({
-            type: ChatItemValueTypeEnum.text,
-            text: {
-              content: item.content
-            }
-          });
+          if (item.content.substring(0, 9) === '###文件标题: ') {
+            value.push({
+              //@ts-ignore
+              type: 'file',
+              file: {
+                type: ChatFileTypeEnum.file,
+                name: item.content.split('。')[0].substring(9),
+                url: item.content.split('。')[1].substring(10)
+              }
+            });
+          } else {
+            value.push({
+              type: ChatItemValueTypeEnum.text,
+              text: {
+                content: item.content
+              }
+            });
+          }
         } else if (Array.isArray(item.content)) {
           item.content.forEach((item) => {
             if (item.type === 'text') {

@@ -67,6 +67,7 @@
       "charsPointsPrice": 0,
       "censor": false,
       "vision": false,
+      "file": true,
       "datasetProcess": false,
       "usedInClassify": true,
       "usedInExtractFields": true,

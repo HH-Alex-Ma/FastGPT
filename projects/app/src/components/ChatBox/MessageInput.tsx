@@ -243,7 +243,7 @@ const MessageInput = ({
       files: fileList
     });
     replaceFile([]);
-  }, [TextareaDom, fileList, onSendMessage, replaceFile]);
+  }, [TextareaDom, fileList, onSendMessage, replaceFile, canSendMessage]);
 
   /* whisper init */
   const {
