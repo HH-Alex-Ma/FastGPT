@@ -964,14 +964,14 @@ const ChatBox = (
                         </Flex>
                       </Flex>
                       {/* 外部消息 */}
-                      {!statusBoxData && (
+                      {/* !statusBoxData && (
                         <ExternalChatItem
                           type={item.obj}
                           chat={item}
                           isLastChild={index === chatHistories.length - 1}
                           text={currentText}
                         />
-                      )}
+                      ) */}
                       {/* custom feedback */}
                       {item.customFeedbacks && item.customFeedbacks.length > 0 && (
                         <Box>
