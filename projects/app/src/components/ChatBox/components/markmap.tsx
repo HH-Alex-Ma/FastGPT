@@ -65,7 +65,7 @@ const MarkmapViewer: React.FC<MarkmapViewerProps> = ({
   }, [markmapInstance]);
 
   return (
-    <Flex width="100%" height="100%" justifyContent="center" alignItems="center">
+    <Flex width="100%" minHeight="400px" justifyContent="center" alignItems="center">
       <svg ref={svgRef} style={{ width: '100%', height: '100%' }} />
     </Flex>
   );

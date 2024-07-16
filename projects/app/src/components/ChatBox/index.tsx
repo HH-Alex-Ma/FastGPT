@@ -65,6 +65,9 @@ import ExternalChatItem from './components/ExternalChatItem';
 import dynamic from 'next/dynamic';
 import ExternalReponse from './ExternalReponse';
 
+import { twoColAppType } from '@fastgpt/global/core/app/constants';
+import { twoColConfigList } from './components/twoColAppConfig';
+
 const ResponseTags = dynamic(() => import('./ResponseTags'));
 const FeedbackModal = dynamic(() => import('./FeedbackModal'));
 const ReadFeedbackModal = dynamic(() => import('./ReadFeedbackModal'));
@@ -151,6 +154,9 @@ const ChatBox = (
   const [adminMarkData, setAdminMarkData] = useState<AdminMarkType & { chatItemId: string }>();
   const [questionGuides, setQuestionGuide] = useState<string[]>([]);
   const [isChatItemRendered, setIsChatItemRendered] = useState(false);
+  const twoColConfig: twoColAppType | undefined = twoColConfigList.find(
+    (item) => item.id === appId
+  );
 
   const {
     welcomeText,
@@ -929,6 +935,7 @@ const ChatBox = (
                       avatar={appAvatar}
                       chat={item}
                       isLastChild={index === chatHistories.length - 1}
+                      twoColConfig={twoColConfig}
                       {...(item.obj === 'AI' && {
                         showVoiceIcon,
                         shareId,
@@ -964,14 +971,14 @@ const ChatBox = (
                         </Flex>
                       </Flex>
                       {/* 外部消息 */}
-                      {/* !statusBoxData && (
+                      {/*{!statusBoxData && (
                         <ExternalChatItem
                           type={item.obj}
                           chat={item}
                           isLastChild={index === chatHistories.length - 1}
                           text={currentText}
                         />
-                      ) */}
+                      )}*/}
                       {/* custom feedback */}
                       {item.customFeedbacks && item.customFeedbacks.length > 0 && (
                         <Box>

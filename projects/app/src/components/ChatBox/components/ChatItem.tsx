@@ -36,6 +36,7 @@ import FilesBlock from './FilesBox';
 import { useChatProviderStore } from '../Provider';
 import MarkMapViewer from 'src/components/ChatBox/components/markmap';
 import { AIChatItemType, ChatHistoryItemResType } from '@fastgpt/global/core/chat/type';
+import { twoColAppType } from '@fastgpt/global/core/app/constants';
 const colorMap = {
   [ChatStatusEnum.loading]: {
     bg: 'myGray.100',
@@ -58,6 +59,7 @@ const ChatItem = ({
   children,
   isLastChild,
   questionGuides = [],
+  twoColConfig,
   ...chatControllerProps
 }: {
   type: ChatRoleEnum.Human | ChatRoleEnum.AI;
@@ -68,6 +70,7 @@ const ChatItem = ({
   };
   questionGuides?: string[];
   children?: React.ReactNode;
+  twoColConfig?: twoColAppType;
 } & ChatControllerProps) => {
   const styleMap: BoxProps =
     type === ChatRoleEnum.Human
@@ -128,105 +131,84 @@ const ChatItem = ({
 ${JSON.stringify(questionGuides)}`;
             }
 
-            {
-              /* 把回答按模板切分为文字，大纲，思维导图三部分 
-            const parseResponse = (content: string) : string[] => {
-              const parts1 = content.split('**大纲**:');
-              const text = parts1[0].replace('**文本回答**:', '').trim();
-              const parts2 = parts1[1].split('**Markdown思维导图**:');
-              
-              const outline = parts2[0].replace('', '').trim();
-              const mindMap = parts2[1].trim().replace(/^```|```$/g, '')
-              return [text, outline, mindMap]
-            }
-
-            
-            const [textAnswer, outlineMD , mindMapMD] = parseResponse(source);
-            */
-            }
-
-            let extraData: ChatHistoryItemResType | undefined;
-            let extraResponse: string | undefined;
-            if ((chat as AIChatItemType).responseData !== undefined) {
-              //提取外部搜索的回答
-              extraData = (chat as AIChatItemType).responseData?.find(
-                (obj) => obj.moduleName === '候选人评估' && obj.moduleType === 'chatNode'
+            if (!twoColConfig) {
+              return (
+                <Markdown
+                  key={key}
+                  source={source}
+                  showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+                />
               );
-            }
-            if (extraData) {
-              extraResponse = extraData.historyPreview?.at(-1)?.value;
-            }
+            } else {
+              // 把回答按模板切分为文字，大纲，思维导图三部分
+              const parseResponse = (content: string): string[] => {
+                // const parts1 = content.split('**大纲**');
+                // const text = parts1[0].replace('**文本回答**', '').trim();
+                // const parts2 = parts1[1].split('**Markdown思维导图**');
 
-            return (
-              <Flex flexDirection="row" height="auto">
-                <Flex flexDirection="column" maxWidth="50%">
-                  <Flex justifyContent="center" w="100%" paddingRight="14px">
-                    <Tag colorScheme="cyan">
-                      <TagLabel isTruncated w="100%">
-                        候选人评估
-                      </TagLabel>
-                    </Tag>
-                  </Flex>
-                  <Tabs isLazy>
-                    <TabList>
-                      <Tab>会话</Tab>
-                      {/* <Tab>大纲</Tab>
-                      <Tab>思维导图</Tab> */}
-                    </TabList>
-                    <TabPanels>
-                      <TabPanel>
-                        <p>
-                          <Markdown
-                            key={key}
-                            source={source}
-                            showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
-                          />
-                        </p>
-                      </TabPanel>
-                      {/* <TabPanel>
-                        <p>这是大纲</p>
-                      </TabPanel>
-                      <TabPanel>
-                        <Flex>
-                          <MarkMapViewer />
-                        </Flex>
-                      </TabPanel> */}
-                    </TabPanels>
-                  </Tabs>
-                </Flex>
-                {type === 'AI' && (
-                  <Flex height="auto">
-                    <Divider orientation="vertical" alignSelf="stretch" />
-                  </Flex>
-                )}
-                {type === 'AI' && (
-                  <Flex flexDirection="column" maxWidth="50%">
-                    <Flex justifyContent="center" w="100%" paddingLeft="14px">
-                      <Tag colorScheme="green">
+                // const outline = parts2[0].replace('', '').trim();
+                // const mindMap = parts2[1].trim().replace(/^```|```$/g, '')
+                // return [text, outline, mindMap]
+                const parts = content.split('**Markdown思维导图**');
+                const outlineMD = parts[0].replace('**大纲**', '').trim();
+                const mindMapMD = parts[1].trim().replace(/^```|```$/g, '');
+                return [outlineMD, mindMapMD];
+              };
+
+              {
+                /*
+              const [textAnswer, outlineMD , mindMapMD] = parseResponse(source);
+              */
+              }
+
+              let extraData: ChatHistoryItemResType | undefined;
+              let extraResponse: string | undefined;
+              let outline: string | undefined;
+              let mindMap: string | undefined;
+              if ((chat as AIChatItemType).responseData !== undefined) {
+                //提取外部搜索的回答
+                extraData = (chat as AIChatItemType).responseData?.find(
+                  (obj) =>
+                    obj.moduleName === twoColConfig.right_module && obj.moduleType === 'chatNode'
+                );
+              }
+              if (extraData) {
+                extraResponse = extraData.historyPreview?.at(-1)?.value;
+                if (extraResponse && twoColConfig.right_tabs.length > 1) {
+                  [outline, mindMap] = parseResponse(extraResponse);
+                }
+              }
+
+              return (
+                <Flex flexDirection="row" height="auto">
+                  {/* 左侧对话框 */}
+                  <Flex flexDirection="column" w="50%">
+                    <Flex justifyContent="center" w="100%" paddingRight="14px">
+                      <Tag colorScheme="cyan">
                         <TagLabel isTruncated w="100%">
-                          面试问题设计
+                          {twoColConfig.left_tag}
                         </TagLabel>
                       </Tag>
                     </Flex>
-                    <Tabs isLazy>
+                    <Tabs isLazy isFitted>
                       <TabList>
-                        <Tab>会话</Tab>
-                        {/*<Tab>大纲</Tab>
-                        <Tab>思维导图</Tab>*/}
+                        {twoColConfig.left_tabs.map((item) => (
+                          <Tab>{item}</Tab>
+                        ))}
                       </TabList>
                       <TabPanels>
                         <TabPanel>
                           <p>
                             <Markdown
                               key={key}
-                              source={extraResponse}
+                              source={source}
                               showAnimation={
                                 isLastChild && isChatting && i === chat.value.length - 1
                               }
                             />
                           </p>
                         </TabPanel>
-                        {/*<TabPanel>
+                        {/* <TabPanel>
                           <p>这是大纲</p>
                         </TabPanel>
                         <TabPanel>
@@ -237,9 +219,66 @@ ${JSON.stringify(questionGuides)}`;
                       </TabPanels>
                     </Tabs>
                   </Flex>
-                )}
-              </Flex>
-            );
+                  {/* 分隔线 */}
+                  <Flex height="auto">
+                    <Divider orientation="vertical" alignSelf="stretch" />
+                  </Flex>
+                  {/* 右侧对话框 */}
+                  {type === 'AI' && (
+                    <Flex flexDirection="column" minW="120px" w="50%">
+                      <Flex justifyContent="center" w="100%" paddingLeft="14px">
+                        <Tag colorScheme="green">
+                          <TagLabel isTruncated w="100%">
+                            {twoColConfig.right_tag}
+                          </TagLabel>
+                        </Tag>
+                      </Flex>
+                      <Tabs isLazy isFitted w="100%">
+                        <TabList>
+                          {twoColConfig.right_tabs.map((item) => (
+                            <Tab>{item}</Tab>
+                          ))}
+                        </TabList>
+                        <TabPanels>
+                          {twoColConfig.right_tabs.length === 1 ? (
+                            <TabPanel>
+                              <p>
+                                <Markdown
+                                  key={key}
+                                  source={extraResponse}
+                                  showAnimation={
+                                    isLastChild && isChatting && i === chat.value.length - 1
+                                  }
+                                />
+                              </p>
+                            </TabPanel>
+                          ) : (
+                            <TabPanel>
+                              <p>
+                                <Markdown
+                                  key={key}
+                                  source={outline}
+                                  showAnimation={
+                                    isLastChild && isChatting && i === chat.value.length - 1
+                                  }
+                                />
+                              </p>
+                            </TabPanel>
+                          )}
+                          {twoColConfig.right_tabs.length === 2 && (
+                            <TabPanel>
+                              <Flex>
+                                <MarkMapViewer markdown={mindMap} />
+                              </Flex>
+                            </TabPanel>
+                          )}
+                        </TabPanels>
+                      </Tabs>
+                    </Flex>
+                  )}
+                </Flex>
+              );
+            }
           }
           if (value.type === ChatItemValueTypeEnum.tool && value.tools) {
             return (
