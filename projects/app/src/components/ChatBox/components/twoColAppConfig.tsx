@@ -3,7 +3,7 @@ import { twoColAppType } from '@fastgpt/global/core/app/constants';
 
 export const twoColConfigList: twoColAppType[] = [
   {
-    id: '6686694000ebf388aadb02d1',
+    id: '66962371a1e76a2b79b2b86e',
     name: '小红书营销专家',
 
     left_tag: '产品推广方案',
@@ -15,7 +15,7 @@ export const twoColConfigList: twoColAppType[] = [
     right_module: '生成文案'
   },
   {
-    id: '668f9581cbb03ffde913f6cf',
+    id: '66962497a1e76a2b79b2b929',
     name: 'AI智能搜索',
 
     left_tag: '问题回答',
