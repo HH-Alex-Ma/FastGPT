@@ -60,8 +60,8 @@ const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
   [FlowNodeTypeEnum.lafModule]: dispatchLafRequest,
 
   // none
-  [FlowNodeTypeEnum.userGuide]: () => Promise.resolve(),
-  [FlowNodeTypeEnum.externalData]: () => Promise.resolve()
+  [FlowNodeTypeEnum.userGuide]: () => Promise.resolve()
+  // [FlowNodeTypeEnum.externalData]: () => Promise.resolve()
 };
 
 /* running */
