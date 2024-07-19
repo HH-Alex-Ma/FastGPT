@@ -1744,5 +1744,14 @@ export const appTemplates: (AppItemType & {
         ]
       }
     ]
+  },
+  {
+    id: 'pdf',
+    avatar: '/imgs/module/contract.png',
+    name: '文档分析',
+    intro:
+      '支持多种文档审查，精准定位关键审查点，提供专业的风险评估、判断依据及修改建议，加速文档审查流程。',
+    type: AppTypeEnum.pdf,
+    modules: []
   }
 ];

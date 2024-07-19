@@ -2,7 +2,8 @@ import { AppWhisperConfigType } from './type';
 
 export enum AppTypeEnum {
   simple = 'simple',
-  advanced = 'advanced'
+  advanced = 'advanced',
+  pdf = 'pdf'
 }
 export const AppTypeMap = {
   [AppTypeEnum.simple]: {
@@ -10,6 +11,9 @@ export const AppTypeMap = {
   },
   [AppTypeEnum.advanced]: {
     label: 'advanced'
+  },
+  [AppTypeEnum.pdf]: {
+    label: 'pdf'
   }
 };
 

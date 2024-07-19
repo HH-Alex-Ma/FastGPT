@@ -27,7 +27,7 @@ export interface ShareAppItem {
 export type AppItemType = {
   id: string;
   name: string;
-  modules: ModuleItemType[];
+  modules?: ModuleItemType[];
 };
 
 export type AppLogsListItemType = {
