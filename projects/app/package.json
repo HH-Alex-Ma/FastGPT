@@ -40,6 +40,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mermaid": "^10.2.3",
+    "microsoft-cognitiveservices-speech-sdk": "^1.38.0",
     "nanoid": "^4.0.1",
     "next": "13.5.2",
     "next-i18next": "15.2.0",
