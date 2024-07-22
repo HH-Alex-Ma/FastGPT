@@ -7,8 +7,8 @@ import Avatar from '@/components/Avatar';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import PageContainer from '@/components/PageContainer';
 import PDFPreview from './component/PDFPreview';
-import { analyzeContract, getContractReviewResult } from '../../../pages/api/pdf/ContractAnalyze';
 import { serviceSideProps } from '@/web/common/utils/i18n';
+import { analyzeContract, fetchAuthToken, getContractReviewResult } from '@/web/support/pdf/api';
 
 interface Clause {
   ruleName: string;
@@ -50,33 +50,16 @@ const PDFDetail = () => {
     const uploadedFile = event.target.files?.[0];
     if (uploadedFile) {
       const fileUrl = URL.createObjectURL(uploadedFile);
-      console.log('File URL:', fileUrl);
-
       setFile(fileUrl);
       setIsLoading(true);
 
       try {
-        console.log('Analyzing contract with file:', uploadedFile.name);
-
-        const reviewResult = await analyzeContract(uploadedFile); // Pass the file object directly
-        console.log('Review Result:', reviewResult);
-
+        const accessToken = await fetchAuthToken();
+        const reviewResult = await analyzeContract(uploadedFile);
         if (reviewResult) {
-          const taskId = reviewResult.result.taskId;
-          console.log('Task ID:', taskId);
-
-          const result = await getContractReviewResult(taskId);
-          console.log('Contract Review Result:', result);
-
-          if (result && result.result.status === 'success') {
-            const textReviewResults = result.result.textreviewResult || [];
-            const processedResults = processReviewResults(textReviewResults);
-            setReviewResults(processedResults);
-            setCollapsedItems(Array(textReviewResults.length).fill(true));
-            saveFileToLocalStorage(uploadedFile.name, await getBase64(uploadedFile), processedResults);
-          } else {
-            console.error('Review result fetch failed:', result.result.message);
-          }
+          const taskId = reviewResult.taskId;
+          pollForReviewResult(taskId); // 启动轮询
+          saveFileToLocalStorage(uploadedFile.name, await getBase64(uploadedFile), []);
         }
       } catch (error) {
         console.error('Error during file analysis:', error);
@@ -84,6 +67,23 @@ const PDFDetail = () => {
         setIsLoading(false);
       }
     }
+  };
+
+
+  const pollForReviewResult = async (taskId: string) => {
+    const interval = setInterval(async () => {
+      try {
+        const result = await getContractReviewResult(taskId);
+        if (result && result.status === 'success') {
+          const textReviewResults = result.textreviewResult || [];
+          const processedResults = processReviewResults(textReviewResults);
+          setReviewResults(processedResults);
+          clearInterval(interval); // 停止轮询
+        }
+      } catch (error) {
+        console.error('Error fetching review result:', error);
+      }
+    }, 5000); // 每 5 秒轮询一次
   };
 
   const getBase64 = (file: File): Promise<string> => {

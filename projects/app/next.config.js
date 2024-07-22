@@ -3,14 +3,6 @@ const { i18n } = require('./next-i18next.config');
 const path = require('path');
 
 const nextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'https://aip.baidubce.com/:path*' // 代理到实际的 API 地址
-      }
-    ];
-  },
   i18n,
   output: 'standalone',
   reactStrictMode: process.env.NODE_ENV === 'development' ? false : true,
