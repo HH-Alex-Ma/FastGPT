@@ -8,7 +8,13 @@ import {
 import fs from 'fs';
 import path from 'path';
 
-const speechConfig = SpeechConfig.fromSubscription('YOUR_MICROSOFT_API_KEY', 'YOUR_REGION');
+const KEY = process.env.MS_COG_SERVICE_SPEECH_KEY;
+const REGION = process.env.MS_COG_SERVICE_SPEECH_REGION;
+if (!KEY || !REGION) {
+  throw new Error('Missing MS_COGNITIVE_SERVICES_KEY or MS_COGNITIVE_SERVICES_REGION');
+}
+
+const speechConfig = SpeechConfig.fromSubscription(KEY, REGION);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {

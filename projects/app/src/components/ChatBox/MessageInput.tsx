@@ -95,40 +95,45 @@ const MessageInput = ({
         }
       } else if (file.type === ChatFileTypeEnum.file && file.rawFile) {
         try {
-          const reader = new FileReader();
-          reader.readAsArrayBuffer(file.rawFile);
+          if (file.rawFile.type.includes('mp4') || file.rawFile.type.includes('wav')) {
+            //video and audio(wav) logic here
+          } else if (file.rawFile.type.includes('pdf')) {
+            //pdf logic here
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file.rawFile);
 
-          const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
-            reader.onload = () => {
-              resolve(reader.result as ArrayBuffer);
-            };
-            reader.onerror = (err) => {
-              console.log(err);
-              reject('Load PDF error');
-            };
-          });
+            const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+              reader.onload = () => {
+                resolve(reader.result as ArrayBuffer);
+              };
+              reader.onerror = (err) => {
+                console.log(err);
+                reject('Load PDF error');
+              };
+            });
 
-          const response = await readPdfFile({
-            buffer: Buffer.from(arrayBuffer),
-            teamId: '',
-            encoding: 'utf8'
-          });
+            const response = await readPdfFile({
+              buffer: Buffer.from(arrayBuffer),
+              teamId: '',
+              encoding: 'utf8'
+            });
 
-          // 获取输入框中的内容
-          const textareaValue = TextareaDom.current?.value || '';
+            // 获取输入框中的内容
+            const textareaValue = TextareaDom.current?.value || '';
 
-          // 在这里调用onSendMessage来发送PDF文件的rawText
-          // onSendMessage({
-          //   text: `${textareaValue.trim()} ${response.rawText}`,
-          //   files: [], // 假设PDF文本作为消息发送，不包含文件
-          //   autoTTSResponse
-          // });
+            // 在这里调用onSendMessage来发送PDF文件的rawText
+            // onSendMessage({
+            //   text: `${textareaValue.trim()} ${response.rawText}`,
+            //   files: [], // 假设PDF文本作为消息发送，不包含文件
+            //   autoTTSResponse
+            // });
 
-          // 更新文件列表中的PDF文件项，如果需要保留文件项
-          updateFile(fileIndex, {
-            ...file,
-            url: response.rawText // 如果是文件，url就是文件的识别内容
-          });
+            // 更新文件列表中的PDF文件项，如果需要保留文件项
+            updateFile(fileIndex, {
+              ...file,
+              url: response.rawText // 如果是文件，url就是文件的识别内容
+            });
+          }
         } catch (error) {
           removeFile(fileIndex);
           console.log(error);
