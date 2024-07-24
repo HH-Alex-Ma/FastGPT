@@ -8,133 +8,79 @@ import MyIcon from '@fastgpt/web/components/common/Icon';
 import PageContainer from '@/components/PageContainer';
 import PDFPreview from './component/PDFPreview';
 import { serviceSideProps } from '@/web/common/utils/i18n';
-import { analyzeContract, fetchAuthToken, getContractReviewResult } from '@/web/support/pdf/api';
 
 interface Clause {
   ruleName: string;
   riskName: string;
   markdownResult: string;
-  pageNumber: number;
-  positions?: { box: number[] }[];
+  pageNumber: number; // 新增页面号字段
+  positions?: { // 新增位置字段
+    box: number[];
+  }[];
 }
 
-interface StoredFile {
+interface UploadedFile {
   name: string;
-  content: string;
-  reviewResults: Clause[];
+  dataUrl: string;
+  taskId: string;
 }
 
 const PDFDetail = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const [isClient, setIsClient] = useState(false);
-  const [file, setFile] = useState<string>('');
-  const [fileList, setFileList] = useState<string[]>([]);
+  const [instance, setInstance] = useState<any>(null);
+  const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
+  const [rightPanelWidth, setRightPanelWidth] = useState(300);
+  const [collapsedItems, setCollapsedItems] = useState<boolean[]>([]);
   const [reviewResults, setReviewResults] = useState<Clause[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [collapsedItems, setCollapsedItems] = useState<boolean[]>([]);
   const [selectedRiskLevel, setSelectedRiskLevel] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
-  useEffect(() => {
-    setIsClient(true);
-    loadFileList();
-  }, []);
 
-  const loadFileList = () => {
-    const storedFiles = getFileListFromLocalStorage();
-    setFileList(storedFiles.map(file => file.name));
-  };
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0];
-    if (uploadedFile) {
-      const fileUrl = URL.createObjectURL(uploadedFile);
-      setFile(fileUrl);
-      setIsLoading(true);
-
-      try {
-        const accessToken = await fetchAuthToken();
-        const reviewResult = await analyzeContract(uploadedFile);
-        if (reviewResult) {
-          const taskId = reviewResult.taskId;
-          pollForReviewResult(taskId); // 启动轮询
-          saveFileToLocalStorage(uploadedFile.name, await getBase64(uploadedFile), []);
-        }
-      } catch (error) {
-        console.error('Error during file analysis:', error);
-      } finally {
-        setIsLoading(false);
-      }
+  const loadDocument = (dataUrl: string) => {
+    if (instance) {
+      const { documentViewer } = instance.Core;
+      documentViewer.loadDocument(dataUrl);
     }
   };
 
+  const handleFileItemClick = async (file: UploadedFile) => {
+    loadDocument(file.dataUrl);
+    setReviewResults([]);
+    setCollapsedItems([]);
+    setIsLoading(true);
+    await fetchAndSetReviewResults(file.taskId);
+    setIsLoading(false);
+  };
 
-  const pollForReviewResult = async (taskId: string) => {
-    const interval = setInterval(async () => {
-      try {
-        const result = await getContractReviewResult(taskId);
-        if (result && result.status === 'success') {
-          const textReviewResults = result.textreviewResult || [];
-          const processedResults = processReviewResults(textReviewResults);
-          setReviewResults(processedResults);
-          clearInterval(interval); // 停止轮询
-        }
-      } catch (error) {
-        console.error('Error fetching review result:', error);
+  const fetchAndSetReviewResults = async (taskId: string) => {
+    const result = await getContractReviewResult(taskId);
+    console.log('Contract review result:', result);
+    if (result && result.result.status === 'success') {
+      const textReviewResults = result.result.textreviewResult || [];
+      setReviewResults(
+        textReviewResults.flatMap((doc: any) =>
+          doc.chatContents.map((item: any) => ({
+            ruleName: item.ruleName,
+            riskName: item.riskName || "未知风险",
+            markdownResult: item.markdownResult,
+            pageNumber: item.pageNumber, // 从接口获取页码或坐标信息
+            positions: item.positions || [] // 获取位置信息
+          }))
+        )
+      );
+      setCollapsedItems(Array(textReviewResults.length).fill(true));
+
+      // Optional: Auto-expand the first item
+      if (textReviewResults.length > 0) {
+        toggleCollapse(0);
       }
-    }, 5000); // 每 5 秒轮询一次
-  };
-
-  const getBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve((reader.result as string).split(',')[1]);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const saveFileToLocalStorage = (fileName: string, base64String: string, reviewResults: Clause[]) => {
-    const storedFiles = getFileListFromLocalStorage();
-    const newFileList = [...storedFiles, { name: fileName, content: base64String, reviewResults }];
-    localStorage.setItem('uploadedPDFList', JSON.stringify(newFileList));
-  };
-
-  const getFileListFromLocalStorage = (): StoredFile[] => {
-    const storedFiles = localStorage.getItem('uploadedPDFList');
-    return storedFiles ? JSON.parse(storedFiles) : [];
-  };
-
-  const handleFileClick = (fileName: string) => {
-    const storedFiles = getFileListFromLocalStorage();
-    const fileContent = storedFiles.find(file => file.name === fileName)?.content;
-    const fileReviewResults = storedFiles.find(file => file.name === fileName)?.reviewResults;
-    if (fileContent) {
-      const blob = new Blob([new Uint8Array(atob(fileContent).split('').map(c => c.charCodeAt(0)))], { type: 'application/pdf' });
-      const fileUrl = URL.createObjectURL(blob);
-      setFile(fileUrl);
-      setReviewResults(fileReviewResults || []);
+    } else if (result && result.result.status === 'fail') {
+      console.error('Review result fetch failed:', result.result.message);
     }
   };
-
-  const processReviewResults = (textReviewResults: any[]) => {
-    return textReviewResults.flatMap((doc: any) =>
-      doc.chatContents.map((item: any) => ({
-        ruleName: item.ruleName,
-        riskName: item.riskName || "未知风险",
-        markdownResult: item.markdownResult,
-        pageNumber: item.positions[0]?.pageNum,
-        positions: item.positions || []
-      }))
-    );
-  };
-
-  const countRiskLevels = (riskName: string) => reviewResults.filter(clause => clause.riskName === riskName).length;
-
-  const filteredResults = reviewResults.filter(clause => !selectedRiskLevel || clause.riskName.includes(selectedRiskLevel));
-
-  const handleRiskLevelClick = (riskLevel: string | null) => setSelectedRiskLevel(riskLevel);
 
   return (
     <>

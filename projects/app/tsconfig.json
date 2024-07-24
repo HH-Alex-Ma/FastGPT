@@ -20,5 +20,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts", "../../packages/**/*.d.ts", "src/pages/pdf/detail/component/PDFPreview.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"] 
 }

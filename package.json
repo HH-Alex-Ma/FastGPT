@@ -13,6 +13,9 @@
   },
   "devDependencies": {
     "@chakra-ui/cli": "^2.4.1",
+    "@types/form-data": "^2.2.1",
+    "@types/formidable": "^3.4.5",
+    "@types/node-fetch": "^2.6.11",
     "husky": "^8.0.3",
     "i18next": "23.10.0",
     "lint-staged": "^13.2.1",
@@ -33,9 +36,12 @@
     "@azure-rest/ai-document-intelligence": "^1.0.0-beta.2",
     "@azure/core-auth": "^1.7.2",
     "@pdftron/webviewer": "^10.10.1",
+    "form-data": "^4.0.0",
+    "formidable": "^3.5.1",
     "markmap-lib": "^0.17.0",
     "markmap-render": "^0.17.0",
     "markmap-toolbar": "^0.17.0",
-    "markmap-view": "^0.17.0"
+    "markmap-view": "^0.17.0",
+    "node-fetch": "^3.3.2"
   }
 }
