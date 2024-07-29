@@ -5,6 +5,7 @@ import { createJWT, setCookie } from '@fastgpt/service/support/permission/contro
 import { getUserDetail } from '@fastgpt/service/support/user/controller';
 import { connectToDatabase } from '@/service/mongo';
 import { hashStr } from '@fastgpt/global/common/string/tools';
+import { UserStatusEnum } from '@fastgpt/global/support/user/constant';
 import dayjs from 'dayjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
@@ -36,7 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             error: '用户不存在'
           });
         } else {
-          if (dayjs(user.validity).isBefore(new Date())) {
+          if (user.status === UserStatusEnum.forbidden) {
+            jsonRes(res, {
+              code: 400,
+              error: '账号已停用，禁止登录'
+            });
+          } else if (dayjs(user.validity).isBefore(new Date())) {
             jsonRes(res, {
               code: 400,
               error: '账户已过期，请联系管理员'
