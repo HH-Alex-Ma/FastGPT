@@ -1,86 +1,101 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Box, Flex, IconButton, useTheme, Input, List, ListItem, Text, Spinner, Collapse, Badge, HStack } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  useDisclosure,
+  useToast,
+  VStack,
+  HStack,
+  Badge,
+  Collapse,
+  Spinner,
+  Heading,
+} from '@chakra-ui/react';
 import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import Avatar from '@/components/Avatar';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import PageContainer from '@/components/PageContainer';
+import UploadModal from './component/UploadModal';
 import PDFPreview from './component/PDFPreview';
 import { serviceSideProps } from '@/web/common/utils/i18n';
 
-interface Clause {
-  ruleName: string;
-  riskName: string;
-  markdownResult: string;
-  pageNumber: number; // 新增页面号字段
-  positions?: { // 新增位置字段
-    box: number[];
-  }[];
-}
-
-interface UploadedFile {
-  name: string;
-  dataUrl: string;
-  taskId: string;
-}
-
 const PDFDetail = () => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const theme = useTheme();
-  const [instance, setInstance] = useState<any>(null);
-  const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
-  const [rightPanelWidth, setRightPanelWidth] = useState(300);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [analysisResult, setAnalysisResult] = useState<any>({ textreviewResult: [] });
+  const [loading, setLoading] = useState<boolean>(false);
   const [collapsedItems, setCollapsedItems] = useState<boolean[]>([]);
-  const [reviewResults, setReviewResults] = useState<Clause[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedRiskLevel, setSelectedRiskLevel] = useState<string | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const toast = useToast();
 
+  useEffect(() => {
+    const storedFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+    setUploadedFiles(storedFiles.map((fileData: any) =>
+      new File([], fileData.name, { type: fileData.type })
+    ));
+  }, []);
 
-  const loadDocument = (dataUrl: string) => {
-    if (instance) {
-      const { documentViewer } = instance.Core;
-      documentViewer.loadDocument(dataUrl);
-    }
+  useEffect(() => {
+    localStorage.setItem('uploadedFiles', JSON.stringify(
+      uploadedFiles.map(file => ({ name: file.name, type: file.type }))
+    ));
+  }, [uploadedFiles]);
+
+  const handleFileUpload = async (result: any, file: File) => {
+    setFileUrl(URL.createObjectURL(file));
+    setUploadedFiles(prevFiles => [...prevFiles, file]);
+
+    setAnalysisResult(result.result || { textreviewResult: [] });
+    console.log("setAnalysisResult:", result.result);
   };
 
-  const handleFileItemClick = async (file: UploadedFile) => {
-    loadDocument(file.dataUrl);
-    setReviewResults([]);
-    setCollapsedItems([]);
-    setIsLoading(true);
-    await fetchAndSetReviewResults(file.taskId);
-    setIsLoading(false);
+  const handleFileClick = (file: File) => {
+    setFileUrl(URL.createObjectURL(file));
   };
 
-  const fetchAndSetReviewResults = async (taskId: string) => {
-    const result = await getContractReviewResult(taskId);
-    console.log('Contract review result:', result);
-    if (result && result.result.status === 'success') {
-      const textReviewResults = result.result.textreviewResult || [];
-      setReviewResults(
-        textReviewResults.flatMap((doc: any) =>
-          doc.chatContents.map((item: any) => ({
-            ruleName: item.ruleName,
-            riskName: item.riskName || "未知风险",
-            markdownResult: item.markdownResult,
-            pageNumber: item.pageNumber, // 从接口获取页码或坐标信息
-            positions: item.positions || [] // 获取位置信息
-          }))
-        )
-      );
-      setCollapsedItems(Array(textReviewResults.length).fill(true));
+  const handleRiskLevelClick = (riskLevel: string | null) => {
+    setSelectedRiskLevel(prev => (prev === riskLevel ? null : riskLevel));
+  };
 
-      // Optional: Auto-expand the first item
-      if (textReviewResults.length > 0) {
-        toggleCollapse(0);
+  const toggleCollapse = (index: number) => {
+    setCollapsedItems(prev => {
+      const newCollapsedItems = [...prev];
+      newCollapsedItems[index] = !newCollapsedItems[index];
+      return newCollapsedItems;
+    });
+  };
+
+  // Calculate counts for each risk level
+  const allRiskCounts = (analysisResult.textreviewResult || [])
+    .flatMap((doc: any) => doc.chatContents)
+    .reduce((acc: any, item: any) => {
+      acc[item.riskName] = (acc[item.riskName] || 0) + 1;
+      return acc;
+    }, {});
+
+  // Filter results based on selected risk level
+  const filteredResults = (analysisResult.textreviewResult || [])
+    .flatMap((doc: any) => doc.chatContents)
+    .filter((item: any) =>
+      !selectedRiskLevel || item.riskName === selectedRiskLevel
+    );
+
+  // Set initial collapsed state
+  useEffect(() => {
+    setCollapsedItems(new Array(filteredResults.length).fill(true));
+  }, [filteredResults.length]);
+
+  useEffect(() => {
+    return () => {
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
       }
-    } else if (result && result.result.status === 'fail') {
-      console.error('Review result fetch failed:', result.result.message);
-    }
-  };
+    };
+  }, [fileUrl]);
 
   return (
     <>
@@ -89,11 +104,19 @@ const PDFDetail = () => {
       </Head>
       <PageContainer>
         <Flex flexDirection={['column', 'row']} h="100%">
-          <Box display={['none', 'flex']} flexDirection="column" p={4} w="180px" borderRight={theme.borders.base}>
+          <Box
+            display={['none', 'flex']}
+            flexDirection="column"
+            p={4}
+            w="180px"
+            borderRight="1px solid"
+            borderColor="gray.200"
+          >
             <Flex mb={4} alignItems="center">
               <Avatar src="/imgs/module/contract.png" w="34px" borderRadius="md" />
               <Box ml={2} fontWeight="bold">智能文档分析</Box>
             </Flex>
+
             <Flex
               alignItems="center"
               px={5}
@@ -103,136 +126,104 @@ const PDFDetail = () => {
               bg="primary.500"
               color="white"
               h={['28px', '35px']}
-              as="label"
-              htmlFor="file-upload"
+              onClick={onOpen}
             >
-              <Input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                id="file-upload"
-                style={{ display: 'none' }}
-              />
               <MyIcon name="common/importLight" mr={2} w="14px" />
               <Box>{t('dataset.collections.Create And Import')}</Box>
             </Flex>
-            <List mt={4} spacing={2}>
-              {fileList.map(fileName => (
-                <ListItem
-                  key={fileName}
-                  cursor="pointer"
-                  py={2}
-                  px={3}
-                  borderRadius="md"
-                  _hover={{ bg: 'myGray.100' }}
-                  onClick={() => handleFileClick(fileName)}
-                >
-                  {fileName}
-                </ListItem>
-              ))}
-            </List>
-            <Flex
-              alignItems="center"
-              cursor="pointer"
-              py={2}
-              px={3}
-              borderRadius="md"
-              _hover={{ bg: 'myGray.100' }}
-              onClick={() => router.replace('/app/list')}
-            >
-              <IconButton
-                mr={3}
-                icon={<MyIcon name="common/backFill" w="18px" color="primary.500" />}
-                bg="white"
-                boxShadow="1px 1px 9px rgba(0,0,0,0.15)"
-                size="smSquare"
-                borderRadius="50%"
-                aria-label=""
-              />
-              {t('app.My Apps')}
-            </Flex>
-          </Box>
-          <Box flex="1" h={['auto', '100%']} overflow="hidden">
-            <Flex flexDirection={['column', 'row']} h="100%">
-              <Box flex="1" overflow="hidden">
-                <PDFPreview file={{ name: '', dataUrl: file, taskId: '' }} />
-              </Box>
-              <Box
-                flex="1"
-                display="flex"
-                flexDirection="column"
-                p={4}
-                bg="gray.50"
+
+            {uploadedFiles.map((file, index) => (
+              <Flex
+                key={index}
+                alignItems="center"
+                px={3}
+                py={2}
+                borderRadius="md"
+                cursor="pointer"
+                bg="gray.100"
+                _hover={{ bg: 'gray.200' }}
+                onClick={() => handleFileClick(file)}
               >
-                <Text fontSize="xl" fontWeight="bold" mb={4}>合同条款审查结果</Text>
-                {isLoading ? (
-                  <Spinner size="md" />
-                ) : (
-                  <>
-                    <HStack spacing={4} mb={4}>
+                <Text isTruncated>{file.name}</Text>
+              </Flex>
+            ))}
+          </Box>
+
+          <Box flex="1" p={4}>
+            <PDFPreview fileUrl={fileUrl} />
+          </Box>
+
+          <Box w="300px" bg="white" p={4} borderLeft="1px solid" borderColor="gray.200">
+            <VStack bg="white" p={4} spacing={4} h="100%" overflowY="auto">
+              <Heading size="md">合同条款审查结果</Heading>
+              {loading ? (
+                <Spinner size="sm" />
+              ) : (
+                <>
+                  <HStack spacing={4}>
+                    {['重大风险', '一般风险'].map(level => (
                       <Badge
+                        key={level}
                         variant="subtle"
-                        colorScheme="red"
+                        colorScheme={level === '重大风险' ? 'red' : 'yellow'}
                         cursor="pointer"
-                        onClick={() => handleRiskLevelClick('重大风险')}
+                        onClick={() => handleRiskLevelClick(level)}
                       >
-                        重大风险 ({countRiskLevels('重大风险')})
+                        {level} ({allRiskCounts[level] || 0})
                       </Badge>
-                      <Badge
-                        variant="subtle"
-                        colorScheme="yellow"
-                        cursor="pointer"
-                        onClick={() => handleRiskLevelClick('中等风险')}
-                      >
-                        中等风险 ({countRiskLevels('中等风险')})
-                      </Badge>
-                      <Badge
-                        variant="subtle"
-                        colorScheme="green"
-                        cursor="pointer"
-                        onClick={() => handleRiskLevelClick('轻微风险')}
-                      >
-                        轻微风险 ({countRiskLevels('轻微风险')})
-                      </Badge>
-                      <Badge
-                        variant="subtle"
-                        cursor="pointer"
-                        onClick={() => handleRiskLevelClick(null)}
-                      >
-                        全部风险 ({reviewResults.length})
-                      </Badge>
-                    </HStack>
-                    <List spacing={4} overflowY="auto">
-                      {filteredResults.map((item, index) => (
-                        <ListItem key={index} p={4} border="1px" borderColor="gray.200" borderRadius="md" bg="white">
-                          <Flex justify="space-between" align="center" mb={2}>
-                            <Text fontWeight="bold">{item.ruleName}</Text>
-                            <Text color="red.500">{item.riskName}</Text>
-                            <IconButton
-                              size="sm"
-                              aria-label="Toggle collapse"
-                              // icon={<MyIcon name={collapsedItems[index] ? 'chevron-up' : 'chevron-down'} />}
-                              onClick={() => setCollapsedItems(prev => {
-                                const newCollapsedItems = [...prev];
-                                newCollapsedItems[index] = !newCollapsedItems[index];
-                                return newCollapsedItems;
-                              })}
-                            />
-                          </Flex>
-                          <Collapse in={collapsedItems[index]}>
-                            <Box>
-                              <Text mb={2} fontSize="sm" whiteSpace="pre-wrap">{item.markdownResult}</Text>
-                            </Box>
-                          </Collapse>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </>
-                )}
-              </Box>
-            </Flex>
+                    ))}
+                    <Badge
+                      variant="subtle"
+                      colorScheme="blue"
+                      cursor="pointer"
+                      onClick={() => handleRiskLevelClick(null)}
+                    >
+                      所有风险 ({filteredResults.length})
+                    </Badge>
+                  </HStack>
+                  {filteredResults.map((result: any, index: number) => (
+                    <Box
+                      key={index}
+                      w="100%"
+                      bg="white"
+                      p={4}
+                      borderRadius="md"
+                      boxShadow="md"
+                      cursor="pointer"
+                      onClick={() => toggleCollapse(index)}
+                      _hover={{ bg: 'gray.100' }}
+                      _active={{ bg: 'gray.200' }}
+                      position="relative"
+                    >
+                      <Box
+                        position="absolute"
+                        left={0}
+                        top={0}
+                        bottom={0}
+                        width="4px"
+                        bg={result.riskName === '重大风险' ? 'red.500' : 'yellow.500'}
+                      />
+                      <Box ml={6}>
+                        <Text fontWeight="bold">{result.ruleName}</Text>
+                        <Text color="gray.500">{result.riskName}</Text>
+                        <Collapse in={!collapsedItems[index]}>
+                          <Box mt={2} whiteSpace="pre-wrap">
+                            {result.markdownResult}
+                          </Box>
+                        </Collapse>
+                      </Box>
+                    </Box>
+                  ))}
+                </>
+              )}
+            </VStack>
           </Box>
         </Flex>
+        <UploadModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onConfirm={handleFileUpload}
+        />
       </PageContainer>
     </>
   );
