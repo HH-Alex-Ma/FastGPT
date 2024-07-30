@@ -1,0 +1,14 @@
+{"level":"info","message":"🔥 DailyHot API 成功在端口 3000 上运行","timestamp":"2024-07-30 16:25:16"}
+{"level":"info","message":"🔗 Local: 👉 http://localhost:3000","timestamp":"2024-07-30 16:25:16"}
+{"level":"info","message":"🔥 DailyHot API 成功在端口 9527 上运行","timestamp":"2024-07-30 16:25:16"}
+{"level":"info","message":"🔗 Local: 👉 http://localhost:9527","timestamp":"2024-07-30 16:25:16"}
+{"level":"info","message":"🔥 DailyHot API 成功在端口 9527 上运行","timestamp":"2024-07-30 16:28:40"}
+{"level":"info","message":"🔗 Local: 👉 http://localhost:9527","timestamp":"2024-07-30 16:28:40"}
+{"level":"info","message":"发起 GET 请求","noCache":false,"timestamp":"2024-07-30 16:28:41","ttl":60,"url":"https://weibo.com/ajax/side/hotSearch"}
+{"level":"info","message":"请求接口","timestamp":"2024-07-30 16:28:41","url":"https://weibo.com/ajax/side/hotSearch"}
+{"level":"info","message":"数据缓存成功","timestamp":"2024-07-30 16:28:41","url":"https://weibo.com/ajax/side/hotSearch"}
+{"level":"info","message":"接口调用成功","status":"OK","timestamp":"2024-07-30 16:28:41"}
+{"level":"info","message":"发起 GET 请求","noCache":false,"timestamp":"2024-07-30 16:28:41","url":"https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc"}
+{"level":"info","message":"请求接口","timestamp":"2024-07-30 16:28:41","url":"https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc"}
+{"level":"info","message":"数据缓存成功","timestamp":"2024-07-30 16:28:41","url":"https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc"}
+{"level":"info","message":"接口调用成功","status":"OK","timestamp":"2024-07-30 16:28:41"}

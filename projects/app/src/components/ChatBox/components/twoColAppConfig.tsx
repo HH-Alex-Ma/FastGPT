@@ -4,7 +4,7 @@ import { twoColAppType } from '@fastgpt/global/core/app/constants';
 export const twoColConfigList: twoColAppType[] = [
   {
     id: '66962371a1e76a2b79b2b86e',
-    name: '小红书营销专家',
+    name: '小红书营销专家(aitest)',
 
     left_tag: '产品推广方案',
     left_tabs: ['会话'],
@@ -16,7 +16,7 @@ export const twoColConfigList: twoColAppType[] = [
   },
   {
     id: '66962497a1e76a2b79b2b929',
-    name: 'AI智能搜索',
+    name: 'AI智能搜索(aitest)',
 
     left_tag: '问题回答',
     left_tabs: ['会话'],
@@ -25,5 +25,29 @@ export const twoColConfigList: twoColAppType[] = [
     right_tag: '总结',
     right_tabs: ['大纲', '导图'],
     right_module: '生成大纲和导图'
+  },
+  {
+    id: '66a87c8825f9aec47370bcbe',
+    name: '小红书营销专家(aitest热点)',
+
+    left_tag: '热点分析',
+    left_tabs: ['会话'],
+    left_module: '热点分析',
+
+    right_tag: '文案创作',
+    right_tabs: ['会话'],
+    right_module: '文案创作'
+  },
+  {
+    id: '66a89ccca44bac3435d64493',
+    name: '小红书营销专家(热点)',
+
+    left_tag: '热点分析',
+    left_tabs: ['会话'],
+    left_module: '热点分析',
+
+    right_tag: '文案创作',
+    right_tabs: ['会话'],
+    right_module: '文案创作'
   }
 ];

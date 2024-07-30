@@ -38,6 +38,7 @@ import { ChatItemValueTypeEnum } from '@fastgpt/global/core/chat/constants';
 import { DispatchFlowResponse } from './type';
 import { dispatchStopToolCall } from './agent/runTool/stopTool';
 import { dispatchLafRequest } from './tools/runLaf';
+import { dispatchDailyHotWords } from './tools/dailyHotWords';
 
 const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
   [FlowNodeTypeEnum.historyNode]: dispatchHistory,
@@ -58,6 +59,7 @@ const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
   [FlowNodeTypeEnum.tools]: dispatchRunTools,
   [FlowNodeTypeEnum.stopTool]: dispatchStopToolCall,
   [FlowNodeTypeEnum.lafModule]: dispatchLafRequest,
+  [FlowNodeTypeEnum.dailyhotwords]: dispatchDailyHotWords,
 
   // none
   [FlowNodeTypeEnum.userGuide]: () => Promise.resolve(),
