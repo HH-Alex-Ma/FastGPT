@@ -1,5 +1,4 @@
 // pages/api/support/pdf/contract_analyze.ts
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
