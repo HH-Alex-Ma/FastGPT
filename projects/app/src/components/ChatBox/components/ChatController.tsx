@@ -23,6 +23,19 @@ export type ChatControllerProps = {
   onAddUserDislike?: () => void;
 };
 
+export type ExternalChatItemProps = {
+  isLastChild: boolean;
+  chat: ChatSiteItemType;
+  showVoiceIcon?: boolean;
+  onRetry?: () => void;
+  onDelete?: () => void;
+  onMark?: () => void;
+  onReadUserDislike?: () => void;
+  onCloseUserLike?: () => void;
+  onAddUserLike?: () => void;
+  onAddUserDislike?: () => void;
+};
+
 const ChatController = ({
   chat,
   isLastChild,

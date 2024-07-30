@@ -310,7 +310,9 @@ const MyApps = () => {
                         <MyTooltip label={app.intro ? app.intro : ''}>
                           {app.intro === ''
                             ? '这个应用还没写介绍~'
-                            : app.intro.slice(0, 15) + ' . . .'}
+                            : app.intro.length > 15
+                              ? app.intro.slice(0, 15) + ' . . .'
+                              : app.intro}
                         </MyTooltip>
                       </Td>
                       {/* 模型（通过modules内固定index索引查得） */}

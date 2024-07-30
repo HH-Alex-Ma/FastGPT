@@ -36,6 +36,7 @@ export enum ModuleInputKeyEnum {
   history = 'history',
   userChatInput = 'userChatInput',
   questionGuide = 'questionGuide',
+  externalData = 'externalData',
   tts = 'tts',
   whisper = 'whisper',
   answerText = 'text',

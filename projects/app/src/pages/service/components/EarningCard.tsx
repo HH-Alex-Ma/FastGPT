@@ -1,5 +1,5 @@
-import { Box, Skeleton } from "@chakra-ui/react";
-import { FC, ReactElement } from "react";
+import { Box, Skeleton } from '@chakra-ui/react';
+import { FC, ReactElement } from 'react';
 
 // ==============================|| SKELETON - EARNING CARD ||============================== //
 

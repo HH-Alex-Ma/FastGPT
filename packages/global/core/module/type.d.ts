@@ -95,6 +95,7 @@ export type ChatDispatchProps = {
   histories: ChatItemType[];
   variables: Record<string, any>;
   inputFiles?: UserChatItemValueItemType['file'][];
+  //query: UserChatItemValueItemType; // trigger query
   stream: boolean;
   detail: boolean; // response detail
   maxRunTimes: number;

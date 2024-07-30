@@ -39,7 +39,7 @@ export function generateChartOptions(data: any, unit: any) {
       right: '2%',
       bottom: '5%',
       top: '4%',
-      containLabel: false,
+      containLabel: false
     },
     xAxis: {
       type: 'category',
@@ -48,8 +48,8 @@ export function generateChartOptions(data: any, unit: any) {
       min: minDate,
       max: maxDate,
       axisLabel: {
-        show: false,
-      },
+        show: false
+      }
     },
     yAxis: {
       type: 'value',
@@ -62,17 +62,19 @@ export function generateChartOptions(data: any, unit: any) {
         show: false
       }
     },
-    series: [{
-      data: values,
-      type: 'line',
-      smooth: true,
-      lineStyle: {
-        width: 3
-      },
-      itemStyle: {
-        color: '#fff',
-        width: 3
+    series: [
+      {
+        data: values,
+        type: 'line',
+        smooth: true,
+        lineStyle: {
+          width: 3
+        },
+        itemStyle: {
+          color: '#fff',
+          width: 3
+        }
       }
-    }]
+    ]
   };
 }

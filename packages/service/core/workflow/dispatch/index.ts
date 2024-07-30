@@ -61,6 +61,7 @@ const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
 
   // none
   [FlowNodeTypeEnum.userGuide]: () => Promise.resolve()
+  // [FlowNodeTypeEnum.externalData]: () => Promise.resolve()
 };
 
 /* running */

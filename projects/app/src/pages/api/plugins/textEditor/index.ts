@@ -16,6 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       DYNAMIC_INPUT_KEY: { ...obj }
     } = req.body as Props;
 
+    console.log(`Request Headers Host: ${req.headers.host}`);
+
     await authRequestFromLocal({ req });
 
     // string all value

@@ -35,6 +35,7 @@ export const getDefaultAppForm = (): AppSimpleEditFormType => {
       welcomeText: '',
       variables: [],
       questionGuide: false,
+      externalData: false,
       tts: {
         type: 'web'
       },
@@ -109,13 +110,20 @@ export const appModules2Form = ({ modules }: { modules: ModuleItemType[] }) => {
         ModuleInputKeyEnum.datasetSearchExtensionBg
       );
     } else if (module.flowType === FlowNodeTypeEnum.userGuide) {
-      const { welcomeText, variableModules, questionGuide, ttsConfig, whisperConfig } =
-        splitGuideModule(getGuideModule(modules));
+      const {
+        welcomeText,
+        variableModules,
+        questionGuide,
+        externalData,
+        ttsConfig,
+        whisperConfig
+      } = splitGuideModule(getGuideModule(modules));
 
       defaultAppForm.userGuide = {
         welcomeText: welcomeText,
         variables: variableModules,
         questionGuide: questionGuide,
+        externalData: externalData,
         tts: ttsConfig,
         whisper: whisperConfig
       };

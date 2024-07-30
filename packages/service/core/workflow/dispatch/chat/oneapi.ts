@@ -68,6 +68,7 @@ export const dispatchChatCompletion = async (props: ChatProps): Promise<ChatResp
     histories,
     module: { name, outputs },
     inputFiles = [],
+    //query,
     params: {
       model,
       temperature = 0,
@@ -81,6 +82,7 @@ export const dispatchChatCompletion = async (props: ChatProps): Promise<ChatResp
       quotePrompt
     }
   } = props;
+  //const { files: inputFiles } = chatValue2RuntimePrompt(query); //not ready yet
   if (!userChatInput && inputFiles.length === 0) {
     return Promise.reject('Question is empty');
   }

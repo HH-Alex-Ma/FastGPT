@@ -18,3 +18,18 @@ export const defaultWhisperConfig: AppWhisperConfigType = {
   autoSend: false,
   autoTTSResponse: false
 };
+
+export type twoColAppType = {
+  id: string;
+  name: string;
+
+  left_tag: string;
+  left_tabs: string[];
+  left_module: string;
+  //left_content: () => void,
+
+  right_tag: string;
+  right_tabs: string[];
+  right_module: string;
+  //right_content: () => void
+};
