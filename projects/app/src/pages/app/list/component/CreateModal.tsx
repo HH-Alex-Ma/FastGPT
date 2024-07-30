@@ -98,6 +98,9 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       if (!template) {
         return Promise.reject(t('core.dataset.error.Template does not exist'));
       }
+      if (appTemplates.find((item) => item.id === 'pdf')) {
+        console.log('合同审阅被选中');
+      }
       return postCreateApp({
         avatar: data.avatar,
         name: data.name,

@@ -62,8 +62,8 @@ const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
   [FlowNodeTypeEnum.dailyhotwords]: dispatchDailyHotWords,
 
   // none
-  [FlowNodeTypeEnum.userGuide]: () => Promise.resolve(),
-  [FlowNodeTypeEnum.externalData]: () => Promise.resolve()
+  [FlowNodeTypeEnum.userGuide]: () => Promise.resolve()
+  // [FlowNodeTypeEnum.externalData]: () => Promise.resolve()
 };
 
 /* running */

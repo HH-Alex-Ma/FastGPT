@@ -71,7 +71,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             error: '用户不存在'
           });
         } else {
-          if (dayjs(user.validity).isBefore(new Date())) {
+          if (user.status === UserStatusEnum.forbidden) {
+            jsonRes(res, {
+              code: 400,
+              error: '账号已停用，禁止登录'
+            });
+          } else if (dayjs(user.validity).isBefore(new Date())) {
             jsonRes(res, {
               code: 400,
               error: '账户已过期，请联系管理员'
@@ -98,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
       } catch (err: any) {
         // err 中含有 code 和 message 属性，可帮助开发定位问题
-        console.log(err);
+        //console.log(err);
         jsonRes(res, {
           code: 400,
           error: err.message
