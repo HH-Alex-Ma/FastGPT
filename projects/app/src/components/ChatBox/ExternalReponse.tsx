@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { type ChatHistoryItemResType } from '@fastgpt/global/core/chat/type.d';
 import { DispatchNodeResponseType } from '@fastgpt/global/core/module/runtime/type.d';
+import Markdown from '@/components/Markdown';
 import type { ChatItemType } from '@fastgpt/global/core/chat/type';
-import { Flex, BoxProps, useDisclosure, useTheme, Box } from '@chakra-ui/react';
+import { Flex, BoxProps, useDisclosure, useTheme, Box, Mark } from '@chakra-ui/react';
 import { useTranslation } from 'next-i18next';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import type { SearchDataResponseItemType } from '@fastgpt/global/core/dataset/type';
@@ -22,7 +23,7 @@ const WholeResponseModal = dynamic(() => import('./WholeResponseModal'));
 const isLLMNode = (item: ChatHistoryItemResType) =>
   item.moduleType === FlowNodeTypeEnum.chatNode || item.moduleType === FlowNodeTypeEnum.tools;
 
-const ResponseTags = ({
+const ExternalReponse = ({
   flowResponses = [],
   showDetail
 }: {
@@ -53,7 +54,8 @@ const ResponseTags = ({
     quoteList = [],
     sourceList = [],
     historyPreview = [],
-    runningTime = 0
+    runningTime = 0,
+    quoteLink = []
   } = useMemo(() => {
     const flatResponse = flowResponses
       .map((item) => {
@@ -73,8 +75,17 @@ const ResponseTags = ({
         .flat()
         .filter(Boolean) as SearchDataResponseItemType[]
     )
-      //只选取内部知识库引用内容
-      .filter((item) => item.datasetId === '6673c1c94c1a375bf275f9ed');
+      //只选取外部知识库引用内容
+      .filter((item) => item.datasetId === '6673a1c14c1a375bf275ee7a');
+
+    const quoteLink: string[][] = quoteList.map((item) => {
+      const linesArray = item.q.split('\n');
+      //名称在第二行
+      const name = linesArray[1].split(/:(.+)/)[1].trim();
+      //链接在最后一行
+      const link = linesArray[linesArray.length - 1].split(/:(.+)/)[1].trim();
+      return [name, link];
+    });
 
     const sourceList = quoteList.reduce(
       (acc: Record<string, SearchDataResponseItemType[]>, cur) => {
@@ -99,7 +110,10 @@ const ResponseTags = ({
           collectionId: item.collectionId
         })),
       historyPreview: chatData?.historyPreview,
-      runningTime: +flowResponses.reduce((sum, item) => sum + (item.runningTime || 0), 0).toFixed(2)
+      runningTime: +flowResponses
+        .reduce((sum, item) => sum + (item.runningTime || 0), 0)
+        .toFixed(2),
+      quoteLink
     };
   }, [showDetail, flowResponses]);
 
@@ -110,50 +124,21 @@ const ResponseTags = ({
 
   return flowResponses.length === 0 ? null : (
     <>
-      {sourceList.length > 0 && (
+      {quoteLink.length > 0 && (
         <>
-          <ChatBoxDivider icon="core/chat/quoteFill" text={t('core.chat.Quote')} />
-          <Flex alignItems={'center'} flexWrap={'wrap'} gap={2}>
-            {sourceList.map((item) => (
-              <MyTooltip key={item.collectionId} label={t('core.chat.quote.Read Quote')}>
-                <Flex
-                  alignItems={'center'}
-                  fontSize={'sm'}
-                  border={theme.borders.sm}
-                  py={1}
-                  px={2}
-                  borderRadius={'sm'}
-                  _hover={{
-                    '.controller': {
-                      display: 'flex'
-                    }
-                  }}
-                  overflow={'hidden'}
-                  position={'relative'}
-                  cursor={'pointer'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setQuoteModalData({
-                      rawSearch: quoteList,
-                      metadata: {
-                        collectionId: item.collectionId,
-                        sourceId: item.sourceId,
-                        sourceName: item.sourceName
-                      }
-                    });
-                  }}
-                >
-                  <MyIcon name={item.icon as any} mr={1} flexShrink={0} w={'12px'} />
-                  <Box className="textEllipsis3" wordBreak={'break-all'} flex={'1 0 0'}>
-                    {item.sourceName}
-                  </Box>
-                </Flex>
-              </MyTooltip>
+          <ChatBoxDivider icon="core/chat/quoteFill" text={t('core.chat.External Quote')} />
+          <Flex flexDirection="column" alignItems={'flex-start'} flexWrap={'wrap'} gap={2}>
+            {quoteLink.map((item) => (
+              <>
+                <Tag>
+                  <Markdown source={`[${item[0]}](${item[1]})`} />
+                </Tag>
+              </>
             ))}
           </Flex>
         </>
       )}
-      {showDetail && (
+      {/* {showDetail && (
         <Flex alignItems={'center'} mt={3} flexWrap={'wrap'}>
           {quoteList.length > 0 && (
             <MyTooltip label="查看引用">
@@ -202,26 +187,26 @@ const ResponseTags = ({
             </Tag>
           </MyTooltip>
         </Flex>
-      )}
-      {!!quoteModalData && (
+      )} */}
+      {/* {!!quoteModalData && (
         <QuoteModal
           {...quoteModalData}
           showDetail={showDetail}
           onClose={() => setQuoteModalData(undefined)}
         />
-      )}
-      {!!contextModalData && (
+      )} */}
+      {/* {!!contextModalData && (
         <ContextModal context={contextModalData} onClose={() => setContextModalData(undefined)} />
-      )}
-      {isOpenWholeModal && (
+      )} */}
+      {/* {isOpenWholeModal && (
         <WholeResponseModal
           response={flowResponses}
           showDetail={showDetail}
           onClose={onCloseWholeModal}
         />
-      )}
+      )} */}
     </>
   );
 };
 
-export default React.memo(ResponseTags);
+export default React.memo(ExternalReponse);

@@ -49,15 +49,25 @@ import MessageInput from './MessageInput';
 import ChatBoxDivider from '../core/chat/Divider';
 import { OutLinkChatAuthProps } from '@fastgpt/global/support/permission/chat';
 import { getNanoid } from '@fastgpt/global/common/string/tools';
-import { ChatItemValueTypeEnum, ChatRoleEnum } from '@fastgpt/global/core/chat/constants';
+import {
+  ChatItemValueTypeEnum,
+  ChatRoleEnum,
+  ChatStatusEnum
+} from '@fastgpt/global/core/chat/constants';
 import { formatChatValue2InputType } from './utils';
 import { textareaMinH } from './constants';
 import { SseResponseEventEnum } from '@fastgpt/global/core/module/runtime/constants';
 import ChatProvider, { useChatProviderStore } from './Provider';
 
 import ChatItem from './components/ChatItem';
+import ExternalChatItem from './components/ExternalChatItem';
 
 import dynamic from 'next/dynamic';
+import ExternalReponse from './ExternalReponse';
+
+import { twoColAppType } from '@fastgpt/global/core/app/constants';
+import { twoColConfigList } from './components/twoColAppConfig';
+
 const ResponseTags = dynamic(() => import('./ResponseTags'));
 const FeedbackModal = dynamic(() => import('./FeedbackModal'));
 const ReadFeedbackModal = dynamic(() => import('./ReadFeedbackModal'));
@@ -143,6 +153,10 @@ const ChatBox = (
   }>();
   const [adminMarkData, setAdminMarkData] = useState<AdminMarkType & { chatItemId: string }>();
   const [questionGuides, setQuestionGuide] = useState<string[]>([]);
+  const [isChatItemRendered, setIsChatItemRendered] = useState(false);
+  const twoColConfig: twoColAppType | undefined = twoColConfigList.find(
+    (item) => item.id === appId
+  );
 
   const {
     welcomeText,
@@ -173,6 +187,7 @@ const ChatBox = (
     }
   });
   const { setValue, watch, handleSubmit } = chatForm;
+  const [currentText, setCurrentText] = useState('');
   const variables = watch('variables');
   const chatStarted = watch('chatStarted');
   const variableIsFinish = useMemo(() => {
@@ -443,9 +458,11 @@ const ChatBox = (
           }
         ];
 
+        console.log('text', text);
         // 插入内容
         setChatHistories(newChatList);
-
+        setCurrentText(text);
+        console.log('currentText after setCurrentText', text);
         // 清空输入内容
         resetInputVal({});
         setQuestionGuide([]);
@@ -552,7 +569,8 @@ const ChatBox = (
       splitText2Audio,
       startSegmentedAudio,
       t,
-      toast
+      toast,
+      currentText
     ]
   );
 
@@ -917,6 +935,7 @@ const ChatBox = (
                       avatar={appAvatar}
                       chat={item}
                       isLastChild={index === chatHistories.length - 1}
+                      twoColConfig={twoColConfig}
                       {...(item.obj === 'AI' && {
                         showVoiceIcon,
                         shareId,
@@ -935,11 +954,31 @@ const ChatBox = (
                         onReadUserDislike: onReadUserDislike(item)
                       })}
                     >
-                      <ResponseTags
-                        flowResponses={item.responseData}
-                        showDetail={!shareId && !teamId}
-                      />
-
+                      <Flex flexDirection="row" width="100%">
+                        {/* 引用 */}
+                        <Flex flexDirection="column" width="50%">
+                          <ResponseTags
+                            flowResponses={item.responseData}
+                            showDetail={!shareId && !teamId}
+                          />
+                        </Flex>
+                        {/* 外部引用 */}
+                        <Flex flexDirection="column" width="50%">
+                          <ExternalReponse
+                            flowResponses={item.responseData}
+                            showDetail={!shareId && !teamId}
+                          />
+                        </Flex>
+                      </Flex>
+                      {/* 外部消息 */}
+                      {/*{!statusBoxData && (
+                        <ExternalChatItem
+                          type={item.obj}
+                          chat={item}
+                          isLastChild={index === chatHistories.length - 1}
+                          text={currentText}
+                        />
+                      )}*/}
                       {/* custom feedback */}
                       {item.customFeedbacks && item.customFeedbacks.length > 0 && (
                         <Box>

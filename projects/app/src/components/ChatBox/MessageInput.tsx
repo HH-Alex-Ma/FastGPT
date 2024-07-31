@@ -1,7 +1,7 @@
 import { useSpeech } from '@/web/common/hooks/useSpeech';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
-import { Box, Flex, Image, Spinner, Textarea } from '@chakra-ui/react';
-import React, { useRef, useEffect, useCallback, useTransition } from 'react';
+import { Box, Flex, Image, Spinner, Textarea, Tag, TagLabel } from '@chakra-ui/react';
+import React, { useRef, useEffect, useCallback, useTransition, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import MyTooltip from '../MyTooltip';
 import MyIcon from '@fastgpt/web/components/common/Icon';
@@ -16,7 +16,7 @@ import { ChatBoxInputFormType, ChatBoxInputType, UserInputFileItemType } from '.
 import { textareaMinH } from './constants';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
 import { useChatProviderStore } from './Provider';
-import { readPdfFile } from '@fastgpt/service/common/file/read/pdf';
+import { readPdfFile } from '@fastgpt/service/common/file/read/microsoft';
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 6);
 
 const MessageInput = ({
@@ -54,8 +54,9 @@ const MessageInput = ({
   const { isPc, whisperModel } = useSystemStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { t } = useTranslation();
-
   const havInput = !!inputValue || fileList.length > 0;
+  const hasFileUploading = fileList.some((item) => !item.url) && fileList.length > 0;
+  const canSendMessage = havInput && !hasFileUploading;
 
   /* file selector and upload */
   const { File, onOpen: onOpenSelectFile } = useSelectFile({
@@ -63,17 +64,19 @@ const MessageInput = ({
     multiple: true,
     maxCount: 10
   });
+  // 用于处理文件上传的逻辑
   const { mutate: uploadFile } = useRequest({
     mutationFn: async ({ file, fileIndex }: { file: UserInputFileItemType; fileIndex: number }) => {
-      console.log("file", file)
+      console.log('file', file);
+      console.log('file', file);
       if (file.type === ChatFileTypeEnum.image && file.rawFile) {
         try {
           const url = await compressImgFileAndUpload({
             type: MongoImageTypeEnum.chatImage,
             file: file.rawFile,
-            maxW: 4329,
-            maxH: 4329,
-            maxSize: 1024 * 1024 * 5,
+            maxW: 4320,
+            maxH: 4320,
+            maxSize: 1024 * 1024 * 16,
             // 7 day expired.
             expiredTime: addDays(new Date(), 7),
             shareId,
@@ -94,6 +97,7 @@ const MessageInput = ({
         try {
           const reader = new FileReader();
           reader.readAsArrayBuffer(file.rawFile);
+
           const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
             reader.onload = () => {
               resolve(reader.result as ArrayBuffer);
@@ -103,15 +107,27 @@ const MessageInput = ({
               reject('Load PDF error');
             };
           });
+
           const response = await readPdfFile({
             buffer: Buffer.from(arrayBuffer),
-            teamId: "",
-            encoding: "utf8"
+            teamId: '',
+            encoding: 'utf8'
           });
-          console.log("response readPdfFile", response);
+
+          // 获取输入框中的内容
+          const textareaValue = TextareaDom.current?.value || '';
+
+          // 在这里调用onSendMessage来发送PDF文件的rawText
+          // onSendMessage({
+          //   text: `${textareaValue.trim()} ${response.rawText}`,
+          //   files: [], // 假设PDF文本作为消息发送，不包含文件
+          //   autoTTSResponse
+          // });
+
+          // 更新文件列表中的PDF文件项，如果需要保留文件项
           updateFile(fileIndex, {
             ...file,
-            url: `${location.origin}${response}`
+            url: response.rawText // 如果是文件，url就是文件的识别内容
           });
         } catch (error) {
           removeFile(fileIndex);
@@ -122,6 +138,8 @@ const MessageInput = ({
     },
     errorToast: t('common.Upload File Failed')
   });
+
+  // 用于处理用户选择的文件
   const onSelectFile = useCallback(
     async (files: File[]) => {
       if (!files || files.length === 0) {
@@ -131,9 +149,9 @@ const MessageInput = ({
         files.map(
           (file) =>
             new Promise<UserInputFileItemType>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
               if (file.type.includes('image')) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
                 reader.onload = () => {
                   const item = {
                     id: nanoid(),
@@ -160,7 +178,6 @@ const MessageInput = ({
         )
       );
       appendFile(loadFiles);
-      console.log("loadFiles", loadFiles)
 
       loadFiles.forEach((file, i) =>
         uploadFile({
@@ -174,14 +191,59 @@ const MessageInput = ({
 
   /* on send */
   const handleSend = useCallback(async () => {
+    if (!canSendMessage) return;
     const textareaValue = TextareaDom.current?.value || '';
 
+    // // 处理每个文件，根据类型执行不同逻辑
+    // for (const file of fileList) {
+    //   if (file.type === ChatFileTypeEnum.file && file.rawFile) {
+    //     // 处理PDF文件逻辑
+    //     try {
+    //       const reader = new FileReader();
+    //       reader.readAsArrayBuffer(file.rawFile);
+
+    //       const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+    //         reader.onload = () => {
+    //           resolve(reader.result as ArrayBuffer);
+    //         };
+    //         reader.onerror = (err) => {
+    //           console.log(err);
+    //           reject('Load PDF error');
+    //         };
+    //       });
+
+    //       const response = await readPdfFile({
+    //         buffer: Buffer.from(arrayBuffer),
+    //         teamId: '',
+    //         encoding: 'utf8'
+    //       });
+
+    //       console.log('response', response);
+    //       SetisUploading(false);
+
+    //       // 将PDF文本附加到输入框内容中
+    //       onSendMessage({
+    //         text: `${textareaValue.trim()} ${response.rawText}`,
+    //         files: [], // 假设PDF文本作为消息发送，不包含文件
+    //         autoTTSResponse
+    //       });
+
+    //       // 将PDF文件识别txt内容附加到file.rawText中
+    //       //file.rawText = response.rawText;
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   }
+    // }
+
+    // 发送最终的消息，如果有必要
     onSendMessage({
       text: textareaValue.trim(),
+      //files: fileList.filter((file) => file.type !== ChatFileTypeEnum.file) // 排除PDF文件，如果已经处理
       files: fileList
     });
     replaceFile([]);
-  }, [TextareaDom, fileList, onSendMessage, replaceFile]);
+  }, [TextareaDom, fileList, onSendMessage, replaceFile, canSendMessage]);
 
   /* whisper init */
   const {
@@ -245,13 +307,13 @@ const MessageInput = ({
         overflow={'hidden'}
         {...(isPc
           ? {
-            border: '1px solid',
-            borderColor: 'rgba(0,0,0,0.12)'
-          }
+              border: '1px solid',
+              borderColor: 'rgba(0,0,0,0.12)'
+            }
           : {
-            borderTop: '1px solid',
-            borderTopColor: 'rgba(0,0,0,0.15)'
-          })}
+              borderTop: '1px solid',
+              borderTopColor: 'rgba(0,0,0,0.15)'
+            })}
       >
         {/* translate loading */}
         <Flex
@@ -272,12 +334,12 @@ const MessageInput = ({
         </Flex>
 
         {/* file preview */}
-        <Flex wrap={'wrap'} px={[2, 4]} userSelect={'none'}>
+        <Flex wrap={'wrap'} px={[2, 4]} userSelect={'none'} alignItems={'flex-end'}>
           {fileList.map((item, index) => (
             <Box
               key={item.id}
-              border={'1px solid rgba(0,0,0,0.12)'}
-              mr={2}
+              border={item.type === 'image' ? '1px solid rgba(0,0,0,0.12)' : ''}
+              mr={4}
               mb={2}
               rounded={'md'}
               position={'relative'}
@@ -319,7 +381,7 @@ const MessageInput = ({
                 className="close-icon"
                 display={['', 'none']}
               />
-              {(item.type === ChatFileTypeEnum.image || item.type === ChatFileTypeEnum.file) && (
+              {item.type === ChatFileTypeEnum.image && (
                 <Image
                   alt={'img'}
                   src={item.icon}
@@ -328,6 +390,12 @@ const MessageInput = ({
                   borderRadius={'md'}
                   objectFit={'contain'}
                 />
+              )}
+              {item.type === ChatFileTypeEnum.file && (
+                <Tag size="lg" colorScheme="facebook" borderRadius="full">
+                  <MyIcon boxSize="20px" name={'text'} color={'myGray.600'} />
+                  <TagLabel>{item.name}</TagLabel>
+                </Tag>
               )}
             </Box>
           ))}
@@ -347,7 +415,7 @@ const MessageInput = ({
                 onOpenSelectFile();
               }}
             >
-              <MyTooltip label={t('core.chat.Select Image')}>
+              <MyTooltip label={'选择文件'}>
                 <MyIcon name={'core/chat/fileSelect'} w={'18px'} color={'myGray.600'} />
               </MyTooltip>
               <File onSelect={onSelectFile} />

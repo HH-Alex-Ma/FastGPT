@@ -14,6 +14,7 @@ import type {
   ChatCompletionToolMessageParam
 } from '../../core/ai/type.d';
 import { ChatCompletionRequestMessageRoleEnum } from '../../core/ai/constants';
+import { url } from 'inspector';
 
 const GPT2Chat = {
   [ChatCompletionRequestMessageRoleEnum.System]: ChatRoleEnum.System,
@@ -62,6 +63,12 @@ export const chats2GPTMessages = ({
               image_url: {
                 url: item.file?.url || ''
               }
+            };
+          }
+          if (item.type === 'file' && item.file?.type === ChatFileTypeEnum.file) {
+            return {
+              type: 'text',
+              text: `###文件标题: ${item.file.name}。文件内容: ${item.file?.url}` || ''
             };
           }
           return;
@@ -148,21 +155,45 @@ export const GPTMessages2Chats = (
         item.role === ChatCompletionRequestMessageRoleEnum.User
       ) {
         if (typeof item.content === 'string') {
-          value.push({
-            type: ChatItemValueTypeEnum.text,
-            text: {
-              content: item.content
-            }
-          });
+          if (item.content.substring(0, 9) === '###文件标题: ') {
+            value.push({
+              //@ts-ignore
+              type: 'file',
+              file: {
+                type: ChatFileTypeEnum.file,
+                name: item.content.split('。')[0].substring(9),
+                url: item.content.split('。')[1].substring(10)
+              }
+            });
+          } else {
+            value.push({
+              type: ChatItemValueTypeEnum.text,
+              text: {
+                content: item.content
+              }
+            });
+          }
         } else if (Array.isArray(item.content)) {
           item.content.forEach((item) => {
             if (item.type === 'text') {
-              value.push({
-                type: ChatItemValueTypeEnum.text,
-                text: {
-                  content: item.text
-                }
-              });
+              if (item.text.substring(0, 9) === '###文件标题: ') {
+                value.push({
+                  //@ts-ignore
+                  type: 'file',
+                  file: {
+                    type: ChatFileTypeEnum.file,
+                    name: item.text.split('。')[0].substring(9),
+                    url: item.text.split('。')[1].substring(6)
+                  }
+                });
+              } else {
+                value.push({
+                  type: ChatItemValueTypeEnum.text,
+                  text: {
+                    content: item.text
+                  }
+                });
+              }
             } else if (item.type === 'image_url') {
               value.push({
                 //@ts-ignore

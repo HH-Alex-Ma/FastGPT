@@ -43,6 +43,7 @@ export enum FlowNodeOutputTypeEnum {
 
 export enum FlowNodeTypeEnum {
   userGuide = 'userGuide',
+  // externalData = 'externalData',
   questionInput = 'questionInput',
   historyNode = 'historyNode',
   chatNode = 'chatNode',

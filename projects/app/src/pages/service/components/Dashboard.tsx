@@ -52,7 +52,7 @@ const Dashboard = () => {
     const data = await getTokenList();
     if (data) {
       const tokenChartData = getTokenTableUsageBarDataGroup(data) as any;
-      console.log("tokenChartData", tokenChartData);
+      console.log('tokenChartData', tokenChartData);
       setLogsChart(tokenChartData);
     }
     setLoading(false);
@@ -84,15 +84,17 @@ const Dashboard = () => {
         </Box>
       </Box>
       <Box alignItems={'center'}>
-        <Box sx={{
-          minHeight: '490px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingLeft: '40px',
-          paddingRight: '40px'
-        }}>
+        <Box
+          sx={{
+            minHeight: '490px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingLeft: '40px',
+            paddingRight: '40px'
+          }}
+        >
           <Flex marginBottom="40px" gap="30px">
             <StatisticalLineChartCard
               isLoading={isLoading}
@@ -120,10 +122,14 @@ const Dashboard = () => {
             />
           </Flex>
           <GridItem colSpan={{ base: 12, md: 6, lg: 4 }}>
-            <StatisticalBarChart isLoading={isLoading} chartDatas={statisticalData} title={"模型统计"} />
+            <StatisticalBarChart
+              isLoading={isLoading}
+              chartDatas={statisticalData}
+              title={'模型统计'}
+            />
           </GridItem>
           <GridItem colSpan={{ base: 12, md: 6, lg: 4 }}>
-            <StatisticalBarChart isLoading={isLoading} chartDatas={logsChart} title={"令牌统计"} />
+            <StatisticalBarChart isLoading={isLoading} chartDatas={logsChart} title={'令牌统计'} />
           </GridItem>
         </Box>
       </Box>
@@ -183,11 +189,10 @@ function getBarDataGroup(data: any) {
     stack: 'Ad', // 堆叠的组名，和柱状图相同
     data: lineDataArray, // 折线的数据
     itemStyle: {
-      color: '#4cabce', // 设置折线的颜色为墨蓝色
+      color: '#4cabce' // 设置折线的颜色为墨蓝色
     }
   };
   result.push(lineData);
-
 
   // 检查barDataArray中是否有undefined的元素
   for (let i = 0; i < 7; i++) {
@@ -286,7 +291,6 @@ function getUserDataGroup(users: any) {
   };
 
   return groupedData;
-
 }
 
 function getLineCardOption(lineDataGroup: any[], field: any) {

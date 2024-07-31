@@ -48,8 +48,9 @@ COPY ./projects/$name ./projects/$name
 COPY --from=mainDeps /app/projects/$name/node_modules ./projects/$name/node_modules
 
 RUN [ -z "$proxy" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
 RUN apk add --no-cache libc6-compat && npm install -g pnpm@8.6.0
+# 明确添加缺失的依赖到工作区根目录
+RUN pnpm add @azure-rest/ai-document-intelligence @azure/core-auth @azure/logger -w
 RUN pnpm --filter=$name build
 
 # --------- runner -----------

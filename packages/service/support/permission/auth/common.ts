@@ -14,7 +14,9 @@ export const authCert = async (props: AuthModeType) => {
 
 /* auth the request from local service */
 export const authRequestFromLocal = ({ req }: AuthModeType) => {
-  if (req.headers.host !== SERVICE_LOCAL_HOST) {
+  console.log(`Service Local Host: ${SERVICE_LOCAL_HOST}`);
+  // SERVICE_LOCAL_HOST 包含大写字母，转小写以后再比较
+  if (req.headers.host !== SERVICE_LOCAL_HOST.toLocaleLowerCase()) {
     return Promise.reject('Invalid request');
   }
 };

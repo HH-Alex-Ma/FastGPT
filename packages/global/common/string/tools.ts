@@ -49,7 +49,16 @@ export const replaceSensitiveText = (text: string) => {
 };
 
 export const getNanoid = (size = 12) => {
-  return customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', size)();
+  const firstChar = customAlphabet('abcdefghijklmnopqrstuvwxyz', 1)();
+
+  if (size === 1) return firstChar;
+
+  const randomsStr = customAlphabet(
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
+    size - 1
+  )();
+
+  return `${firstChar}${randomsStr}`;
 };
 
 export const replaceRegChars = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

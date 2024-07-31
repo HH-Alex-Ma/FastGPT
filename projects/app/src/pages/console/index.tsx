@@ -119,19 +119,20 @@ const Login = () => {
             mb={'12px'}
             position="absolute"
             bottom={0}
-            width={["85%", "77%"]}
+            width={['85%', '77%']}
           >
             {t('support.user.login.Policy tip')}
-            <Link
-              ml={1}
-              onClick={onOpen}
-              color={'primary.500'}
-            >
+            <Link ml={1} onClick={onOpen} color={'primary.500'}>
               {t('support.user.login.Terms')}
             </Link>
           </Flex>
 
-          <MyModal isOpen={isOpen} onClose={onClose} iconSrc="modal/concat" title={t('home.Community')}>
+          <MyModal
+            isOpen={isOpen}
+            onClose={onClose}
+            iconSrc="modal/concat"
+            title={t('home.Community')}
+          >
             <ModalBody textAlign={'left'}>
               <Markdown source={disclaimerIntro} />
             </ModalBody>

@@ -1,7 +1,14 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { getMyApps, getModelById, putAppById, replaceAppById, getAppsDetails, getCreatorName } from '@/web/core/app/api';
+import {
+  getMyApps,
+  getModelById,
+  putAppById,
+  replaceAppById,
+  getAppsDetails,
+  getCreatorName
+} from '@/web/core/app/api';
 import { defaultApp } from '@/constants/app';
 import type { AppUpdateParams } from '@fastgpt/global/core/app/api.d';
 import { AppDetailType, AppListDetailType, AppListItemType } from '@fastgpt/global/core/app/type.d';
