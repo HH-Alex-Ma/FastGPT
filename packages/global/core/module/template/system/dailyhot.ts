@@ -4,7 +4,7 @@ import {
   ModuleOutputKeyEnum
 } from '../../constants';
 import { FlowNodeOutputTypeEnum, FlowNodeTypeEnum } from '../../node/constant';
-import { FlowNodeTemplateType } from 'core/module/type';
+import { FlowNodeTemplateType } from '../../type.d';
 import { Input_Template_UserChatInput } from '../input';
 
 export const DailyHotWords: FlowNodeTemplateType = {
