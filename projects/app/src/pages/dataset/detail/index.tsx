@@ -102,7 +102,7 @@ const Detail = ({ datasetId, currentTab }: { datasetId: string; currentTab: `${T
         agentModel: datasetDetail.agentModel.model
       }),
     {
-      refetchInterval: 10000
+      refetchInterval: 30000
     }
   );
   const { vectorTrainingMap, agentTrainingMap } = useMemo(() => {
