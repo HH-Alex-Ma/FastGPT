@@ -14,7 +14,7 @@ import { defaultWhisperConfig } from './constants';
 export const getDefaultAppForm = (): AppSimpleEditFormType => {
   return {
     aiSettings: {
-      model: 'gpt-3.5-turbo-16k',
+      model: 'gpt-4o',
       systemPrompt: '',
       temperature: 0.2,
       isResponseAnswerText: true,

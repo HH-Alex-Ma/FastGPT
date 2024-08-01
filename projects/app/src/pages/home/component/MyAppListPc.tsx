@@ -1,6 +1,24 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon, Input } from '@chakra-ui/react';
-import { StarIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Grid,
+  Flex,
+  IconButton,
+  useDisclosure,
+  Text,
+  Icon,
+  Input,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+  position
+} from '@chakra-ui/react';
+import { StarIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
@@ -148,18 +166,18 @@ const MyAppListPc = ({
             p={'5px'}
             {...(0 === activeAppType
               ? {
+                fontWeight: '600',
+                color: '#447EF2'
+              }
+              : {
+                _hover: {
                   fontWeight: '600',
                   color: '#447EF2'
+                },
+                onClick: () => {
+                  setActiveAppType(0);
                 }
-              : {
-                  _hover: {
-                    fontWeight: '600',
-                    color: '#447EF2'
-                  },
-                  onClick: () => {
-                    setActiveAppType(0);
-                  }
-                })}
+              })}
           >
             {`全部`}
           </Text>
@@ -176,18 +194,18 @@ const MyAppListPc = ({
               p={'5px'}
               {...(item._id === activeAppType
                 ? {
+                  fontWeight: '600',
+                  color: '#447EF2'
+                }
+                : {
+                  _hover: {
                     fontWeight: '600',
                     color: '#447EF2'
+                  },
+                  onClick: () => {
+                    setActiveAppType(item._id);
                   }
-                : {
-                    _hover: {
-                      fontWeight: '600',
-                      color: '#447EF2'
-                    },
-                    onClick: () => {
-                      setActiveAppType(item._id);
-                    }
-                  })}
+                })}
             >
               {item.name}
             </Text>
@@ -386,6 +404,24 @@ const MyAppListPc = ({
           <CreateModal onClose={onCloseCreateModal} onSuccess={() => onRefresh()} />
         )}
       </PageContainer>
+      <Menu>
+        <MenuButton
+          style={{ position: 'absolute', bottom: '100px', right: '15px' }}
+          zIndex={99999}
+          padding={0}
+        >
+          <QuestionOutlineIcon boxSize={8} />
+        </MenuButton>
+        <MenuList
+          padding={1}
+          style={{ position: 'absolute', right: '-10px', top: '-650px' }}
+          zIndex={99999}
+        >
+          <MenuItem padding={0}>
+            <iframe src="https://wechat.hi-wintech.com/web" height={600} width={500}></iframe>
+          </MenuItem>
+        </MenuList>
+      </Menu>
     </>
   );
 };
