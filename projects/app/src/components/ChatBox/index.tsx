@@ -956,19 +956,24 @@ const ChatBox = (
                     >
                       <Flex flexDirection="row" width="100%">
                         {/* 引用 */}
-                        <Flex flexDirection="column" width="50%">
+                        <Flex flexDirection="column" width="100%">
+                          {' '}
+                          {/* 100%因为目前只显示一个引用tag */}
                           <ResponseTags
                             flowResponses={item.responseData}
                             showDetail={!shareId && !teamId}
                           />
                         </Flex>
-                        {/* 外部引用 */}
+                        {/* 外部引用 */}{' '}
+                        {/*暂时不需要外部引用/*}
+                        {/*
                         <Flex flexDirection="column" width="50%">
                           <ExternalReponse
                             flowResponses={item.responseData}
                             showDetail={!shareId && !teamId}
                           />
                         </Flex>
+                        */}
                       </Flex>
                       {/* 外部消息 */}
                       {/*{!statusBoxData && (

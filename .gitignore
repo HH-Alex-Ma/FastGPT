@@ -52,3 +52,4 @@ oneapi/
 pg/
 
 projects/app/logs/
+projects/app/logs/logger.log
