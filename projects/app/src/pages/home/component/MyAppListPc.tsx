@@ -62,6 +62,7 @@ const MyAppListPc = ({
   const [editPerAppIndex, setEditPerAppIndex] = useState<string>();
 
   const { openConfirm, ConfirmModal } = useConfirm({
+    type: 'delete',
     title: '删除提示',
     content: '确认删除该应用所有信息？'
   });
@@ -335,28 +336,6 @@ const MyAppListPc = ({
                         );
                       }}
                     />
-                    {/* {app.isOwner &&
-                      userInfo?.team.canWrite &&
-                      app.appType === AppSortType.PERSON && (
-                        <IconButton
-                          position={'absolute'}
-                          top={3}
-                          right={12}
-                          size={'xsSquare'}
-                          variant={'whiteDanger'}
-                          icon={
-                            <MyIcon name={'common/settingLight'} color={'#718096'} w={'18px'} />
-                          }
-                          aria-label={'setting'}
-                          border={'0'}
-                          _hover={{ bg: '#F7FAF7' }}
-                          boxShadow="none"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/home/detail?appId=${app._id}`);
-                          }}
-                        />
-                      )} */}
                   </Flex>
                   <Box
                     flex={1}
@@ -382,7 +361,7 @@ const MyAppListPc = ({
                     {app.isOwner &&
                       userInfo?.team.canWrite &&
                       app.appType === AppSortType.PERSON && (
-                        <Box className="more" display={['', 'none']}>
+                        <Box className="more" display={['', 'none']} zIndex={9}>
                           <MyMenu
                             Button={
                               <IconButton
@@ -421,20 +400,6 @@ const MyAppListPc = ({
                             ]}
                           ></MyMenu>
                         </Box>
-                        // <>
-                        //   <IconButton
-                        //     className="delete"
-                        //     size={'xsSquare'}
-                        //     variant={'whiteDanger'}
-                        //     icon={<MyIcon name={'delete'} w={'14px'} />}
-                        //     aria-label={'delete'}
-                        //     display={['', 'none']}
-                        //     onClick={(e) => {
-                        //       e.stopPropagation();
-                        //       openConfirm(() => onclickDelApp(app._id))();
-                        //     }}
-                        //   />
-                        // </>
                       )}
                   </Flex>
                 </Box>
