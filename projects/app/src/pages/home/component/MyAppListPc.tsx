@@ -1,5 +1,20 @@
-import React, { useCallback, useState } from 'react';
-import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon, Input } from '@chakra-ui/react';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  Box,
+  Grid,
+  Flex,
+  IconButton,
+  useDisclosure,
+  Text,
+  Icon,
+  Input,
+  Menu,
+  MenuList,
+  MenuItem,
+  useOutsideClick,
+  MenuButton,
+  MenuItemProps
+} from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
@@ -17,6 +32,14 @@ import MySelect from '@fastgpt/web/components/common/MySelect';
 import { useQuery } from '@tanstack/react-query';
 import { getTypes } from '@/web/support/user/api';
 import CreateModal from '@/pages/app/list/component/CreateModal';
+import MyMenu from '@fastgpt/web/components/common/MyMenu';
+import dynamic from 'next/dynamic';
+import {
+  AppDefaultPermissionVal,
+  AppPermissionList
+} from '@fastgpt/global/support/permission/app/constant';
+
+const ConfigPerModal = dynamic(() => import('@/components/support/permission/ConfigPerModal'));
 
 const MyAppListPc = ({
   ownerApps,
@@ -36,6 +59,7 @@ const MyAppListPc = ({
   const { t } = useTranslation();
   const { userInfo } = useUserStore();
   const [searchText, setSearchText] = useState('');
+  const [editPerAppIndex, setEditPerAppIndex] = useState<string>();
 
   const { openConfirm, ConfirmModal } = useConfirm({
     title: '删除提示',
@@ -126,6 +150,13 @@ const MyAppListPc = ({
     );
   };
 
+  const editPerApp = useMemo(
+    () =>
+      editPerAppIndex !== undefined
+        ? myApps().find((item: any) => item._id == editPerAppIndex)
+        : undefined,
+    [editPerAppIndex, myApps]
+  );
   return (
     <>
       <Flex
@@ -235,7 +266,7 @@ const MyAppListPc = ({
           gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
           gridGap={5}
         >
-          {myApps().map((app: any) => (
+          {myApps().map((app: any, index: any) => (
             <MyTooltip key={app._id}>
               <Box
                 lineHeight={1.5}
@@ -254,7 +285,7 @@ const MyAppListPc = ({
                 _hover={{
                   borderColor: 'primary.300',
                   boxShadow: '1.5',
-                  '& .delete': {
+                  '& .more': {
                     display: 'flex'
                   },
                   '& .chat': {
@@ -304,7 +335,7 @@ const MyAppListPc = ({
                         );
                       }}
                     />
-                    {app.isOwner &&
+                    {/* {app.isOwner &&
                       userInfo?.team.canWrite &&
                       app.appType === AppSortType.PERSON && (
                         <IconButton
@@ -325,7 +356,7 @@ const MyAppListPc = ({
                             router.push(`/home/detail?appId=${app._id}`);
                           }}
                         />
-                      )}
+                      )} */}
                   </Flex>
                   <Box
                     flex={1}
@@ -351,20 +382,59 @@ const MyAppListPc = ({
                     {app.isOwner &&
                       userInfo?.team.canWrite &&
                       app.appType === AppSortType.PERSON && (
-                        <>
-                          <IconButton
-                            className="delete"
-                            size={'xsSquare'}
-                            variant={'whiteDanger'}
-                            icon={<MyIcon name={'delete'} w={'14px'} />}
-                            aria-label={'delete'}
-                            display={['', 'none']}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openConfirm(() => onclickDelApp(app._id))();
-                            }}
-                          />
-                        </>
+                        <Box className="more" display={['', 'none']}>
+                          <MyMenu
+                            Button={
+                              <IconButton
+                                size={'xsSquare'}
+                                variant={'transparentBase'}
+                                icon={<MyIcon name={'more'} w={'0.875rem'} color={'myGray.500'} />}
+                                aria-label={''}
+                              />
+                            }
+                            menuList={[
+                              {
+                                children: [
+                                  {
+                                    icon: 'support/team/key',
+                                    label: t('common:common.Permission'),
+                                    onClick: () => setEditPerAppIndex(app._id)
+                                  },
+                                  {
+                                    type: 'primary' as 'primary',
+                                    icon: 'common/settingLight',
+                                    label: t('common:common.Setting'),
+                                    onClick: () => router.push(`/home/detail?appId=${app._id}`)
+                                  }
+                                ]
+                              },
+                              {
+                                children: [
+                                  {
+                                    type: 'danger' as 'danger',
+                                    icon: 'delete',
+                                    label: t('common:common.Delete'),
+                                    onClick: () => openConfirm(() => onclickDelApp(app._id))()
+                                  }
+                                ]
+                              }
+                            ]}
+                          ></MyMenu>
+                        </Box>
+                        // <>
+                        //   <IconButton
+                        //     className="delete"
+                        //     size={'xsSquare'}
+                        //     variant={'whiteDanger'}
+                        //     icon={<MyIcon name={'delete'} w={'14px'} />}
+                        //     aria-label={'delete'}
+                        //     display={['', 'none']}
+                        //     onClick={(e) => {
+                        //       e.stopPropagation();
+                        //       openConfirm(() => onclickDelApp(app._id))();
+                        //     }}
+                        //   />
+                        // </>
                       )}
                   </Flex>
                 </Box>
@@ -384,6 +454,41 @@ const MyAppListPc = ({
         <ConfirmModal />
         {isOpenCreateModal && (
           <CreateModal onClose={onCloseCreateModal} onSuccess={() => onRefresh()} />
+        )}
+        {!!editPerApp && (
+          <ConfigPerModal
+            // refetchResource={loadMyApps}
+            // hasParent={Boolean(parentId)}
+            // resumeInheritPermission={onResumeInheritPermission}
+            isInheritPermission={editPerApp.inheritPermission}
+            avatar={editPerApp.avatar}
+            name={editPerApp.name}
+            defaultPer={{
+              value: editPerApp.defaultPermission,
+              // defaultValue: AppDefaultPermissionVal,
+              defaultValue: 0,
+              onChange: (e: any) => {
+                return getTypes();
+              }
+            }}
+            managePer={{
+              permission: editPerApp.permission,
+              onGetCollaboratorList: () => getTypes() as any,
+              permissionList: AppPermissionList,
+              onUpdateCollaborators: ({
+                tmbIds,
+                permission
+              }: {
+                tmbIds: string[];
+                permission: number;
+              }) => {
+                return null;
+              },
+              onDelOneCollaborator: (tmbId: string) => getTypes(),
+              refreshDeps: [editPerApp.inheritPermission]
+            }}
+            onClose={() => setEditPerAppIndex(undefined)}
+          />
         )}
       </PageContainer>
     </>
