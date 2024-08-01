@@ -227,6 +227,25 @@ const Navbar = ({ unread }: { unread: number }) => {
           </Link>
         </MyTooltip>
       )}
+      <MyTooltip placement={'right-end'}>
+        <Link
+          as={NextLink}
+          href="/home"
+          target={'_blank'}
+          {...itemStyles}
+          _hover={{
+            bg: 'rgba(255,255,255,0.9)'
+          }}
+          mt={0}
+          mb={5}
+          color={'myGray.500'}
+        >
+          <MyIcon name={'common/viewLight'} width={'26px'} height={'26px'} />
+          <Box fontSize={'12px'} transform={'scale(0.9)'} mt={'5px'} lineHeight={1}>
+            {'访问前台'}
+          </Box>
+        </Link>
+      </MyTooltip>
     </Flex>
   );
 };
