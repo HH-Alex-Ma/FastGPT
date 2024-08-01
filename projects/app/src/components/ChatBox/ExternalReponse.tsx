@@ -68,15 +68,13 @@ const ExternalReponse = ({
 
     const chatData = flatResponse.find(isLLMNode);
 
-    const quoteList = (
-      flatResponse
-        .filter((item) => item.moduleType === FlowNodeTypeEnum.datasetSearchNode)
-        .map((item) => item.quoteList)
-        .flat()
-        .filter(Boolean) as SearchDataResponseItemType[]
-    )
-      //只选取外部知识库引用内容
-      .filter((item) => item.datasetId === '6673a1c14c1a375bf275ee7a');
+    const quoteList = flatResponse
+      .filter((item) => item.moduleType === FlowNodeTypeEnum.datasetSearchNode)
+      .map((item) => item.quoteList)
+      .flat()
+      .filter(Boolean) as SearchDataResponseItemType[];
+    //只选取外部知识库引用内容
+    //.filter((item) => item.datasetId === '6673a1c14c1a375bf275ee7a');
 
     const quoteLink: string[][] = quoteList.map((item) => {
       const linesArray = item.q.split('\n');
