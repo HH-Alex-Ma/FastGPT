@@ -17,7 +17,7 @@ type StreamFetchProps = {
   url?: string;
   data: Record<string, any>;
   onMessage: StartChatFnProps['generatingMessage'];
-  abortSignal: AbortController;
+  abortCtrl: AbortController;
 };
 type StreamResponseType = {
   responseText: string;
@@ -29,11 +29,11 @@ export const streamFetch = ({
   url = '/api/v1/chat/completions',
   data,
   onMessage,
-  abortSignal
+  abortCtrl
 }: StreamFetchProps) =>
   new Promise<StreamResponseType>(async (resolve, reject) => {
     const timeoutId = setTimeout(() => {
-      abortSignal.abort('Time out');
+      abortCtrl.abort('Time out');
     }, 60000);
 
     // response data
@@ -74,7 +74,7 @@ export const streamFetch = ({
     // animate response to make it looks smooth
     function animateResponseText() {
       // abort message
-      if (abortSignal.signal.aborted) {
+      if (abortCtrl.signal.aborted) {
         responseQueue.forEach((item) => {
           onMessage(item);
           if (isAnswerEvent(item.event)) {
@@ -117,7 +117,7 @@ export const streamFetch = ({
           'Content-Type': 'application/json',
           token: getToken()
         },
-        signal: abortSignal.signal,
+        signal: abortCtrl.signal,
         body: JSON.stringify({
           ...data,
           variables,
@@ -220,7 +220,7 @@ export const streamFetch = ({
     } catch (err: any) {
       clearTimeout(timeoutId);
 
-      if (abortSignal.signal.aborted) {
+      if (abortCtrl.signal.aborted) {
         finished = true;
 
         return;
