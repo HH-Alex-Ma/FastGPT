@@ -20,15 +20,18 @@ export const dispatchDailyHotWords = async (
   //哔哩哔哩热榜，知乎、IT资讯、虎嗅网、人人都是产品经理热榜百度、抖音热点豆瓣小组精选等聚合热榜
   // weibo, toutiao, zhihu-daily, hupu, 36kr, bilibili, zhihu, huxiu, douyin, douban-group
   // ithome
+  console.log('dispatchDailyHotWords');
   const port = 9527;
   const fetchNo = 3;
   const server = serveHotApi(port) as ServerType | undefined;
+  console.log('server is running');
   const fetchlist = ['weibo', 'toutiao', 'bilibili', 'zhihu', 'baidu', 'douyin'];
   //const fetchlist = ['weibo', 'toutiao'];
   const result = [];
   for (const key of fetchlist) {
     try {
       const res = await axios.get(`http://localhost:${port}/${key}`);
+      console.log(`got res from ${key}`);
       const words = [];
       for (let i = 0; i < fetchNo; i++) {
         words.push(res.data.data[i].title);
@@ -38,7 +41,7 @@ export const dispatchDailyHotWords = async (
         hotwords: words
       });
     } catch (error) {
-      console.log('error', error);
+      console.log('DHW error', error);
       continue;
     }
   }
