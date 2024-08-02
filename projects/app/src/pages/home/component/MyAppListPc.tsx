@@ -166,18 +166,18 @@ const MyAppListPc = ({
             p={'5px'}
             {...(0 === activeAppType
               ? {
+                fontWeight: '600',
+                color: '#447EF2'
+              }
+              : {
+                _hover: {
                   fontWeight: '600',
                   color: '#447EF2'
+                },
+                onClick: () => {
+                  setActiveAppType(0);
                 }
-              : {
-                  _hover: {
-                    fontWeight: '600',
-                    color: '#447EF2'
-                  },
-                  onClick: () => {
-                    setActiveAppType(0);
-                  }
-                })}
+              })}
           >
             {`全部`}
           </Text>
@@ -194,18 +194,18 @@ const MyAppListPc = ({
               p={'5px'}
               {...(item._id === activeAppType
                 ? {
+                  fontWeight: '600',
+                  color: '#447EF2'
+                }
+                : {
+                  _hover: {
                     fontWeight: '600',
                     color: '#447EF2'
+                  },
+                  onClick: () => {
+                    setActiveAppType(item._id);
                   }
-                : {
-                    _hover: {
-                      fontWeight: '600',
-                      color: '#447EF2'
-                    },
-                    onClick: () => {
-                      setActiveAppType(item._id);
-                    }
-                  })}
+                })}
             >
               {item.name}
             </Text>
@@ -418,7 +418,7 @@ const MyAppListPc = ({
           zIndex={99999}
         >
           <MenuItem padding={0}>
-            <iframe src="http://wechat.hi-wintech.com:8888/web" height={600} width={500}></iframe>
+            <iframe src="https://wechat.hi-wintech.com/web" height={600} width={500}></iframe>
           </MenuItem>
         </MenuList>
       </Menu>

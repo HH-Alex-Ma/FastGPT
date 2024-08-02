@@ -10,6 +10,7 @@ const unAuthPage: { [key: string]: boolean } = {
   '/login/auth': true,
   '/login/oauth': true,
   '/login/ding': true,
+  '/login/ad': true,
   '/login/provider': true,
   '/login/fastlogin': true,
   '/console': true,
