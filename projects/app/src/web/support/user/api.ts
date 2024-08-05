@@ -169,8 +169,8 @@ export const updateType = ({ id, name, desc }: { id: string; name: string; desc:
   PUT('/support/type/update', { id, name, desc });
 export const delTypeById = (id: string) => DELETE(`/support/type/delete`, { id });
 
-export const getOwnerApps = (id: any, tmbId: any) =>
-  GET(`/support/user/account/ownerApps/getApps`, { id, tmbId });
+// export const getOwnerApps = (id: any, tmbId: any) =>
+//   GET(`/support/user/account/ownerApps/getApps`, { id, tmbId });
 
 export const setAppCollect = (tmbId: any, apps: string, type: number) =>
   POST(`/support/user/account/collect/addCollect`, { tmbId, apps, type });

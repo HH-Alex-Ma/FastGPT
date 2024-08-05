@@ -45,7 +45,8 @@ export enum ModelType {
 }
 export enum AppSortType {
   COMPANY = 'Company',
-  PERSON = 'Person'
+  PERSON = 'Person',
+  SHARE = 'SHARE'
 }
 
 export enum PerResourceTypeEnum {

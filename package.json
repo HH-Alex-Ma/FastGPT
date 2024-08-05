@@ -37,6 +37,6 @@
     "markmap-render": "^0.17.0",
     "markmap-toolbar": "^0.17.0",
     "markmap-view": "^0.17.0",
-    "use-context-selector": "^2.0.0"
+    "use-context-selector": "^1.4.4"
   }
 }

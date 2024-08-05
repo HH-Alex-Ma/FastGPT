@@ -18,7 +18,7 @@ import {
   IconButton
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { getMyApps } from '@/web/core/app/api';
+import { getCompanyApps } from '@/web/core/app/api';
 import { getRoles, addRole, updateRole, delRoleById } from '@/web/support/user/api';
 import { useQuery } from '@tanstack/react-query';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
@@ -283,7 +283,9 @@ function EditModal({
     onSuccess: onEdit
   });
 
-  const { data: myApps = [], isLoading: isGetting } = useQuery(['getMyApps'], () => getMyApps());
+  const { data: myApps = [], isLoading: isGetting } = useQuery(['getCompanyApps'], () =>
+    getCompanyApps()
+  );
   return (
     <MyModal isOpen={true} iconSrc="/imgs/modal/key.svg" title={isEdit ? '编辑角色' : '创建角色'}>
       <ModalBody style={{ maxHeight: '70vh', minHeight: '50vh' }}>

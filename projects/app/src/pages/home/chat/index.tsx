@@ -37,7 +37,7 @@ import { checkChatSupportSelectFileByChatModels } from '@/web/core/chat/utils';
 import { getChatTitleFromChatMessage } from '@fastgpt/global/core/chat/utils';
 import { ChatStatusEnum } from '@fastgpt/global/core/chat/constants';
 import { GPTMessages2Chats } from '@fastgpt/global/core/chat/adapt';
-import { getOwnerApps } from '@/web/support/user/api';
+// import { getOwnerApps } from '@/web/support/user/api';
 import { ImageFetch } from '@/web/common/api/imageFetch';
 
 const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
@@ -248,9 +248,9 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
 
   useQuery(['loadHistories', appId], () => (appId ? loadHistories({ appId }) : null));
 
-  const { data: ownerApps = [] as any, isLoading: isGetting } = useQuery(['getOwnerApps'], () =>
-    getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
-  );
+  // const { data: ownerApps = [] as any, isLoading: isGetting } = useQuery(['getOwnerApps'], () =>
+  //   getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
+  // );
   return (
     <Flex h={'100%'}>
       <Head>
@@ -293,7 +293,8 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
           })(
             <ChatHistorySlider
               //侧边栏应用数据过滤
-              apps={myApps.filter((app: any) => ownerApps.includes(app._id))}
+              // apps={myApps.filter((app: any) => ownerApps.includes(app._id))}
+              apps={myApps}
               confirmClearText={t('core.chat.Confirm to clear history')}
               appId={appId}
               appName={chatData.app.name}

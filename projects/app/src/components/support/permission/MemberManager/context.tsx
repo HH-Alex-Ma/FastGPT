@@ -12,9 +12,7 @@ import dynamic from 'next/dynamic';
 
 import MemberListCard, { MemberListCardProps } from './MemberListCard';
 import { useRequest2 } from '@fastgpt/web/hooks/useRequest';
-import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
-import { useI18n } from '@/web/context/I18n';
 const AddMemberModal = dynamic(() => import('./AddMemberModal'));
 const ManageModal = dynamic(() => import('./ManageModal'));
 
@@ -70,14 +68,10 @@ const CollaboratorContextProvider = ({
   onDelOneCollaborator,
   children,
   refetchResource,
-  refreshDeps = [],
-  isInheritPermission,
-  hasParent
+  refreshDeps = []
 }: MemberManagerInputPropsType & {
   children: (props: ChildrenProps) => ReactNode;
   refetchResource?: () => void;
-  isInheritPermission?: boolean;
-  hasParent?: boolean;
 }) => {
   const onUpdateCollaboratorsThen = async (props: UpdateClbPermissionProps) => {
     await onUpdateCollaborators(props);
@@ -88,19 +82,13 @@ const CollaboratorContextProvider = ({
     refetchCollaboratorList();
   };
 
-  const { feConfigs } = useSystemStore();
-  const { commonT } = useI18n();
-
   const {
     data: collaboratorList = [],
     runAsync: refetchCollaboratorList,
     loading: isFetchingCollaborator
   } = useRequest2(
     async () => {
-      if (feConfigs.isPlus) {
-        return onGetCollaboratorList();
-      }
-      return [];
+      return onGetCollaboratorList();
     },
     {
       manual: false,
@@ -159,30 +147,10 @@ const CollaboratorContextProvider = ({
   };
 
   const onOpenAddMemberModal = () => {
-    if (isInheritPermission && hasParent) {
-      openConfirm(
-        () => {
-          onOpenAddMember();
-        },
-        undefined,
-        commonT('permission.Remove InheritPermission Confirm')
-      )();
-    } else {
-      onOpenAddMember();
-    }
+    onOpenAddMember();
   };
   const onOpenManageModalModal = () => {
-    if (isInheritPermission && hasParent) {
-      openConfirm(
-        () => {
-          onOpenManageModal();
-        },
-        undefined,
-        commonT('permission.Remove InheritPermission Confirm')
-      )();
-    } else {
-      onOpenManageModal();
-    }
+    onOpenManageModal();
   };
   return (
     <CollaboratorContext.Provider value={contextValue}>

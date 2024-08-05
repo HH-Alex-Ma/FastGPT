@@ -1,20 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  Box,
-  Grid,
-  Flex,
-  IconButton,
-  useDisclosure,
-  Text,
-  Icon,
-  Input,
-  Menu,
-  MenuList,
-  MenuItem,
-  useOutsideClick,
-  MenuButton,
-  MenuItemProps
-} from '@chakra-ui/react';
+import { Box, Grid, Flex, IconButton, useDisclosure, Text, Input } from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
@@ -34,10 +19,12 @@ import { getTypes } from '@/web/support/user/api';
 import CreateModal from '@/pages/app/list/component/CreateModal';
 import MyMenu from '@fastgpt/web/components/common/MyMenu';
 import dynamic from 'next/dynamic';
+import { AppPermissionList } from '@fastgpt/global/support/permission/app/constant';
 import {
-  AppDefaultPermissionVal,
-  AppPermissionList
-} from '@fastgpt/global/support/permission/app/constant';
+  deleteAppCollaborators,
+  getCollaboratorList,
+  postUpdateAppCollaborators
+} from '@/web/core/app/api/collaborator';
 
 const ConfigPerModal = dynamic(() => import('@/components/support/permission/ConfigPerModal'));
 
@@ -62,7 +49,6 @@ const MyAppListPc = ({
   const [editPerAppIndex, setEditPerAppIndex] = useState<string>();
 
   const { openConfirm, ConfirmModal } = useConfirm({
-    type: 'delete',
     title: '删除提示',
     content: '确认删除该应用所有信息？'
   });
@@ -130,11 +116,11 @@ const MyAppListPc = ({
     {
       id: 3,
       name: '个人应用'
+    },
+    {
+      id: 4,
+      name: '团队分享'
     }
-    // {
-    //   id: 4,
-    //   name: '我收藏的'
-    // }
   ];
   const myApps = () => {
     return ownerApps.filter(
@@ -147,7 +133,9 @@ const MyAppListPc = ({
             ? item.appType == AppSortType.COMPANY
             : mySelectType == 3
               ? item.appType == AppSortType.PERSON
-              : collects && collects.includes(item._id))
+              : mySelectType == 4
+                ? item.appType == AppSortType.SHARE
+                : collects && collects.includes(item._id))
     );
   };
 
@@ -356,7 +344,11 @@ const MyAppListPc = ({
                   </Box>
                   <Flex justifyContent="space-between" h={'15px'} mt={'20px'} alignItems={'center'}>
                     <Text color={'myGray.600'} fontSize={'12px'}>
-                      {app.appType === AppSortType.PERSON ? '个人应用' : '企业应用'}
+                      {app.appType === AppSortType.PERSON
+                        ? '个人应用'
+                        : app.appType === AppSortType.SHARE
+                          ? '团队分享'
+                          : '企业应用'}
                     </Text>
                     {app.isOwner &&
                       userInfo?.team.canWrite &&
@@ -422,24 +414,13 @@ const MyAppListPc = ({
         )}
         {!!editPerApp && (
           <ConfigPerModal
-            // refetchResource={loadMyApps}
-            // hasParent={Boolean(parentId)}
-            // resumeInheritPermission={onResumeInheritPermission}
-            isInheritPermission={editPerApp.inheritPermission}
+            refetchResource={() => onRefresh()}
             avatar={editPerApp.avatar}
             name={editPerApp.name}
-            defaultPer={{
-              value: editPerApp.defaultPermission,
-              // defaultValue: AppDefaultPermissionVal,
-              defaultValue: 0,
-              onChange: (e: any) => {
-                return getTypes();
-              }
-            }}
             managePer={{
               permission: editPerApp.permission,
-              onGetCollaboratorList: () => getTypes() as any,
               permissionList: AppPermissionList,
+              onGetCollaboratorList: () => getCollaboratorList(editPerApp._id),
               onUpdateCollaborators: ({
                 tmbIds,
                 permission
@@ -447,9 +428,17 @@ const MyAppListPc = ({
                 tmbIds: string[];
                 permission: number;
               }) => {
-                return null;
+                return postUpdateAppCollaborators({
+                  tmbIds,
+                  permission,
+                  appId: editPerApp._id
+                });
               },
-              onDelOneCollaborator: (tmbId: string) => getTypes(),
+              onDelOneCollaborator: (tmbId: string) =>
+                deleteAppCollaborators({
+                  appId: editPerApp._id,
+                  delTmbId: tmbId
+                }),
               refreshDeps: [editPerApp.inheritPermission]
             }}
             onClose={() => setEditPerAppIndex(undefined)}

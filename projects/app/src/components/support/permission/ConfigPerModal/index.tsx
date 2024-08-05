@@ -1,47 +1,27 @@
 import React from 'react';
 import MyModal from '@fastgpt/web/components/common/MyModal';
 import { useTranslation } from 'next-i18next';
-import { PermissionValueType } from '@fastgpt/global/support/permission/type';
 import CollaboratorContextProvider, { MemberManagerInputPropsType } from '../MemberManager/context';
 import { Box, Button, Flex, HStack, ModalBody } from '@chakra-ui/react';
 import Avatar from '@fastgpt/web/components/common/Avatar';
-import DefaultPermissionList from '../DefaultPerList';
 import MyIcon from '@fastgpt/web/components/common/Icon';
-import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
-import { useI18n } from '@/web/context/I18n';
-import ResumeInherit from '../ResumeInheritText';
-
 export type ConfigPerModalProps = {
   avatar?: string;
   name: string;
-
-  defaultPer: {
-    value: PermissionValueType;
-    defaultValue: PermissionValueType;
-    onChange: (v: PermissionValueType) => Promise<any>;
-  };
   managePer: MemberManagerInputPropsType;
-  isInheritPermission?: boolean;
-  resumeInheritPermission?: () => void;
-  hasParent?: boolean;
   refetchResource?: () => void;
 };
 
 const ConfigPerModal = ({
   avatar,
   name,
-  defaultPer,
   managePer,
-  isInheritPermission,
-  resumeInheritPermission,
-  hasParent,
   onClose,
   refetchResource
 }: ConfigPerModalProps & {
   onClose: () => void;
 }) => {
   const { t } = useTranslation();
-
   return (
     <>
       <MyModal
@@ -55,29 +35,8 @@ const ConfigPerModal = ({
             <Avatar src={avatar} w={'1.75rem'} borderRadius={'md'} />
             <Box>{name}</Box>
           </HStack>
-          {!isInheritPermission && (
-            <Box mt={3}>
-              <ResumeInherit onResume={resumeInheritPermission} />
-            </Box>
-          )}
-          <Box mt={5}>
-            <Box fontSize={'sm'}>{t('common:permission.Default permission')}</Box>
-            <DefaultPermissionList
-              mt="1"
-              per={defaultPer.value}
-              defaultPer={defaultPer.defaultValue}
-              isInheritPermission={isInheritPermission}
-              onChange={(v) => defaultPer.onChange(v)}
-              hasParent={hasParent}
-            />
-          </Box>
           <Box mt={4}>
-            <CollaboratorContextProvider
-              {...managePer}
-              refetchResource={refetchResource}
-              isInheritPermission={isInheritPermission}
-              hasParent={hasParent}
-            >
+            <CollaboratorContextProvider {...managePer} refetchResource={refetchResource}>
               {({ MemberListCard, onOpenManageModal, onOpenAddMember }) => {
                 return (
                   <>

@@ -7,22 +7,21 @@ import {
   Thead,
   Tr,
   Td,
-  Box,
-  Flex
+  Flex,
+  IconButton
 } from '@chakra-ui/react';
 import MyModal from '@fastgpt/web/components/common/MyModal';
 import React from 'react';
 import { useContextSelector } from 'use-context-selector';
-import PermissionSelect from './PermissionSelect';
-import PermissionTags from './PermissionTags';
 import Avatar from '@fastgpt/web/components/common/Avatar';
 import { CollaboratorContext } from './context';
 import MyIcon from '@fastgpt/web/components/common/Icon';
-import { useRequest, useRequest2 } from '@fastgpt/web/hooks/useRequest';
-import { PermissionValueType } from '@fastgpt/global/support/permission/type';
+import { useRequest2 } from '@fastgpt/web/hooks/useRequest';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import EmptyTip from '@fastgpt/web/components/common/EmptyTip';
 import Loading from '@fastgpt/web/components/common/MyLoading';
+import MyMenu from '@fastgpt/web/components/common/MyMenu';
+import { useTranslation } from 'next-i18next';
 
 export type ManageModalProps = {
   onClose: () => void;
@@ -30,6 +29,7 @@ export type ManageModalProps = {
 
 function ManageModal({ onClose }: ManageModalProps) {
   const { userInfo } = useUserStore();
+  const { t } = useTranslation();
   const { permission, collaboratorList, onUpdateCollaborators, onDelOneCollaborator } =
     useContextSelector(CollaboratorContext, (v) => v);
 
@@ -37,18 +37,7 @@ function ManageModal({ onClose }: ManageModalProps) {
     onDelOneCollaborator(tmbId)
   );
 
-  const { mutate: onUpdate, isLoading: isUpdating } = useRequest({
-    mutationFn: ({ tmbId, per }: { tmbId: string; per: PermissionValueType }) => {
-      return onUpdateCollaborators({
-        tmbIds: [tmbId],
-        permission: per
-      });
-    },
-    successToast: '更新成功',
-    errorToast: 'Error'
-  });
-
-  const loading = isDeleting || isUpdating;
+  const loading = isDeleting;
 
   return (
     <MyModal isOpen onClose={onClose} minW="600px" title="管理协作者" iconSrc="common/settingLight">
@@ -58,7 +47,6 @@ function ManageModal({ onClose }: ManageModalProps) {
             <Thead bg="myGray.100">
               <Tr>
                 <Th border="none">名称</Th>
-                <Th border="none">权限</Th>
                 <Th border="none" w={'40px'}>
                   操作
                 </Th>
@@ -77,32 +65,34 @@ function ManageModal({ onClose }: ManageModalProps) {
                     <Td border="none">
                       <Flex alignItems="center">
                         <Avatar src={item.avatar} w="24px" mr={2} />
-                        {item.name}
+                        {item.memberName}
                       </Flex>
                     </Td>
                     <Td border="none">
-                      <PermissionTags permission={item.permission.value} />
-                    </Td>
-                    <Td border="none">
-                      {/* Not self; Not owner and other manager */}
-                      {item.tmbId !== userInfo?.team?.tmbId &&
-                        (permission.isOwner || !item.permission.hasManagePer) && (
-                          <PermissionSelect
-                            Button={
+                      <MyMenu
+                        Button={
+                          <IconButton
+                            size={'xsSquare'}
+                            variant={'transparentBase'}
+                            icon={
                               <MyIcon name={'edit'} w={'16px'} _hover={{ color: 'primary.600' }} />
                             }
-                            value={item.permission.value}
-                            onChange={(per) => {
-                              onUpdate({
-                                tmbId: item.tmbId,
-                                per
-                              });
-                            }}
-                            onDelete={() => {
-                              onDelete(item.tmbId);
-                            }}
+                            aria-label={''}
                           />
-                        )}
+                        }
+                        menuList={[
+                          {
+                            children: [
+                              {
+                                type: 'danger' as 'danger',
+                                icon: 'delete',
+                                label: t('common:common.Delete'),
+                                onClick: () => onDelete(item.tmbId)
+                              }
+                            ]
+                          }
+                        ]}
+                      ></MyMenu>
                     </Td>
                   </Tr>
                 );

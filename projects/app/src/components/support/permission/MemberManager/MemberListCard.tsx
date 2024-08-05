@@ -1,6 +1,6 @@
 import { Box, BoxProps, Flex } from '@chakra-ui/react';
 import MyBox from '@fastgpt/web/components/common/MyBox';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useContextSelector } from 'use-context-selector';
 import { CollaboratorContext } from './context';
 import Tag, { TagProps } from '@fastgpt/web/components/common/Tag';
@@ -30,7 +30,7 @@ const MemberListCard = ({ tagStyle, ...props }: MemberListCardProps) => {
               <Tag key={member.tmbId} type={'fill'} colorSchema="white" {...tagStyle}>
                 <Avatar src={member.avatar} w="1.25rem" />
                 <Box fontSize={'sm'} ml={1}>
-                  {member.name}
+                  {member.memberName}
                 </Box>
               </Tag>
             );

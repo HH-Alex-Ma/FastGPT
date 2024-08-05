@@ -15,6 +15,8 @@ import { UserType } from '@fastgpt/global/support/user/type';
  */
 export const getMyApps = () => GET<AppListItemType[]>('/core/app/list');
 
+export const getCompanyApps = () => GET<AppListItemType[]>('/core/app/company/list');
+
 /**
  * 获取模型详细信息
  */
@@ -75,3 +77,11 @@ export const getAppTotalUsage = (data: { appId: string }) =>
 
 // =================== chat logs
 export const getAppChatLogs = (data: GetAppChatLogsParams) => POST(`/core/app/getChatLogs`, data);
+
+/**
+ * 根据 ID 删除模型
+ */
+export const delAppById = (id: string) => DELETE(`/core/app/del?appId=${id}`);
+
+export const resumeInheritPer = (appId: string) =>
+  GET(`/core/app/resumeInheritPermission`, { appId });

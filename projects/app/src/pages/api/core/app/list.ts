@@ -2,9 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { connectToDatabase } from '@/service/mongo';
 import { MongoApp } from '@fastgpt/service/core/app/schema';
-import { mongoRPermission } from '@fastgpt/global/support/permission/utils';
 import { AppListItemType } from '@fastgpt/global/core/app/type';
 import { authUserRole } from '@fastgpt/service/support/permission/auth/user';
+import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
+import { MongoUser } from '@fastgpt/service/support/user/schema';
+import { MongoRole } from '@fastgpt/service/support/user/role/schema';
+import { MongoCollaborator } from '@fastgpt/service/support/user/collaborator/schema';
+import type { CollaboratorModelSchema } from '@fastgpt/global/support/user/type';
+import { AppSortType } from '@fastgpt/global/support/permission/constant';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
@@ -12,15 +17,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // 凭证校验
     const { teamId, tmbId, teamOwner, role } = await authUserRole({ req, authToken: true });
 
-    // 根据 userId 获取模型信息
-    const myApps = await MongoApp.find(
-      { ...mongoRPermission({ teamId, tmbId, role }) },
-      '_id avatar name intro tmbId permission isShow appShowType appType'
-    ).sort({
-      updateTime: -1
+    let myApps: string[] = [];
+    const mebResult = await MongoTeamMember.findOne({ _id: tmbId });
+
+    const userInfo = await MongoUser.findOne({ _id: mebResult?.userId });
+
+    if (userInfo && userInfo.roleId && userInfo.roleId != '') {
+      const roleInfo = await MongoRole.findOne({ _id: userInfo.roleId });
+      roleInfo?.apps.map((app: any) => myApps.push(app.value));
+    }
+
+    const collaborators = await MongoCollaborator.find();
+    const myCollaborators = getCollaboratorList(collaborators, tmbId);
+    const apps = await MongoApp.find({
+      $or: [{ tmbId: tmbId }, { _id: { $in: mergeUnique(myApps, myCollaborators) } }]
     });
+
     jsonRes<AppListItemType[]>(res, {
-      data: myApps.map((app) => ({
+      message: myCollaborators.toString(),
+      data: apps.map((app) => ({
         _id: app._id,
         avatar: app.avatar,
         name: app.name,
@@ -29,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         permission: app.permission,
         isShow: app.isShow,
         appShowType: app.appShowType,
-        appType: app.appType
+        appType: myCollaborators.includes(String(app._id)) ? AppSortType.SHARE : app.appType
       }))
     });
   } catch (err) {
@@ -38,4 +53,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       error: err
     });
   }
+}
+
+function getCollaboratorList(collaborators: CollaboratorModelSchema[], tmbId: string) {
+  let myCollaborators: string[] = [];
+  for (let element of collaborators) {
+    if (element.tmbIds.includes(tmbId)) {
+      myCollaborators.push(element.appId);
+    }
+  }
+  return myCollaborators;
+}
+
+function mergeUnique<T>(arr1: T[], arr2: T[]): T[] {
+  return [...arr1, ...arr2].filter((item, index, self) => self.indexOf(item) === index);
 }

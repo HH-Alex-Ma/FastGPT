@@ -16,8 +16,6 @@ import MyIcon from '@fastgpt/web/components/common/Icon';
 import { useContextSelector } from 'use-context-selector';
 import MyAvatar from '@fastgpt/web/components/common/Avatar';
 import { useMemo, useState } from 'react';
-import PermissionSelect from './PermissionSelect';
-import PermissionTags from './PermissionTags';
 import { CollaboratorContext } from './context';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { getTeamMembers } from '@/web/support/user/team/api';
@@ -26,6 +24,8 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import Avatar from '@fastgpt/web/components/common/Avatar';
 import { useRequest, useRequest2 } from '@fastgpt/web/hooks/useRequest';
 import { useTranslation } from 'next-i18next';
+import { TeamMemberItemType } from '@fastgpt/global/support/user/team/type';
+import Tag from '@fastgpt/web/components/common/Tag';
 
 export type AddModalPropsType = {
   onClose: () => void;
@@ -37,11 +37,12 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
 
   const { permissionList, collaboratorList, onUpdateCollaborators, getPerLabelList } =
     useContextSelector(CollaboratorContext, (v: any) => v);
+
   const [searchText, setSearchText] = useState<string>('');
   const { data: members = [], loading: loadingMembers } = useRequest2(
     async () => {
       if (!userInfo?.team?.teamId) return [];
-      const members = await getTeamMembers(userInfo?.team?.teamId);
+      const members = await getTeamMembers();
       return members;
     },
     {
@@ -50,25 +51,21 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
     }
   );
   const filterMembers = useMemo(() => {
-    return members.filter((item: any) => {
-      // if (item.permission.isOwner) return false;
+    return members.filter((item: TeamMemberItemType) => {
       if (item.tmbId === userInfo?.team?.tmbId) return false;
       if (!searchText) return true;
-      return item.memberName.includes(searchText);
+      return (
+        item.memberName != undefined &&
+        item.memberName.toLocaleLowerCase().includes(searchText.toLocaleLowerCase())
+      );
     });
   }, [members, searchText, userInfo?.team?.tmbId]);
 
   const [selectedMemberIdList, setSelectedMembers] = useState<string[]>([]);
-  const [selectedPermission, setSelectedPermission] = useState(permissionList['read'].value);
-  const perLabel = useMemo(() => {
-    return getPerLabelList(selectedPermission).join('、');
-  }, [getPerLabelList, selectedPermission]);
-
   const { mutate: onConfirm, isLoading: isUpdating } = useRequest({
     mutationFn: () => {
       return onUpdateCollaborators({
-        tmbIds: selectedMemberIdList,
-        permission: selectedPermission
+        tmbIds: selectedMemberIdList
       });
     },
     successToast: t('common:common.Add Success'),
@@ -108,7 +105,7 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
                 onChange={(e) => setSearchText(e.target.value)}
               />
             </InputGroup>
-            <Flex flexDirection="column" mt="2">
+            <Flex flexDirection="column" mt="2" maxH={'50vh'} overflow={'scroll'}>
               {filterMembers.map((member: any) => {
                 const onChange = () => {
                   if (selectedMemberIdList.includes(member.tmbId)) {
@@ -147,7 +144,19 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
                         <Box ml="2">{member.memberName}</Box>
                       </Flex>
                       {!!collaborator && (
-                        <PermissionTags permission={collaborator.permission.value} />
+                        <Flex gap="2" alignItems="center">
+                          <Tag
+                            mixBlendMode={'multiply'}
+                            key={member.tmbId}
+                            colorSchema="blue"
+                            border="none"
+                            py={2}
+                            px={3}
+                            fontSize={'xs'}
+                          >
+                            {'已分享'}
+                          </Tag>
+                        </Flex>
                       )}
                     </Flex>
                   </Flex>
@@ -157,7 +166,7 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
           </Flex>
           <Flex p="4" flexDirection="column">
             <Box>已选: {selectedMemberIdList.length}</Box>
-            <Flex flexDirection="column" mt="2">
+            <Flex flexDirection="column" mt="2" maxH={'50vh'} overflow={'scroll'}>
               {selectedMemberIdList.map((tmbId) => {
                 const member = filterMembers.find((v) => v.tmbId === tmbId);
                 return member ? (
@@ -172,7 +181,9 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
                     _notLast={{ mb: 2 }}
                   >
                     <Avatar src={member.avatar} w="24px" />
-                    <Box w="full">{member.memberName}</Box>
+                    <Box w="full" pl={1}>
+                      {member.memberName}
+                    </Box>
                     <MyIcon
                       name="common/closeLight"
                       w="16px"
@@ -192,24 +203,6 @@ function AddMemberModal({ onClose }: AddModalPropsType) {
         </MyBox>
       </ModalBody>
       <ModalFooter>
-        <PermissionSelect
-          value={selectedPermission}
-          Button={
-            <Flex
-              alignItems={'center'}
-              bg={'myGray.50'}
-              border="base"
-              fontSize={'sm'}
-              px={3}
-              borderRadius={'md'}
-              h={'32px'}
-            >
-              {perLabel}
-              <ChevronDownIcon fontSize={'md'} />
-            </Flex>
-          }
-          onChange={(v) => setSelectedPermission(v)}
-        />
         <Button isLoading={isUpdating} ml="4" h={'32px'} onClick={onConfirm}>
           确认
         </Button>

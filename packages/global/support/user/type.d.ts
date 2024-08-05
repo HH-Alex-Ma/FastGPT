@@ -69,3 +69,10 @@ export type TypeCollectSchema = {
   desc: string;
   createTime: number;
 };
+
+export type CollaboratorModelSchema = {
+  _id: string;
+  appId: string;
+  tmbIds: string[];
+  createTime: number;
+};

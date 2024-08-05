@@ -9,7 +9,8 @@ import AsidePage from './component/AsidePage';
 import HeaderPage from './component/HeaderPage';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import { useUserStore } from '@/web/support/user/useUserStore';
-import { getOwnerApps, getCollectById } from '@/web/support/user/api';
+// import { getOwnerApps, getCollectById } from '@/web/support/user/api';
+import { getCollectById } from '@/web/support/user/api';
 import { useLoading } from '@fastgpt/web/hooks/useLoading';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { AppListItemType } from '@fastgpt/global/core/app/type.d';
@@ -29,16 +30,17 @@ const Home = ({ children }: { children: JSX.Element }) => {
   const { isFetching } = useQuery(['loadApps'], () => loadMyApps(true), {
     refetchOnMount: true
   });
-  const { data: ownerApps = [] as any, isLoading: isGetting } = useQuery(['getOwnerApps'], () =>
-    getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
-  );
+  // const { data: ownerApps = [] as any, isLoading: isGetting } = useQuery(['getOwnerApps'], () =>
+  //   getOwnerApps(userInfo?._id, userInfo?.team.tmbId)
+  // );
 
   const { data: collects = [] as any, isLoading: isGettingCollect } = useQuery(
     ['getCollectById', reloadCollect],
     () => getCollectById(userInfo?.team.tmbId)
   );
 
-  const appList = myApps.filter((app: AppListItemType) => ownerApps.includes(app._id));
+  // const appList = myApps.filter((app: AppListItemType) => ownerApps.includes(app._id));
+  const appList = myApps;
 
   const {
     isOpen: isOpenCreateModal,
@@ -124,7 +126,8 @@ const Home = ({ children }: { children: JSX.Element }) => {
       {isOpenCreateModal && (
         <CreateModal onClose={onCloseCreateModal} onSuccess={() => loadMyApps(true)} />
       )}
-      <Loading loading={isGetting || isFetching || isGettingCollect} fixed={false} />
+      {/* <Loading loading={isGetting || isFetching || isGettingCollect} fixed={false} /> */}
+      <Loading loading={isFetching || isGettingCollect} fixed={false} />
     </>
   );
 };

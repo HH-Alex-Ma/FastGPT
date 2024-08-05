@@ -49,5 +49,5 @@ const I18nContextProvider = ({ children }: { children: React.ReactNode }) => {
 export default I18nContextProvider;
 
 export const useI18n = () => {
-  return useContextSelector(I18nContext, (ctx) => ctx);
+  return useContextSelector(I18nContext, (ctx: any) => ctx);
 };
