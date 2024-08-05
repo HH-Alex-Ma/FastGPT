@@ -141,7 +141,7 @@ const OutLink = ({
           outLinkUid
         },
         onMessage: generatingMessage,
-        abortCtrl: controller
+        abortSignal: controller
       });
       const newTitle = getChatTitleFromChatMessage(GPTMessages2Chats(prompts)[0]);
 
