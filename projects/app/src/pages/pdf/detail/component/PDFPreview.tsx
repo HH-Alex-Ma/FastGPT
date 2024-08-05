@@ -1,62 +1,61 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Spinner } from '@chakra-ui/react';
-import { WebViewerInstance } from '@pdftron/webviewer';
 
 interface PDFPreviewProps {
-  fileUrl: string | null;
+  file: File | null;
 }
 
-const PDFPreview: React.FC<PDFPreviewProps> = ({ fileUrl }) => {
+const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
   const viewer = useRef<HTMLDivElement>(null);
-  const [instance, setInstance] = useState<WebViewerInstance | null>(null);
+  const [instance, setInstance] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const initializeWebViewer = async () => {
       if (viewer.current && !instance) {
-        const WebViewer = (await import('@pdftron/webviewer')).default;
+        try {
+          const WebViewer = (await import('@pdftron/webviewer')).default;
 
-        const newInstance = await WebViewer(
-          {
-            path: '/lib',
-            licenseKey:
-              'demo:1720778595282:7f9f54de03000000000dcbfa680bceef193d0da307b91278c372511ce2'
-          },
-          viewer.current as HTMLDivElement
-        );
-        // Hide the toolbar and side panels
-        newInstance.UI.disableElements([
-          'header',
-          'toolsHeader',
-          'leftPanel',
-          'leftPanelButton',
-          'pageNavOverlay',
-          'searchButton'
-        ]);
+          const newInstance = await WebViewer(
+            {
+              path: '/lib',
+              licenseKey:
+                'demo:1720778595282:7f9f54de03000000000dcbfa680bceef193d0da307b91278c372511ce2'
+            },
+            viewer.current as HTMLDivElement
+          );
 
-        // Add event listeners
-        const { documentViewer } = newInstance.Core;
+          newInstance.UI.disableElements([
+            'header',
+            'toolsHeader',
+            'leftPanel',
+            'leftPanelButton',
+            'pageNavOverlay',
+            'searchButton'
+          ]);
 
-        documentViewer.addEventListener('pageComplete', () => {
-          newInstance.UI.closeElements(['loadingModal']);
-          console.log('Page complete');
-        });
+          const { documentViewer } = newInstance.Core;
 
-        documentViewer.addEventListener('documentLoaded', () => {
-          const doc = documentViewer.getDocument();
-          doc.getLayersArray().then((layers) => {
-            layers.forEach((layer, index) => {
-              layers[index].visible = false;
-            });
-            doc.setLayersArray(layers);
-            documentViewer.refreshAll();
-            documentViewer.updateView();
+          documentViewer.addEventListener('pageComplete', () => {
+            newInstance.UI.closeElements(['loadingModal']);
           });
-          console.log('Document loaded');
-        });
 
-        setInstance(newInstance);
-        setLoading(false);
+          documentViewer.addEventListener('documentLoaded', () => {
+            const doc = documentViewer.getDocument();
+            doc.getLayersArray().then((layers: any[]) => {
+              layers.forEach((layer) => {
+                layer.visible = false;
+              });
+              doc.setLayersArray(layers);
+              documentViewer.refreshAll();
+              documentViewer.updateView();
+            });
+          });
+
+          setInstance(newInstance);
+        } catch (error) {
+          console.error('Error initializing WebViewer:', error);
+        }
       }
     };
 
@@ -71,23 +70,27 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ fileUrl }) => {
 
   useEffect(() => {
     const loadDocument = async () => {
-      if (fileUrl && instance) {
+      if (file && instance) {
         try {
-          const response = await fetch(fileUrl);
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
+          const url = URL.createObjectURL(file);
           instance.UI.loadDocument(url);
-
-          // Fit document to width
           instance.UI.setFitMode(instance.UI.FitMode.FitWidth);
+          setLoading(false);
         } catch (error) {
           console.error('Error loading document:', error);
+          setLoading(false);
         }
       }
     };
 
     loadDocument();
-  }, [fileUrl, instance]);
+
+    return () => {
+      if (file) {
+        URL.revokeObjectURL(URL.createObjectURL(file));
+      }
+    };
+  }, [file, instance]);
 
   return (
     <Box position="relative" height="100%">

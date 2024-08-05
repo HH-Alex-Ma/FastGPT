@@ -135,7 +135,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onConfirm })
               <option value="Labor_PartyA">劳动合同审查-用人单位立场</option>
               <option value="Labor_PartyB">劳动合同审查-劳动者立场</option>
               <option value="Entrustment_PartyA">委托合同审查-委托方立场</option>
-              <option value="Entrustment_PartyB">委托合同审查-受托方立场</option>
+              <option value="Entrustment_PartyB">受托合同审查-受托方立场</option>
             </Select>
           </FormControl>
           <FormControl>

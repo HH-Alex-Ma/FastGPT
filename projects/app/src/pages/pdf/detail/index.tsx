@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Flex,
@@ -10,7 +10,8 @@ import {
   Badge,
   Collapse,
   Spinner,
-  Heading
+  Heading,
+  Divider
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
@@ -24,7 +25,7 @@ import { serviceSideProps } from '@/web/common/utils/i18n';
 const PDFDetail = () => {
   const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [analysisResult, setAnalysisResult] = useState<any>({ textreviewResult: [] });
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,30 +33,74 @@ const PDFDetail = () => {
   const [selectedRiskLevel, setSelectedRiskLevel] = useState<string | null>(null);
   const toast = useToast();
 
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const base64ToFile = (base64: string, name: string, type: string): File => {
+    const [header, data] = base64.split(',');
+    const mime = header.match(/:(.*?);/)?.[1] || '';
+    const binary = atob(data);
+    const array = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      array[i] = binary.charCodeAt(i);
+    }
+    return new File([array], name, { type: mime });
+  };
+
   useEffect(() => {
     const storedFiles = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
-    setUploadedFiles(
-      storedFiles.map((fileData: any) => new File([], fileData.name, { type: fileData.type }))
-    );
+    Promise.all(storedFiles.map(async (fileData: any) => {
+      const file = base64ToFile(fileData.base64, fileData.name, fileData.type);
+      return file;
+    })).then(files => setUploadedFiles(files));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(
-      'uploadedFiles',
-      JSON.stringify(uploadedFiles.map((file) => ({ name: file.name, type: file.type })))
-    );
+    const fileObjects = uploadedFiles.map(async (file) => {
+      const base64 = await fileToBase64(file);
+      return {
+        name: file.name,
+        type: file.type,
+        base64
+      };
+    });
+    Promise.all(fileObjects).then((fileObjects) => {
+      localStorage.setItem('uploadedFiles', JSON.stringify(fileObjects));
+    });
   }, [uploadedFiles]);
 
-  const handleFileUpload = async (result: any, file: File) => {
-    setFileUrl(URL.createObjectURL(file));
-    setUploadedFiles((prevFiles) => [...prevFiles, file]);
+  const saveAnalysisResultToLocalStorage = (fileName: string, result: any) => {
+    const storedResults = JSON.parse(localStorage.getItem('analysisResults') || '{}');
+    storedResults[fileName] = result;
+    localStorage.setItem('analysisResults', JSON.stringify(storedResults));
+  };
 
+  const getAnalysisResultFromLocalStorage = (fileName: string) => {
+    const storedResults = JSON.parse(localStorage.getItem('analysisResults') || '{}');
+    return storedResults[fileName] || null;
+  };
+
+  const handleFileUpload = async (result: any, file: File) => {
+    setFile(file);
+    setUploadedFiles((prevFiles) => [...prevFiles, file]);
     setAnalysisResult(result.result || { textreviewResult: [] });
-    console.log('setAnalysisResult:', result.result);
+    saveAnalysisResultToLocalStorage(file.name, result.result || { textreviewResult: [] });
   };
 
   const handleFileClick = (file: File) => {
-    setFileUrl(URL.createObjectURL(file));
+    setFile(file);
+    const cachedResult = getAnalysisResultFromLocalStorage(file.name);
+    if (cachedResult) {
+      setAnalysisResult(cachedResult);
+    }
   };
 
   const handleRiskLevelClick = (riskLevel: string | null) => {
@@ -70,7 +115,6 @@ const PDFDetail = () => {
     });
   };
 
-  // Calculate counts for each risk level
   const allRiskCounts = (analysisResult.textreviewResult || [])
     .flatMap((doc: any) => doc.chatContents)
     .reduce((acc: any, item: any) => {
@@ -78,23 +122,17 @@ const PDFDetail = () => {
       return acc;
     }, {});
 
-  // Filter results based on selected risk level
-  const filteredResults = (analysisResult.textreviewResult || [])
-    .flatMap((doc: any) => doc.chatContents)
-    .filter((item: any) => !selectedRiskLevel || item.riskName === selectedRiskLevel);
+  const filteredResults = useMemo(() =>
+    (analysisResult.textreviewResult || [])
+      .flatMap((doc: any) => doc.chatContents)
+      .filter((item: any) => !selectedRiskLevel || item.riskName === selectedRiskLevel),
+    [analysisResult.textreviewResult, selectedRiskLevel]
+  );
 
-  // Set initial collapsed state
   useEffect(() => {
+    console.log('Filtered results:', filteredResults);
     setCollapsedItems(new Array(filteredResults.length).fill(true));
-  }, [filteredResults.length]);
-
-  useEffect(() => {
-    return () => {
-      if (fileUrl) {
-        URL.revokeObjectURL(fileUrl);
-      }
-    };
-  }, [fileUrl]);
+  }, [filteredResults]);
 
   return (
     <>
@@ -151,7 +189,7 @@ const PDFDetail = () => {
           </Box>
 
           <Box flex="1" p={4}>
-            <PDFPreview fileUrl={fileUrl} />
+            <PDFPreview file={file} />
           </Box>
 
           <Box w="300px" bg="white" p={4} borderLeft="1px solid" borderColor="gray.200">
@@ -191,28 +229,17 @@ const PDFDetail = () => {
                       borderRadius="md"
                       boxShadow="md"
                       cursor="pointer"
-                      onClick={() => toggleCollapse(index)}
-                      _hover={{ bg: 'gray.100' }}
-                      _active={{ bg: 'gray.200' }}
-                      position="relative"
+                      borderLeft={`4px solid ${result.riskName === '重大风险' ? 'red' : 'yellow'}`}
                     >
-                      <Box
-                        position="absolute"
-                        left={0}
-                        top={0}
-                        bottom={0}
-                        width="4px"
-                        bg={result.riskName === '重大风险' ? 'red.500' : 'yellow.500'}
-                      />
-                      <Box ml={6}>
+                      <Flex justifyContent="space-between" mb={2}>
                         <Text fontWeight="bold">{result.ruleName}</Text>
-                        <Text color="gray.500">{result.riskName}</Text>
-                        <Collapse in={!collapsedItems[index]}>
-                          <Box mt={2} whiteSpace="pre-wrap">
-                            {result.markdownResult}
-                          </Box>
-                        </Collapse>
-                      </Box>
+                        <Text color="gray.600" onClick={() => toggleCollapse(index)}>
+                          {collapsedItems[index] ? '展开' : '收起'}
+                        </Text>
+                      </Flex>
+                      <Collapse in={!collapsedItems[index]}>
+                        <Text whiteSpace="pre-wrap">{result.markdownResult}</Text>
+                      </Collapse>
                     </Box>
                   ))}
                 </>
@@ -220,8 +247,8 @@ const PDFDetail = () => {
             </VStack>
           </Box>
         </Flex>
-        <UploadModal isOpen={isOpen} onClose={onClose} onConfirm={handleFileUpload} />
       </PageContainer>
+      <UploadModal isOpen={isOpen} onClose={onClose} onConfirm={handleFileUpload} />
     </>
   );
 };

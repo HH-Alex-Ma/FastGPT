@@ -92,6 +92,15 @@ async function getContractReviewResult(
   }
 }
 
+async function deleteTemporaryFile(filePath: string) {
+  try {
+    await fs.promises.unlink(filePath);
+    console.log(`Deleted temporary file: ${filePath}`);
+  } catch (cleanupError) {
+    console.error('Error deleting temporary file:', cleanupError);
+  }
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const form = new formidable.IncomingForm({
     keepExtensions: true,
@@ -153,29 +162,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return res.status(500).json({ error: 'Task ID not found in response' });
       }
 
-      // 获取结果并记录到控制台
       const result = await getContractReviewResult(accessToken, taskId);
       console.log('Final Review Result:', JSON.stringify(result, null)); // Log the final result here
 
-      // 清理上传的临时文件
-      try {
-        await fs.promises.unlink(filePath);
-        console.log(`Deleted temporary file: ${filePath}`);
-      } catch (cleanupError) {
-        console.error('Error deleting temporary file:', cleanupError);
-      }
+      await deleteTemporaryFile(filePath);
 
       return res.status(200).json(result);
     } catch (error: any) {
       console.error('Unexpected error:', error);
 
-      // 发生错误时清理文件
-      try {
-        await fs.promises.unlink(filePath);
-        console.log(`Deleted temporary file after error: ${filePath}`);
-      } catch (cleanupError) {
-        console.error('Error deleting temporary file after error:', cleanupError);
-      }
+      await deleteTemporaryFile(filePath);
 
       return res.status(500).json({ error: error.message });
     }
