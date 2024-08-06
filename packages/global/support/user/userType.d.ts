@@ -42,3 +42,9 @@ export type AuthCode = {
   username: string;
   msgToken: string;
 };
+
+export type AddCollaboratorType = {
+  appId: string;
+  tmbIds: string[];
+  permission: any;
+};

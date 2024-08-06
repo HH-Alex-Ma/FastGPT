@@ -94,7 +94,7 @@ const TeamManageModal = ({ onClose }: { onClose: () => void }) => {
     ['getMembers', userInfo?.team?.teamId],
     () => {
       if (!userInfo?.team?.teamId) return [];
-      return getTeamMembers(userInfo.team.teamId);
+      return getTeamMembers();
     }
   );
 

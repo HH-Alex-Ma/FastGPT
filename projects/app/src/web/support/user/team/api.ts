@@ -27,8 +27,8 @@ export const putSwitchTeam = (teamId: string) =>
   PUT<string>(`/proApi/support/user/team/switch`, { teamId });
 
 /* --------------- team member ---------------- */
-export const getTeamMembers = (teamId: string) =>
-  GET<TeamMemberItemType[]>(`/proApi/support/user/team/member/list`, { teamId });
+export const getTeamMembers = () => GET<TeamMemberItemType[]>(`/support/user/team/member/list`);
+
 export const postInviteTeamMember = (data: InviteMemberProps) =>
   POST<InviteMemberResponse>(`/proApi/support/user/team/member/invite`, data);
 export const putUpdateMember = (data: UpdateTeamMemberProps) =>

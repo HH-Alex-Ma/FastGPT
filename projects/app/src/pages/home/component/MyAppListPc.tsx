@@ -1,24 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import {
-  Box,
-  Grid,
-  Flex,
-  IconButton,
-  useDisclosure,
-  Text,
-  Icon,
-  Input,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
-  position
-} from '@chakra-ui/react';
-import { StarIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon, Input } from '@chakra-ui/react';
+import { StarIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
@@ -35,6 +17,16 @@ import MySelect from '@fastgpt/web/components/common/MySelect';
 import { useQuery } from '@tanstack/react-query';
 import { getTypes } from '@/web/support/user/api';
 import CreateModal from '@/pages/app/list/component/CreateModal';
+import MyMenu from '@fastgpt/web/components/common/MyMenu';
+import dynamic from 'next/dynamic';
+import { AppPermissionList } from '@fastgpt/global/support/permission/app/constant';
+import {
+  deleteAppCollaborators,
+  getCollaboratorList,
+  postUpdateAppCollaborators
+} from '@/web/core/app/api/collaborator';
+
+const ConfigPerModal = dynamic(() => import('@/components/support/permission/ConfigPerModal'));
 
 const MyAppListPc = ({
   ownerApps,
@@ -54,6 +46,7 @@ const MyAppListPc = ({
   const { t } = useTranslation();
   const { userInfo } = useUserStore();
   const [searchText, setSearchText] = useState('');
+  const [editPerAppIndex, setEditPerAppIndex] = useState<string>();
 
   const { openConfirm, ConfirmModal } = useConfirm({
     title: '删除提示',
@@ -123,11 +116,11 @@ const MyAppListPc = ({
     {
       id: 3,
       name: '个人应用'
+    },
+    {
+      id: 4,
+      name: '团队分享'
     }
-    // {
-    //   id: 4,
-    //   name: '我收藏的'
-    // }
   ];
   const myApps = () => {
     return ownerApps.filter(
@@ -140,10 +133,19 @@ const MyAppListPc = ({
             ? item.appType == AppSortType.COMPANY
             : mySelectType == 3
               ? item.appType == AppSortType.PERSON
-              : collects && collects.includes(item._id))
+              : mySelectType == 4
+                ? item.appType == AppSortType.SHARE
+                : collects && collects.includes(item._id))
     );
   };
 
+  const editPerApp = useMemo(
+    () =>
+      editPerAppIndex !== undefined
+        ? myApps().find((item: any) => item._id == editPerAppIndex)
+        : undefined,
+    [editPerAppIndex, myApps]
+  );
   return (
     <>
       <Flex
@@ -166,18 +168,18 @@ const MyAppListPc = ({
             p={'5px'}
             {...(0 === activeAppType
               ? {
-                fontWeight: '600',
-                color: '#447EF2'
-              }
-              : {
-                _hover: {
                   fontWeight: '600',
                   color: '#447EF2'
-                },
-                onClick: () => {
-                  setActiveAppType(0);
                 }
-              })}
+              : {
+                  _hover: {
+                    fontWeight: '600',
+                    color: '#447EF2'
+                  },
+                  onClick: () => {
+                    setActiveAppType(0);
+                  }
+                })}
           >
             {`全部`}
           </Text>
@@ -194,18 +196,18 @@ const MyAppListPc = ({
               p={'5px'}
               {...(item._id === activeAppType
                 ? {
-                  fontWeight: '600',
-                  color: '#447EF2'
-                }
-                : {
-                  _hover: {
                     fontWeight: '600',
                     color: '#447EF2'
-                  },
-                  onClick: () => {
-                    setActiveAppType(item._id);
                   }
-                })}
+                : {
+                    _hover: {
+                      fontWeight: '600',
+                      color: '#447EF2'
+                    },
+                    onClick: () => {
+                      setActiveAppType(item._id);
+                    }
+                  })}
             >
               {item.name}
             </Text>
@@ -253,7 +255,7 @@ const MyAppListPc = ({
           gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
           gridGap={5}
         >
-          {myApps().map((app: any) => (
+          {myApps().map((app: any, index: any) => (
             <MyTooltip key={app._id}>
               <Box
                 lineHeight={1.5}
@@ -272,7 +274,7 @@ const MyAppListPc = ({
                 _hover={{
                   borderColor: 'primary.300',
                   boxShadow: '1.5',
-                  '& .delete': {
+                  '& .more': {
                     display: 'flex'
                   },
                   '& .chat': {
@@ -322,28 +324,6 @@ const MyAppListPc = ({
                         );
                       }}
                     />
-                    {app.isOwner &&
-                      userInfo?.team.canWrite &&
-                      app.appType === AppSortType.PERSON && (
-                        <IconButton
-                          position={'absolute'}
-                          top={3}
-                          right={12}
-                          size={'xsSquare'}
-                          variant={'whiteDanger'}
-                          icon={
-                            <MyIcon name={'common/settingLight'} color={'#718096'} w={'18px'} />
-                          }
-                          aria-label={'setting'}
-                          border={'0'}
-                          _hover={{ bg: '#F7FAF7' }}
-                          boxShadow="none"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/home/detail?appId=${app._id}`);
-                          }}
-                        />
-                      )}
                   </Flex>
                   <Box
                     flex={1}
@@ -364,25 +344,54 @@ const MyAppListPc = ({
                   </Box>
                   <Flex justifyContent="space-between" h={'15px'} mt={'20px'} alignItems={'center'}>
                     <Text color={'myGray.600'} fontSize={'12px'}>
-                      {app.appType === AppSortType.PERSON ? '个人应用' : '企业应用'}
+                      {app.appType === AppSortType.PERSON
+                        ? '个人应用'
+                        : app.appType === AppSortType.SHARE
+                          ? '团队分享'
+                          : '企业应用'}
                     </Text>
                     {app.isOwner &&
                       userInfo?.team.canWrite &&
                       app.appType === AppSortType.PERSON && (
-                        <>
-                          <IconButton
-                            className="delete"
-                            size={'xsSquare'}
-                            variant={'whiteDanger'}
-                            icon={<MyIcon name={'delete'} w={'14px'} />}
-                            aria-label={'delete'}
-                            display={['', 'none']}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openConfirm(() => onclickDelApp(app._id))();
-                            }}
-                          />
-                        </>
+                        <Box className="more" display={['', 'none']} zIndex={9}>
+                          <MyMenu
+                            Button={
+                              <IconButton
+                                size={'xsSquare'}
+                                variant={'transparentBase'}
+                                icon={<MyIcon name={'more'} w={'0.875rem'} color={'myGray.500'} />}
+                                aria-label={''}
+                              />
+                            }
+                            menuList={[
+                              {
+                                children: [
+                                  {
+                                    icon: 'support/team/key',
+                                    label: t('common:common.Permission'),
+                                    onClick: () => setEditPerAppIndex(app._id)
+                                  },
+                                  {
+                                    type: 'primary' as 'primary',
+                                    icon: 'common/settingLight',
+                                    label: t('common:common.Setting'),
+                                    onClick: () => router.push(`/home/detail?appId=${app._id}`)
+                                  }
+                                ]
+                              },
+                              {
+                                children: [
+                                  {
+                                    type: 'danger' as 'danger',
+                                    icon: 'delete',
+                                    label: t('common:common.Delete'),
+                                    onClick: () => openConfirm(() => onclickDelApp(app._id))()
+                                  }
+                                ]
+                              }
+                            ]}
+                          ></MyMenu>
+                        </Box>
                       )}
                   </Flex>
                 </Box>
@@ -402,6 +411,38 @@ const MyAppListPc = ({
         <ConfirmModal />
         {isOpenCreateModal && (
           <CreateModal onClose={onCloseCreateModal} onSuccess={() => onRefresh()} />
+        )}
+        {!!editPerApp && (
+          <ConfigPerModal
+            refetchResource={() => onRefresh()}
+            avatar={editPerApp.avatar}
+            name={editPerApp.name}
+            managePer={{
+              permission: editPerApp.permission,
+              permissionList: AppPermissionList,
+              onGetCollaboratorList: () => getCollaboratorList(editPerApp._id),
+              onUpdateCollaborators: ({
+                tmbIds,
+                permission
+              }: {
+                tmbIds: string[];
+                permission: number;
+              }) => {
+                return postUpdateAppCollaborators({
+                  tmbIds,
+                  permission,
+                  appId: editPerApp._id
+                });
+              },
+              onDelOneCollaborator: (tmbId: string) =>
+                deleteAppCollaborators({
+                  appId: editPerApp._id,
+                  delTmbId: tmbId
+                }),
+              refreshDeps: [editPerApp.inheritPermission]
+            }}
+            onClose={() => setEditPerAppIndex(undefined)}
+          />
         )}
       </PageContainer>
       <Menu>

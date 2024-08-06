@@ -14,6 +14,7 @@ import { useToast } from '@fastgpt/web/hooks/useToast';
 import type { UserType } from '@fastgpt/global/support/user/type.d';
 import { useForm } from 'react-hook-form';
 import { UserUpdateParams } from '@/types/user';
+import MyMenu from '@fastgpt/web/components/common/MyMenu';
 
 import dynamic from 'next/dynamic';
 const UpdatePswModal = dynamic(() => import('../../../pages/account/components/UpdatePswModal'));
@@ -113,7 +114,47 @@ const HeaderPage = () => {
           </Box> */}
         {/* 导航列表 */}
         <Flex position={'fixed'} right={'50px'} alignItems={'center'}>
-          <Menu>
+          <Avatar
+            w={'30px'}
+            h={'30px'}
+            mr={'5px'}
+            src={userInfo?.avatar}
+            fallbackSrc={HUMAN_ICON}
+          />
+          <MyMenu
+            Button={
+              <Flex alignItems={'center'}>
+                {userInfo?.nickname}
+                <ChevronDownIcon />
+              </Flex>
+            }
+            menuList={[
+              {
+                children: [
+                  {
+                    icon: 'edit',
+                    label: '变更头像',
+                    onClick: () => onOpenSelectFile()
+                  },
+                  {
+                    icon: 'support/team/key',
+                    label: '修改密码',
+                    onClick: () => onOpenUpdatePsw()
+                  },
+                  {
+                    icon: 'support/account/loginoutLight',
+                    label: '退出登录',
+                    onClick: () =>
+                      openConfirm(() => {
+                        setUserInfo(null);
+                        router.replace('/login');
+                      })()
+                  }
+                ]
+              }
+            ]}
+          ></MyMenu>
+          {/* <Menu>
             <MenuButton>
               <Flex alignItems={'center'}>
                 <Avatar
@@ -141,7 +182,7 @@ const HeaderPage = () => {
                 退出
               </MenuItem>
             </MenuList>
-          </Menu>
+          </Menu> */}
         </Flex>
         <ConfirmModal />
         {isOpenUpdatePsw && <UpdatePswModal onClose={onCloseUpdatePsw} />}

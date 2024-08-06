@@ -59,7 +59,7 @@ const UsageTable = () => {
   const [selectTmbId, setSelectTmbId] = useState(userInfo?.team?.tmbId);
   const { data: members = [] } = useQuery(['getMembers', userInfo?.team?.teamId], () => {
     if (!userInfo?.team?.teamId) return [];
-    return getTeamMembers(userInfo.team.teamId);
+    return getTeamMembers();
   });
   const tmbList = useMemo(
     () =>
@@ -141,7 +141,7 @@ const UsageTable = () => {
                   list={sourceList}
                   value={usageSource}
                   size={'sm'}
-                  onchange={(e) => {
+                  onchange={(e: any) => {
                     setUsageSource(e);
                   }}
                   w={'130px'}
