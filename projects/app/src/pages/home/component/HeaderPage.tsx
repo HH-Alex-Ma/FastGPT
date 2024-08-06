@@ -125,7 +125,7 @@ const HeaderPage = () => {
             Button={
               <Flex alignItems={'center'}>
                 {userInfo?.nickname}
-                {/* <ChevronDownIcon /> */}
+                <ChevronDownIcon />
               </Flex>
             }
             menuList={[
