@@ -166,18 +166,18 @@ const MyAppListPc = ({
             p={'5px'}
             {...(0 === activeAppType
               ? {
-                fontWeight: '600',
-                color: '#447EF2'
-              }
-              : {
-                _hover: {
                   fontWeight: '600',
                   color: '#447EF2'
-                },
-                onClick: () => {
-                  setActiveAppType(0);
                 }
-              })}
+              : {
+                  _hover: {
+                    fontWeight: '600',
+                    color: '#447EF2'
+                  },
+                  onClick: () => {
+                    setActiveAppType(0);
+                  }
+                })}
           >
             {`全部`}
           </Text>
@@ -194,18 +194,18 @@ const MyAppListPc = ({
               p={'5px'}
               {...(item._id === activeAppType
                 ? {
-                  fontWeight: '600',
-                  color: '#447EF2'
-                }
-                : {
-                  _hover: {
                     fontWeight: '600',
                     color: '#447EF2'
-                  },
-                  onClick: () => {
-                    setActiveAppType(item._id);
                   }
-                })}
+                : {
+                    _hover: {
+                      fontWeight: '600',
+                      color: '#447EF2'
+                    },
+                    onClick: () => {
+                      setActiveAppType(item._id);
+                    }
+                  })}
             >
               {item.name}
             </Text>
