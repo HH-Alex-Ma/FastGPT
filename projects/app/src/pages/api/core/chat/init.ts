@@ -3,7 +3,7 @@ import { jsonRes } from '@fastgpt/service/common/response';
 import { connectToDatabase } from '@/service/mongo';
 import { authApp } from '@fastgpt/service/support/permission/auth/app';
 import { getGuideModule } from '@fastgpt/global/core/module/utils';
-import { getChatModelNameListByModules } from '@/service/core/app/module';
+import { getChatModelNameListByModules, getChatModuleNameList } from '@/service/core/app/module';
 import type { InitChatProps, InitChatResponse } from '@/global/core/chat/api.d';
 import { MongoChat } from '@fastgpt/service/core/chat/chatSchema';
 import { getChatItems } from '@fastgpt/service/core/chat/controller';
@@ -62,7 +62,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           chatModels: getChatModelNameListByModules(app.modules),
           name: app.name,
           avatar: app.avatar,
-          intro: app.intro
+          intro: app.intro,
+          chatModules: getChatModuleNameList(app.modules)
         }
       }
     });

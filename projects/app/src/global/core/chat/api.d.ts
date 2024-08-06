@@ -40,6 +40,7 @@ export type InitChatResponse = {
     avatar: string;
     intro: string;
     canUse?: boolean;
+    chatModules?: string[];
   };
 };
 

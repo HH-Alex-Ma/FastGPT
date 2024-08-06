@@ -7,7 +7,8 @@ export enum SseResponseEventEnum {
   toolCall = 'toolCall', // tool start
   toolParams = 'toolParams', // tool params return
   toolResponse = 'toolResponse', // tool response return
-  flowResponses = 'flowResponses' // sse response request
+  flowResponses = 'flowResponses', // sse response request
+  chatFlowResponse = 'chatFlowFinish' // chat flow start
 }
 
 export enum DispatchNodeResponseKeyEnum {

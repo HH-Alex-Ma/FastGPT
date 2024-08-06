@@ -96,6 +96,8 @@ type Props = OutLinkChatAuthProps & {
 
   // not chat test params
   chatId?: string;
+  // list of chatNodes which output answers
+  chatModules: string[];
 
   onUpdateVariable?: (e: Record<string, any>) => void;
   onStartChat?: (e: StartChatFnProps) => Promise<{
@@ -132,7 +134,8 @@ const ChatBox = (
     teamToken,
     onUpdateVariable,
     onStartChat,
-    onDelMessage
+    onDelMessage,
+    chatModules
   }: Props,
   ref: ForwardedRef<ComponentRef>
 ) => {
@@ -233,8 +236,9 @@ const ChatBox = (
       status,
       name,
       tool,
-      autoTTSResponse
-    }: generatingMessageProps & { autoTTSResponse?: boolean }) => {
+      autoTTSResponse,
+      moduleName
+    }: generatingMessageProps & { autoTTSResponse?: boolean; moduleName?: string }) => {
       setChatHistories((state) =>
         state.map((item, index) => {
           if (index !== state.length - 1) return item;
@@ -256,23 +260,34 @@ const ChatBox = (
             (event === SseResponseEventEnum.answer || event === SseResponseEventEnum.fastAnswer) &&
             text
           ) {
-            if (!lastValue || !lastValue.text) {
+            if (moduleName && chatModules.indexOf(moduleName) > item.value.length - 1) {
               const newValue: AIChatItemValueItemType = {
                 type: ChatItemValueTypeEnum.text,
                 text: {
                   content: text
                 }
               };
-              return {
-                ...item,
-                value: item.value.concat(newValue)
-              };
+              item.value.push(newValue);
+              return item;
             } else {
-              lastValue.text.content += text;
-              return {
-                ...item,
-                value: item.value.slice(0, -1).concat(lastValue)
-              };
+              if (!lastValue || !lastValue.text) {
+                const newValue: AIChatItemValueItemType = {
+                  type: ChatItemValueTypeEnum.text,
+                  text: {
+                    content: text
+                  }
+                };
+                return {
+                  ...item,
+                  value: item.value.concat(newValue)
+                };
+              } else {
+                lastValue.text.content += text;
+                return {
+                  ...item,
+                  value: item.value.slice(0, -1).concat(lastValue)
+                };
+              }
             }
           } else if (event === SseResponseEventEnum.toolCall && tool) {
             const val: AIChatItemValueItemType = {
@@ -936,6 +951,7 @@ const ChatBox = (
                       chat={item}
                       isLastChild={index === chatHistories.length - 1}
                       twoColConfig={twoColConfig}
+                      chatModules={chatModules}
                       {...(item.obj === 'AI' && {
                         showVoiceIcon,
                         shareId,

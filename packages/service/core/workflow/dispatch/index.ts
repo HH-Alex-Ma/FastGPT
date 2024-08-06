@@ -318,7 +318,8 @@ export async function dispatchWorkFlow({
     flowResponses: chatResponses,
     flowUsages: chatNodeUsages,
     [DispatchNodeResponseKeyEnum.assistantResponses]:
-      concatAssistantResponseAnswerText(chatAssistantResponse),
+      //concatAssistantResponseAnswerText(chatAssistantResponse),
+      chatAssistantResponse, // 不合并连续的text回答
     [DispatchNodeResponseKeyEnum.toolResponses]: toolRunResponse
   };
 }

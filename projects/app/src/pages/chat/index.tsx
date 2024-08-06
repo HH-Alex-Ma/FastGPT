@@ -360,6 +360,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
                 onDelMessage={(e) => delOneHistoryItem({ ...e, appId, chatId })}
                 appId={appId}
                 chatId={chatId}
+                chatModules={chatData.app.chatModules || []}
               />
             </Box>
           </Flex>

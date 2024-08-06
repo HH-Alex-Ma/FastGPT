@@ -189,8 +189,11 @@ export const dispatchChatCompletion = async (props: ChatProps): Promise<ChatResp
       const { answer } = await streamResponse({
         res,
         detail,
-        stream: response
+        stream: response,
+        moduleName: name
       });
+      //console.log(name, '回答结束', answer);
+      //responseWrite({res, event: SseResponseEventEnum.chatFlowResponse, data: name})
 
       targetResponse({ res, detail, outputs });
 
@@ -373,11 +376,13 @@ function targetResponse({
 async function streamResponse({
   res,
   detail,
-  stream
+  stream,
+  moduleName
 }: {
   res: NextApiResponse;
   detail: boolean;
   stream: StreamChatType;
+  moduleName?: string;
 }) {
   const write = responseWriteController({
     res,
@@ -391,12 +396,13 @@ async function streamResponse({
     }
     const content = part.choices?.[0]?.delta?.content || '';
     answer += content;
-
+    //console.log('moduleName是', moduleName)
     responseWrite({
       write,
       event: detail ? SseResponseEventEnum.answer : undefined,
       data: textAdaptGptResponse({
-        text: content
+        text: content,
+        moduleName: moduleName
       })
     });
   }

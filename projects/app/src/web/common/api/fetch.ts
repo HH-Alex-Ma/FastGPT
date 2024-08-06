@@ -39,7 +39,11 @@ export const streamFetch = ({
     // response data
     let responseText = '';
     let responseQueue: (
-      | { event: SseResponseEventEnum.fastAnswer | SseResponseEventEnum.answer; text: string }
+      | {
+          event: SseResponseEventEnum.fastAnswer | SseResponseEventEnum.answer;
+          text: string;
+          moduleName?: string;
+        }
       | {
           event:
             | SseResponseEventEnum.toolCall
@@ -170,10 +174,12 @@ export const streamFetch = ({
           // console.log(parseJson, event);
           if (event === SseResponseEventEnum.answer) {
             const text = parseJson.choices?.[0]?.delta?.content || '';
+            const module = parseJson.module;
             for (const item of text) {
               responseQueue.push({
                 event,
-                text: item
+                text: item,
+                moduleName: module
               });
             }
           } else if (event === SseResponseEventEnum.fastAnswer) {

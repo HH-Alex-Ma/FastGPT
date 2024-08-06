@@ -35,7 +35,11 @@ import {
 import FilesBlock from './FilesBox';
 import { useChatProviderStore } from '../Provider';
 import MarkMapViewer from 'src/components/ChatBox/components/markmap';
-import { AIChatItemType, ChatHistoryItemResType } from '@fastgpt/global/core/chat/type';
+import {
+  AIChatItemType,
+  AIChatItemValueItemType,
+  ChatHistoryItemResType
+} from '@fastgpt/global/core/chat/type';
 import { twoColAppType } from '@fastgpt/global/core/app/constants';
 const colorMap = {
   [ChatStatusEnum.loading]: {
@@ -60,6 +64,7 @@ const ChatItem = ({
   isLastChild,
   questionGuides = [],
   twoColConfig,
+  chatModules,
   ...chatControllerProps
 }: {
   type: ChatRoleEnum.Human | ChatRoleEnum.AI;
@@ -71,6 +76,7 @@ const ChatItem = ({
   questionGuides?: string[];
   children?: React.ReactNode;
   twoColConfig?: twoColAppType;
+  chatModules?: string[];
 } & ChatControllerProps) => {
   const styleMap: BoxProps =
     type === ChatRoleEnum.Human
@@ -111,7 +117,9 @@ const ChatItem = ({
 
     /* AI */
     return (
-      <Flex flexDirection={'column'} key={chat.dataId} gap={2}>
+      <Flex flexDirection={'row'} key={chat.dataId} gap={2}>
+        {' '}
+        {/* flexDirection = 'row' for multiple rows config*/}
         {chat.value.map((value, i) => {
           const key = `${chat.dataId}-ai-${i}`;
 
@@ -132,13 +140,42 @@ ${JSON.stringify(questionGuides)}`;
             }
 
             if (!twoColConfig) {
-              return (
-                <Markdown
-                  key={key}
-                  source={source}
-                  showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
-                />
-              );
+              if (chatModules && chatModules.length > 1) {
+                return (
+                  <Flex
+                    flexDirection={'row'}
+                    key={chat.dataId + chatModules[i]}
+                    height={'auto'}
+                    width={`${100 / chat.value.length}%`}
+                  >
+                    {i > 0 && (
+                      <Flex height="auto">
+                        <Divider orientation="vertical" alignSelf="stretch" />
+                      </Flex>
+                    )}
+                    <Flex flexDirection="column" width="100%" paddingLeft={i === 0 ? '' : '14px'}>
+                      <Flex justifyContent="center" paddingRight="14px" paddingBottom="10px">
+                        <Tag colorScheme="cyan">
+                          <TagLabel isTruncated>{chatModules[i]}</TagLabel>
+                        </Tag>
+                      </Flex>
+                      <Markdown
+                        key={key}
+                        source={source}
+                        showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+                      />
+                    </Flex>
+                  </Flex>
+                );
+              } else {
+                return (
+                  <Markdown
+                    key={key}
+                    source={source}
+                    showAnimation={isLastChild && isChatting && i === chat.value.length - 1}
+                  />
+                );
+              }
             } else {
               // 把回答按模板切分为文字，大纲，思维导图三部分
               const parseResponse = (content: string): string[] => {
@@ -154,12 +191,6 @@ ${JSON.stringify(questionGuides)}`;
                 const mindMapMD = parts[1].trim().replace(/^```|```$/g, '');
                 return [outlineMD, mindMapMD];
               };
-
-              {
-                /*
-              const [textAnswer, outlineMD , mindMapMD] = parseResponse(source);
-              */
-              }
 
               let extraData: ChatHistoryItemResType | undefined;
               let extraResponse: string | undefined;
