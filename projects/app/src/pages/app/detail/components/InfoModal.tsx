@@ -249,22 +249,22 @@ const InfoModal = ({
                 }}
               />
             </Box>
-            <Box mt={4}>
-              <Box mb={1}>应用分类</Box>
-              <MySelect
-                value={getValues('appShowType')}
-                list={dataTypes.map((item: any) => ({
-                  label: item.name,
-                  value: item._id
-                }))}
-                onchange={(val: any) => {
-                  setValue('appShowType', val);
-                  setRefresh(!refresh);
-                }}
-              />
-            </Box>
           </>
         )}
+        <Box mt={4}>
+          <Box mb={1}>应用分类</Box>
+          <MySelect
+            value={getValues('appShowType')}
+            list={dataTypes.map((item: any) => ({
+              label: item.name,
+              value: item._id
+            }))}
+            onchange={(val: any) => {
+              setValue('appShowType', val);
+              setRefresh(!refresh);
+            }}
+          />
+        </Box>
       </ModalBody>
 
       <ModalFooter>

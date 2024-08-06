@@ -10,6 +10,7 @@ import { MongoRole } from '@fastgpt/service/support/user/role/schema';
 import { MongoCollaborator } from '@fastgpt/service/support/user/collaborator/schema';
 import type { CollaboratorModelSchema } from '@fastgpt/global/support/user/type';
 import { AppSortType } from '@fastgpt/global/support/permission/constant';
+import { mongoRPermission } from '@fastgpt/global/support/permission/utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
@@ -18,24 +19,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const { teamId, tmbId, teamOwner, role } = await authUserRole({ req, authToken: true });
 
     let myApps: string[] = [];
+    let apps: any;
+    let myCollaborators: string[] = [];
     const mebResult = await MongoTeamMember.findOne({ _id: tmbId });
 
     const userInfo = await MongoUser.findOne({ _id: mebResult?.userId });
+    if (userInfo && userInfo.username !== 'root') {
+      if (userInfo.roleId && userInfo.roleId != '') {
+        const roleInfo = await MongoRole.findOne({ _id: userInfo.roleId });
+        roleInfo?.apps.map((app: any) => myApps.push(app.value));
+      }
 
-    if (userInfo && userInfo.roleId && userInfo.roleId != '') {
-      const roleInfo = await MongoRole.findOne({ _id: userInfo.roleId });
-      roleInfo?.apps.map((app: any) => myApps.push(app.value));
+      const collaborators = await MongoCollaborator.find();
+      myCollaborators = getCollaboratorList(collaborators, tmbId);
+      apps = await MongoApp.find({
+        $or: [{ tmbId: tmbId }, { _id: { $in: mergeUnique(myApps, myCollaborators) } }]
+      });
+    } else {
+      apps = await MongoApp.find(
+        { ...mongoRPermission({ teamId, tmbId, role }) },
+        '_id avatar name intro tmbId permission isShow appShowType appType userId teamId updateTime modules'
+      ).sort({
+        updateTime: -1
+      });
     }
 
-    const collaborators = await MongoCollaborator.find();
-    const myCollaborators = getCollaboratorList(collaborators, tmbId);
-    const apps = await MongoApp.find({
-      $or: [{ tmbId: tmbId }, { _id: { $in: mergeUnique(myApps, myCollaborators) } }]
-    });
-
     jsonRes<AppListItemType[]>(res, {
-      message: myCollaborators.toString(),
-      data: apps.map((app) => ({
+      data: apps.map((app: any) => ({
         _id: app._id,
         avatar: app.avatar,
         name: app.name,

@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // 凭证校验
     const { tmbId, teamOwner } = await authUserRole({ req, authToken: true });
 
-    const apps = await MongoApp.find({ tmbId: tmbId }).sort({
+    const apps = await MongoApp.find().sort({
       updateTime: -1
     });
 
