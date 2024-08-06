@@ -17703,7 +17703,7 @@ snapshots:
 
   markmap-common@0.17.0:
     dependencies:
-      '@babel/runtime': 7.24.7
+      '@babel/runtime': 7.25.0
       '@gera2ld/jsx-dom': 2.2.2
       npm2url: 0.2.4
 

@@ -1,6 +1,18 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Box, Grid, Flex, IconButton, useDisclosure, Text, Icon, Input } from '@chakra-ui/react';
-import { StarIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Grid,
+  Flex,
+  IconButton,
+  useDisclosure,
+  Text,
+  MenuList,
+  Input,
+  Menu,
+  MenuButton,
+  MenuItem
+} from '@chakra-ui/react';
+import { StarIcon, QuestionOutlineIcon } from '@chakra-ui/icons';
 import { delModelById } from '@/web/core/app/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
