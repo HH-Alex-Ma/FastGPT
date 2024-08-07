@@ -1,14 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import { Box, Spinner } from '@chakra-ui/react';
 
 interface PDFPreviewProps {
   file: File | null;
+  positions?: { page: number; coords: { x: number; y: number }[] }[];
 }
 
-const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
+const PDFPreview = forwardRef(({ file, positions = [] }: PDFPreviewProps, ref) => {
   const viewer = useRef<HTMLDivElement>(null);
   const [instance, setInstance] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  useImperativeHandle(ref, () => ({
+    jumpToPosition: (page: number, x: number, y: number) => {
+      if (instance) {
+        const { documentViewer } = instance.Core;
+        documentViewer.setCurrentPage(page);
+        const pageRect = documentViewer.getPageView(page).getPage().getBoundingClientRect();
+        const scrollX = x + pageRect.left - viewer.current!.offsetWidth / 2;
+        const scrollY = y + pageRect.top - viewer.current!.offsetHeight / 2;
+        viewer.current!.scrollTo(scrollX, scrollY);
+      }
+    }
+  }));
 
   useEffect(() => {
     const initializeWebViewer = async () => {
@@ -19,8 +33,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
           const newInstance = await WebViewer(
             {
               path: '/lib',
-              licenseKey:
-                'demo:1720778595282:7f9f54de03000000000dcbfa680bceef193d0da307b91278c372511ce2'
+              licenseKey: 'demo:1720778595282:7f9f54de03000000000dcbfa680bceef193d0da307b91278c372511ce2'
             },
             viewer.current as HTMLDivElement
           );
@@ -50,6 +63,9 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
               documentViewer.refreshAll();
               documentViewer.updateView();
             });
+
+            newInstance.UI.setFitMode(newInstance.UI.FitMode.FitWidth);
+            setLoading(false);
           });
 
           setInstance(newInstance);
@@ -74,7 +90,6 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
         try {
           const url = URL.createObjectURL(file);
           instance.UI.loadDocument(url);
-          instance.UI.setFitMode(instance.UI.FitMode.FitWidth);
           setLoading(false);
         } catch (error) {
           console.error('Error loading document:', error);
@@ -92,6 +107,24 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
     };
   }, [file, instance]);
 
+  useEffect(() => {
+    if (instance && positions.length > 0) {
+      const { documentViewer } = instance.Core;
+      positions.forEach(({ page, coords }) => {
+        documentViewer.setCurrentPage(page);
+        const pageRect = documentViewer.getPageView(page).getPage().getBoundingClientRect();
+        coords.forEach(({ x, y }) => {
+          const highlight = documentViewer.getDocument().createAnnotation({
+            type: 'highlight',
+            pageNumber: page,
+            rect: [x + pageRect.left, y + pageRect.top, x + pageRect.left + 100, y + pageRect.top + 20] // Adjust width and height as needed
+          });
+          documentViewer.getAnnotationManager().addAnnotation(highlight);
+        });
+      });
+    }
+  }, [positions, instance]);
+
   return (
     <Box position="relative" height="100%">
       {loading && (
@@ -99,9 +132,9 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file }) => {
           <Spinner size="xl" />
         </Box>
       )}
-      <Box ref={viewer} height="100%" />
+      <Box ref={viewer} height="100%" width="100%" />
     </Box>
   );
-};
+});
 
 export default PDFPreview;
