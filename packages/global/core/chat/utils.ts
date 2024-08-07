@@ -21,11 +21,28 @@ export const getHistoryPreview = (
   value: string;
 }[] => {
   return completeMessages.map((item, i) => {
-    if (item.obj === ChatRoleEnum.System || i >= completeMessages.length - 2) {
-      return {
-        obj: item.obj,
-        value: item.value?.[0]?.text?.content || ''
-      };
+    const hasFileInput =
+      item.obj === ChatRoleEnum.Human &&
+      item.value.some((item) => item.type === ChatItemValueTypeEnum.file);
+    if (item.obj === ChatRoleEnum.System || i >= completeMessages.length - 2 || hasFileInput) {
+      if (hasFileInput) {
+        let queryWithFiles: string =
+          item.value.find((item) => item.type === ChatItemValueTypeEnum.text)?.text?.content || '';
+        item.value.forEach((item, i) => {
+          if (item.file) {
+            queryWithFiles += '\n' + `文件${i + 1}:\n` + item.file?.url;
+          }
+        });
+        return {
+          obj: item.obj,
+          value: queryWithFiles
+        };
+      } else {
+        return {
+          obj: item.obj,
+          value: item.value?.[0]?.text?.content || ''
+        };
+      }
     }
 
     const content = item.value
