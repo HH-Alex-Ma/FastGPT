@@ -105,18 +105,15 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     }
 
     let startTime = Date.now();
-
     const chatMessages = GPTMessages2Chats(messages);
     if (chatMessages[chatMessages.length - 1].obj !== ChatRoleEnum.Human) {
       chatMessages.pop();
     }
-
     // user question
     const question = chatMessages.pop() as UserChatItemType;
     if (!question) {
       throw new Error('Question is empty');
     }
-
     const { text, files } = chatValue2RuntimePrompt(question.value);
 
     /* 
@@ -165,7 +162,6 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     });
     const concatHistories = history.concat(chatMessages);
     const responseChatItemId: string | undefined = messages[messages.length - 1].dataId;
-
     /* start flow controller */
     const { flowResponses, flowUsages, assistantResponses } = await dispatchWorkFlow({
       res,

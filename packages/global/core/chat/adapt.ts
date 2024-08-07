@@ -68,7 +68,7 @@ export const chats2GPTMessages = ({
           if (item.type === 'file' && item.file?.type === ChatFileTypeEnum.file) {
             return {
               type: 'text',
-              text: `###文件标题: ${item.file.name}。文件内容: ${item.file?.url}` || ''
+              text: `###文件标题: ${item.file.name} ###。文件内容:${item.file?.url}` || ''
             };
           }
           return;
@@ -154,15 +154,24 @@ export const GPTMessages2Chats = (
         obj === ChatRoleEnum.Human &&
         item.role === ChatCompletionRequestMessageRoleEnum.User
       ) {
+        //把文件标题和内容从string中拆出，以便重新作为File object存回历史记录
+        const fileContentParser = (content: string): [string, string] => {
+          const index = content.substring(9).indexOf(' ###。');
+          const fileName = content.substring(9, index + 9);
+          const fileContent = content.substring(index + 19);
+          return [fileName, fileContent];
+        };
+
         if (typeof item.content === 'string') {
           if (item.content.substring(0, 9) === '###文件标题: ') {
+            const [fileName, fileContent] = fileContentParser(item.content);
             value.push({
               //@ts-ignore
               type: 'file',
               file: {
                 type: ChatFileTypeEnum.file,
-                name: item.content.split('。')[0].substring(9),
-                url: item.content.split('。')[1].substring(10)
+                name: fileName,
+                url: fileContent
               }
             });
           } else {
@@ -177,13 +186,14 @@ export const GPTMessages2Chats = (
           item.content.forEach((item) => {
             if (item.type === 'text') {
               if (item.text.substring(0, 9) === '###文件标题: ') {
+                const [fileName, fileContent] = fileContentParser(item.text);
                 value.push({
                   //@ts-ignore
                   type: 'file',
                   file: {
                     type: ChatFileTypeEnum.file,
-                    name: item.text.split('。')[0].substring(9),
-                    url: item.text.split('。')[1].substring(6)
+                    name: fileName,
+                    url: fileContent
                   }
                 });
               } else {

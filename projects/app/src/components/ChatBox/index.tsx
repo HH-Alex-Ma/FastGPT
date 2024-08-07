@@ -459,6 +459,8 @@ const ChatBox = (
         ];
 
         console.log('text', text);
+        console.log('file', files);
+
         // 插入内容
         setChatHistories(newChatList);
         setCurrentText(text);
@@ -475,6 +477,7 @@ const ChatBox = (
           chatController.current = abortSignal;
 
           const messages = chats2GPTMessages({ messages: newChatList, reserveId: true });
+          console.log('messages after turned to GPTmessage', messages);
 
           const {
             responseData,

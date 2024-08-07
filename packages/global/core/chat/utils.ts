@@ -30,7 +30,8 @@ export const getHistoryPreview = (
           item.value.find((item) => item.type === ChatItemValueTypeEnum.text)?.text?.content || '';
         item.value.forEach((item, i) => {
           if (item.file) {
-            queryWithFiles += '\n' + `文件${i + 1}:\n` + item.file?.url;
+            queryWithFiles +=
+              '\n' + `文件${i + 1}: ${item.file.name ?? '未命名'}\n` + item.file?.url;
           }
         });
         return {
